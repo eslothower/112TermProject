@@ -1,5 +1,3 @@
-# 112 Term Project
-
 ## Basic Ideas
 
 - 2D simulation software that simulates the lifespan of animals and plants
@@ -26,5 +24,23 @@
   - Stray humans may wander into the land. Safe to say that they probably won't make it back home...
     - A gang of humans could then come into the land and try to fight the animals 
     - Add tombstone 
+
+
+## Animals
+
+- Wolves
+- Sheep
+- Bunnies
+- Bees
+- Foxes
+- Bears
+- Frogs
+- Birds
+
+## Terrain types
+
+- Forest
+- Mountains
+- Flat-land
  
  
