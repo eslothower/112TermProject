@@ -30,6 +30,23 @@
     - Animate the animals jumping from one level to another 
   - Really far-fetched idea: 3D terrain 
 
+## Animals
+
+- Wolves
+- Sheep
+- Bunnies
+- Bees
+- Foxes
+- Bears
+- Frogs
+- Birds
+
+## Terrain types
+
+- Forest
+- Mountains
+- Flat-land
+
 ## Mutations
 
 - Double the size (require more food, more water, harder to kill, stronger, slower, etc.)
@@ -48,24 +65,6 @@
 - Can give birth to other kinds of animals 
 - Doesn't need food and/or water
 - Dies 3 cycles after being born 
-
-
-## Animals
-
-- Wolves
-- Sheep
-- Bunnies
-- Bees
-- Foxes
-- Bears
-- Frogs
-- Birds
-
-## Terrain types
-
-- Forest
-- Mountains
-- Flat-land
  
 ## Implementation
 
