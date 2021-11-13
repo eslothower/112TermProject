@@ -11,6 +11,9 @@ def appStarted(app):
     app.cellSize = 20
     app.margin = 25
     app.colors = ['green', 'tan']
+    app.cellColors = [[random.randrange(0,2) for _ in range(app.rows)] for _ in range(app.cols)]
+    print(app.cellColors)
+    print(len(app.cellColors))
 
 def getCellBounds(app, row, col):
 
@@ -25,12 +28,13 @@ def getCellBounds(app, row, col):
 def drawBoard(app, canvas):   
     for row in range(app.rows):
         for col in range(app.cols):
-            drawCell(app, canvas, row, col)
+            color = app.cellColors[row][col]
+            drawCell(app, canvas, row, col, app.colors[color])
 
-def drawCell(app, canvas, row, col):
+def drawCell(app, canvas, row, col, color):
     (x0, y0, x1, y1) = getCellBounds(app, row, col)
-    color = random.randint(0,1)
-    canvas.create_rectangle(x0, y0, x1, y1, fill=app.colors[color], width = 4)
+    
+    canvas.create_rectangle(x0, y0, x1, y1, fill=color, width = 4)
 
 def redrawAll(app, canvas):
     drawBoard(app, canvas)
