@@ -1,16 +1,43 @@
 from cmu_112_graphics import *
 import random
 
+
+######################################################################
+#Animal Classes
+######################################################################
+
+class Animal(object):
+
+    def __init__(self):
+        return 
+
+    def __repr__(self):
+        return("I am an animal object")
+
+class Sheep(Animal):
+
+    def __init__(self):
+        return
+
+sheep1 = Sheep()
+print(sheep1)
+
+    
+
+
+
+
+
 ######################################################################
 #Drawing grid
 ######################################################################
 
 def appStarted(app):
-    app.rows = 50
-    app.cols = 50
-    app.cellSize = 20
+    app.rows = 40
+    app.cols = 40
+    app.cellSize = 25
     app.margin = 25
-    app.colors = ['green', 'tan']
+    app.colors = ['green', 'tan', 'blue']
     app.cellColors = [[random.randrange(0,2) for _ in range(app.rows)] for _ in range(app.cols)]
     print(app.cellColors)
     print(len(app.cellColors))
@@ -40,9 +67,9 @@ def redrawAll(app, canvas):
     drawBoard(app, canvas)
 
 def runSim():
-    rows = 50
-    cols = 50
-    cellSize = 20
+    rows = 40
+    cols = 40
+    cellSize = 25
     margin = 25
     width = (cellSize * cols) + (2 * margin)
     height = (cellSize * rows) + (2 * margin)
@@ -77,6 +104,7 @@ plt.plot(xValues, yValues, 'red',
 plt.title("Sample Plot")
 plt.xlabel("X Label")
 plt.ylabel("Y Label")
+plt.axis([0,30,0,42]) #changes the axis points, x values go from 0-30, y values go from 0-42
 
 
 for i in range(4):
