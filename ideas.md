@@ -29,6 +29,7 @@
   - Make 2D terrain have height (like hills), instead of birds-eye view. Think like Terraria.
     - Animate the animals jumping from one level to another 
   - Really far-fetched idea: 3D terrain 
+  - Climate Change kills everything
 
 ## Animals
 
