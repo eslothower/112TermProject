@@ -29,6 +29,7 @@
   - Make 2D terrain have height (like hills), instead of birds-eye view. Think like Terraria.
     - Animate the animals jumping from one level to another 
   - Really far-fetched idea: 3D terrain 
+  - Climate Change kills everything
 
 ## Animals
 
@@ -69,6 +70,13 @@
 ## Implementation
 
 - OOP for all animals and plants, possibly even terrain
+  - All animals will have:
+    -  Offspring rate
+    -  Mutation rate/chance
+    -  Hunger rate
+    -  Thirst rate
+    -  Average lifespan (don't let them live past 80 cycles or something)
+    -  Mutation status
 - Terrain
   - Start with 2D grid (2D list)
   - Randomize color of cells 
