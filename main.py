@@ -9,23 +9,42 @@ import random
 class Animal(object):
 
     def __init__(self):
-        return 
+        self.offspringRate = 0
+        self.hunger = 0
+        self.hungerLevel = 0
+        self.thirst = 0
+        self.thirstLevel = 0
+        self.lifespan = 0
+        self.age = 0
+        self.mutationRate = 0
+        self.mutationStatus = False 
+        self.nutritionalValue = 0
+        self.speed = 0
 
     def __repr__(self):
         return("I am an animal object")
+
 
 class Sheep(Animal):
 
     def __init__(self):
         return
 
+class Wolf(Animal):
+
+    def __init__(self):
+
+        self.offspringRate = 10 #wolf/cycle
+        #self.hunger = 
+        
+        if random.randrange(0,11) == random.randrange(0,11):
+
+            self.mutationStatus = True
+
+        
+
 sheep1 = Sheep()
 print(sheep1)
-
-    
-
-
-
 
 
 ######################################################################
@@ -38,9 +57,43 @@ def appStarted(app):
     app.cellSize = 25
     app.margin = 25
     app.colors = ['green', 'tan', 'blue']
-    app.cellColors = [[random.randrange(0,2) for _ in range(app.rows)] for _ in range(app.cols)]
-    print(app.cellColors)
-    print(len(app.cellColors))
+    app.waterPuddles = 2
+    app.waterAmount = 'Regular'
+    app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
+    
+    #app.cellColors = [[random.randrange(0,2) for _ in range(app.rows)] for _ in range(app.cols)]
+    print(app.cellColorsList)
+    print(len(app.cellColorsList))
+
+
+#Creates a list of digits that all correspond to a color. Used for generating the terrain
+def getCellColorsList(app, rows, cols):
+
+    resultingList = []
+    currentPuddles = 0
+
+    for row in range(rows):
+        currentRow = []
+        for col in range(cols):
+            colorNum = random.randrange(0,3)
+
+
+            # if app.colors[colorNum] == 'blue' and currentPuddles < app.waterPuddles:
+
+            #     currentPuddles += 1
+
+            #     if resultingList[row][col]
+
+            
+
+
+            currentRow.append(colorNum)
+            
+        resultingList.append(currentRow)
+
+    return resultingList
+
+
 
 def getCellBounds(app, row, col):
 
@@ -55,7 +108,7 @@ def getCellBounds(app, row, col):
 def drawBoard(app, canvas):   
     for row in range(app.rows):
         for col in range(app.cols):
-            color = app.cellColors[row][col]
+            color = app.cellColorsList[row][col]
             drawCell(app, canvas, row, col, app.colors[color])
 
 def drawCell(app, canvas, row, col, color):
@@ -77,9 +130,6 @@ def runSim():
     runApp(width=width, height=height)
 
 runSim()
-
-
-
 
 
 ######################################################################

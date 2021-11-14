@@ -34,7 +34,23 @@
 ## Animals
 
 - Wolves
+  -  Offspring rate 
+  -  Hunger rate
+  -  Thirst rate
+  -  Average lifespan (don't let them live past 80 cycles or something)
+  -  Mutation rate/chance
+  -  Mutation status
+  -  Nutritional Value
+  -  Speed
 - Sheep
+  -  Offspring rate
+  -  Hunger rate
+  -  Thirst rate
+  -  Average lifespan (don't let them live past 80 cycles or something)
+  -  Mutation rate/chance
+  -  Mutation status
+  -  Nutritional Value
+  -  Speed
 - Bunnies
 - Bees
 - Foxes
@@ -71,12 +87,18 @@
 
 - OOP for all animals and plants, possibly even terrain
   - All animals will have:
-    -  Offspring rate
-    -  Mutation rate/chance
-    -  Hunger rate
+    -  Offspring rate (baby/cycles)
+    -  Hunger level
+    -  Thirst level
+    -  Health level
+    -  Hunger rate (decrese in 
     -  Thirst rate
     -  Average lifespan (don't let them live past 80 cycles or something)
+    -  Current age
+    -  Mutation rate/chance
     -  Mutation status
+    -  Nutritional Value
+    -  Speed
 - Terrain
   - Start with 2D grid (2D list)
   - Randomize color of cells 
