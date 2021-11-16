@@ -5,6 +5,7 @@
 - Prey vs. Predators
 - Different foods give different benefits (the rarer they are, the more nutritious they are
 - Animals can starve
+- Different plants will have different nutritional value
 - Will be able to change attributes that will have a direct impact on the simulation
   - Avg. lifespan of animal1, animal2, animal3, etc.
   - Avg. plant/food growth
