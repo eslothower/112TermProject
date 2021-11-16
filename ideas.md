@@ -18,6 +18,7 @@
   
 ## Far-fetched ideas
 
+  - Have the board animate in, cell by cell
   - Weather can impact the terrain, and therefore impact the animals and food levels
   - Everything can impact and/or interact with everything 
     - Wolves eat sheep (this is basic functionality)

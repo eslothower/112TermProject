@@ -1,59 +1,30 @@
-from cmu_112_graphics import *
-import random
+#Created by Eli Slothower (Andrew ID: eslothow)
 
+######################################################################
+#Imports
+######################################################################
+
+from cmu_112_graphics import *
+from Animal import *
+from Sheep import *
+from Wolf import *
+import random
 
 ######################################################################
 #Animal Classes
 ######################################################################
 
-class Animal(object):
-
-    def __init__(self):
-        self.offspringRate = 0
-        self.hunger = 0
-        self.hungerLevel = 0
-        self.thirst = 0
-        self.thirstLevel = 0
-        self.lifespan = 0
-        self.age = 0
-        self.mutationRate = 0
-        self.mutationStatus = False 
-        self.nutritionalValue = 0
-        self.speed = 0
-
-    def __repr__(self):
-        return("I am an animal object")
-
-
-class Sheep(Animal):
-
-    def __init__(self):
-        return
-
-class Wolf(Animal):
-
-    def __init__(self):
-
-        self.offspringRate = 10 #wolf/cycle
-        #self.hunger = 
-        
-        if random.randrange(0,11) == random.randrange(0,11):
-
-            self.mutationStatus = True
-
-        
-
 sheep1 = Sheep()
 print(sheep1)
 
-
 ######################################################################
-#Drawing grid
+#App Started
 ######################################################################
 
 def appStarted(app):
-    app.rows = 40
-    app.cols = 40
+    app.mode = "titleScreen"
+    app.rows = 30
+    app.cols = 30
     app.cellSize = 25
     app.margin = 25
     app.colors = ['green', 'tan', 'blue']
@@ -61,10 +32,32 @@ def appStarted(app):
     app.waterAmount = 'Regular'
     app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
     
-    #app.cellColors = [[random.randrange(0,2) for _ in range(app.rows)] for _ in range(app.cols)]
     print(app.cellColorsList)
     print(len(app.cellColorsList))
 
+
+######################################################################
+#Title Screen
+######################################################################
+
+def titleScreen_redrawAll(app, canvas):
+    canvas.create_text(app.width//2, app.height/5, text="EcoSim", fill="black", font="Ariel 100")
+    canvas.create_rectangle(app.width/2.5, app.height/1.9, app.width/1.65, app.height/2.3, fill='black')
+    canvas.create_text(app.width//2, app.height/2.1, text="Simulate", fill='white', font='Ariel 40')
+    canvas.create_text(app.width//2, app.height/1.025, text="Created by Eli Slothower, Carnegie Mellon University class of 2025", fill='black', font='Ariel 20')
+
+def titleScreen_mousePressed(app, event):
+    topLeftXTitleScreen = app.width/2.5
+    topLeftYTitleScreen = app.height/1.9
+    bottomRightXTitleScreen = app.width/1.65
+    bottomRightYTitleScreen = app.height/2.3
+
+    if(topLeftXTitleScreen < event.x < bottomRightXTitleScreen and bottomRightYTitleScreen < event.y < topLeftYTitleScreen):
+        app.mode = 'simulateScreen'
+
+######################################################################
+#Drawing grid
+######################################################################
 
 #Creates a list of digits that all correspond to a color. Used for generating the terrain
 def getCellColorsList(app, rows, cols):
@@ -97,7 +90,7 @@ def getCellColorsList(app, rows, cols):
 
 def getCellBounds(app, row, col):
 
-    gridWidth  = app.width - 2*app.margin
+    gridWidth  = app.width//2 #this makes the grid go to the left side of the screen
     gridHeight = app.height - 2*app.margin
     x0 = app.margin + gridWidth * col / app.cols
     x1 = app.margin + gridWidth * (col+1) / app.cols
@@ -116,18 +109,20 @@ def drawCell(app, canvas, row, col, color):
     
     canvas.create_rectangle(x0, y0, x1, y1, fill=color, width = 4)
 
-def redrawAll(app, canvas):
+def simulateScreen_redrawAll(app, canvas):
     drawBoard(app, canvas)
 
 def runSim():
-    rows = 40
-    cols = 40
-    cellSize = 25
-    margin = 25
-    width = (cellSize * cols) + (2 * margin)
-    height = (cellSize * rows) + (2 * margin)
+    # rows = 40
+    # cols = 40
+    # cellSize = 25
+    # margin = 25
+    # width = (cellSize * cols) + (2 * margin)
+    # height = (cellSize * rows) + (2 * margin)
 
-    runApp(width=width, height=height)
+    #runApp(width=width, height=height)
+
+    runApp(width=1728, height=968)
 
 runSim()
 
