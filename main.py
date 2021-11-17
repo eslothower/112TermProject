@@ -11,11 +11,29 @@ from Wolf import *
 import random
 
 ######################################################################
-#Animal Classes
+#Animal Code
 ######################################################################
 
-sheep1 = Sheep()
+animalCount = {'Wolf': 10}
+SheepNames = set()
+WolfNames = set()
+
+
+sheep1 = Sheep(offspringRate=99)
 print(sheep1)
+
+def initializeAnimals():
+    for key in animalCount:
+        for _ in range(animalCount[key]):
+            number = random.randrange(1000000000000)
+            animalName = '%s%s' % ([key], number)
+
+            if animalName not in globals()[key+'Names']: #how to make 'WolfNames' dynamic?
+                WolfNames.add(animalName)
+                globals()[animalName] = eval(key+'()') #how to make 'Wolf()' dynamic?
+                print(f'This is {key.lower()} {animalName}')
+
+
 
 ######################################################################
 #App Started
@@ -24,6 +42,8 @@ print(sheep1)
 def appStarted(app):
     #app.mode = "titleScreen"
     app.mode = 'simulateScreen'
+
+    #Code for terrain generation
     app.rows = 30
     app.cols = 30
     app.cellSize = 25
@@ -31,10 +51,13 @@ def appStarted(app):
     app.colors = ['green', 'tan', 'blue']
     app.waterPuddles = random.randrange(3)
     app.waterAmount = 'Regular'
-    app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
-    app.wolfImage = app.scaleImage(app.loadImage('assets/Modified/black_wolf.png'), 1/10) 
-    print(app.cellColorsList)
-    print(len(app.cellColorsList))
+    app.cellColorsList = getCellColorsList(app, app.rows, app.cols) 
+    #print(app.cellColorsList)
+    #print(len(app.cellColorsList))
+
+    #Code for animals
+    initializeAnimals()
+    app.wolfImage = app.scaleImage(app.loadImage('assets/Modified/black_wolf.png'), 1/10)
 
 
 ######################################################################
@@ -121,7 +144,9 @@ def drawCell(app, canvas, row, col, color):
 def simulateScreen_redrawAll(app, canvas):
     canvas.create_rectangle(app.margin, app.margin, (app.width//2) + app.margin, app.height-app.margin, outline='black', width=20)
     drawBoard(app, canvas)
-    canvas.create_image(app.width/2, app.height/2, image=ImageTk.PhotoImage(app.wolfImage))  
+
+    for wolf in WolfNames:
+        canvas.create_image(random.randrange((app.margin + 5), (app.width/2 - 5)), random.randrange(app.margin, app.height-app.margin), image=ImageTk.PhotoImage(app.wolfImage))  
 
 def runSim():
     # rows = 40

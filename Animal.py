@@ -1,17 +1,17 @@
 class Animal(object):
 
-    def __init__(self):
-        self.offspringRate = 0
-        self.hunger = 0
-        self.hungerLevel = 0
-        self.thirst = 0
-        self.thirstLevel = 0
-        self.lifespan = 0
-        self.age = 0
-        self.mutationRate = 0
-        self.mutationStatus = False 
-        self.nutritionalValue = 0
-        self.speed = 0
+    def __init__(self, offspringRate=0, hunger=0, hungerLevel=0, thirst=0, thirstLevel=0, lifespan=0, age=0, mutationRate=0, mutationStatus=False, nutritionalValue=0, speed=0, count=0, positions=[]):
+        self.offspringRate = offspringRate
+        self.hunger = hunger
+        self.hungerLevel = hungerLevel
+        self.thirst = thirst
+        self.thirstLevel = thirstLevel
+        self.lifespan = lifespan
+        self.age = age
+        self.mutationRate = mutationRate
+        self.mutationStatus = mutationStatus 
+        self.nutritionalValue = nutritionalValue
+        self.speed = speed
 
     def __repr__(self):
         return("I am an animal object")
