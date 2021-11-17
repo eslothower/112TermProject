@@ -14,24 +14,35 @@ import random
 #Animal Code
 ######################################################################
 
-animalCount = {'Wolf': 10}
+animalCount = {'Wolf': 10, 'Sheep': 10}
 SheepNames = set()
 WolfNames = set()
+SheepStartingPosition = []
+WolfStartingPosition =[]
 
 
 sheep1 = Sheep(offspringRate=99)
 print(sheep1)
 
-def initializeAnimals():
+def initializeAnimals(app):
+
+
+    
     for key in animalCount:
         for _ in range(animalCount[key]):
-            number = random.randrange(1000000000000)
-            animalName = '%s%s' % ([key], number)
+            
+            while True:
+                number = random.randrange(1000000000000)
+                animalName = '%s%s' % ([key], number)
+                if animalName not in globals()[key+'Names']: 
+                    globals()[key+'Names'].add(animalName)
+                    globals()[animalName] = eval(key+'()') 
+                    globals()[key+'StartingPosition'].append((random.randrange((app.margin + 10), (app.width/2 + 5)), random.randrange(app.margin + 12, app.height-app.margin-12)))
 
-            if animalName not in globals()[key+'Names']: #how to make 'WolfNames' dynamic?
-                WolfNames.add(animalName)
-                globals()[animalName] = eval(key+'()') #how to make 'Wolf()' dynamic?
-                print(f'This is {key.lower()} {animalName}')
+                    print(f'This is {key.lower()} {animalName}')
+                    print(f'This is the sheep position list now: {SheepStartingPosition}')
+                    print(f'This is the wolf position list now: {WolfStartingPosition}')
+                    break
 
 
 
@@ -56,8 +67,9 @@ def appStarted(app):
     #print(len(app.cellColorsList))
 
     #Code for animals
-    initializeAnimals()
+    initializeAnimals(app)
     app.wolfImage = app.scaleImage(app.loadImage('assets/Modified/black_wolf.png'), 1/10)
+    app.sheepImage = app.scaleImage(app.loadImage('assets/Modified/white_sheep.png'), 1/10)
 
 
 ######################################################################
@@ -139,14 +151,19 @@ def drawBoard(app, canvas):
 def drawCell(app, canvas, row, col, color):
     (x0, y0, x1, y1) = getCellBounds(app, row, col)
     
-    canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline='black', width = 1)
+    canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline=color, width = 1)
 
 def simulateScreen_redrawAll(app, canvas):
     canvas.create_rectangle(app.margin, app.margin, (app.width//2) + app.margin, app.height-app.margin, outline='black', width=20)
     drawBoard(app, canvas)
 
-    for wolf in WolfNames:
-        canvas.create_image(random.randrange((app.margin + 5), (app.width/2 - 5)), random.randrange(app.margin, app.height-app.margin), image=ImageTk.PhotoImage(app.wolfImage))  
+    for i in range(len(WolfNames)): 
+        canvas.create_image(WolfStartingPosition[i][0], WolfStartingPosition[i][1], image=ImageTk.PhotoImage(app.wolfImage))  
+
+    for i in range(len(SheepNames)): #display sheep after wolves because sheep are smaller. This ensures user can see sheep (unless size mutation of wolf, for example)
+        canvas.create_image(SheepStartingPosition[i][0], SheepStartingPosition[i][1], image=ImageTk.PhotoImage(app.sheepImage))  
+
+
 
 def runSim():
     # rows = 40
