@@ -22,16 +22,17 @@ print(sheep1)
 ######################################################################
 
 def appStarted(app):
-    app.mode = "titleScreen"
+    #app.mode = "titleScreen"
+    app.mode = 'simulateScreen'
     app.rows = 30
     app.cols = 30
     app.cellSize = 25
     app.margin = 25
     app.colors = ['green', 'tan', 'blue']
-    app.waterPuddles = 2
+    app.waterPuddles = random.randrange(3)
     app.waterAmount = 'Regular'
     app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
-    
+    app.wolfImage = app.scaleImage(app.loadImage('assets/Modified/black_wolf.png'), 1/10) 
     print(app.cellColorsList)
     print(len(app.cellColorsList))
 
@@ -43,7 +44,7 @@ def appStarted(app):
 def titleScreen_redrawAll(app, canvas):
     canvas.create_text(app.width//2, app.height/5, text="EcoSim", fill="black", font="Ariel 100")
     canvas.create_rectangle(app.width/2.5, app.height/1.9, app.width/1.65, app.height/2.3, fill='black')
-    canvas.create_text(app.width//2, app.height/2.1, text="Simulate", fill='white', font='Ariel 40')
+    canvas.create_text(app.width//2, app.height/2.1, text="Enter Simulation", fill='white', font='Ariel 40')
     canvas.create_text(app.width//2, app.height/1.025, text="Created by Eli Slothower, Carnegie Mellon University class of 2025", fill='black', font='Ariel 20')
 
 def titleScreen_mousePressed(app, event):
@@ -69,6 +70,14 @@ def getCellColorsList(app, rows, cols):
         currentRow = []
         for col in range(cols):
             colorNum = random.randrange(0,3)
+
+            #if blue and still need more puddles
+                #Look in all directions
+                #If that is a valid position in the grid
+                    #Make that postion blue
+                    #Look in all positions from there again and repeat
+            #else
+                #roll again until it's not blue
 
 
             # if app.colors[colorNum] == 'blue' and currentPuddles < app.waterPuddles:
@@ -107,10 +116,12 @@ def drawBoard(app, canvas):
 def drawCell(app, canvas, row, col, color):
     (x0, y0, x1, y1) = getCellBounds(app, row, col)
     
-    canvas.create_rectangle(x0, y0, x1, y1, fill=color, width = 4)
+    canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline='black', width = 1)
 
 def simulateScreen_redrawAll(app, canvas):
+    canvas.create_rectangle(app.margin, app.margin, (app.width//2) + app.margin, app.height-app.margin, outline='black', width=20)
     drawBoard(app, canvas)
+    canvas.create_image(app.width/2, app.height/2, image=ImageTk.PhotoImage(app.wolfImage))  
 
 def runSim():
     # rows = 40
@@ -122,7 +133,7 @@ def runSim():
 
     #runApp(width=width, height=height)
 
-    runApp(width=1728, height=968)
+    runApp(width=1728, height=905)
 
 runSim()
 
