@@ -53,7 +53,7 @@ def initializeAnimals(app):
 def appStarted(app):
     #app.mode = "titleScreen"
     app.mode = 'simulateScreen'
-
+    app._root.resizable(False, False) #Contributed by Anita (TA)
     #Code for terrain generation
     app.rows = 30
     app.cols = 30
@@ -70,6 +70,27 @@ def appStarted(app):
     initializeAnimals(app)
     app.wolfImage = app.scaleImage(app.loadImage('assets/Modified/black_wolf.png'), 1/10)
     app.sheepImage = app.scaleImage(app.loadImage('assets/Modified/white_sheep.png'), 1/10)
+
+
+    #Slider attributes
+    #Grass growth rate text (note: app.ggr stands for grassGrowthRate)
+    app.ggrSliding = False
+
+    app.ggrNum = 5
+    app.ggrTextX = app.width/1.65
+    app.ggrTextY = app.margin
+
+    #Grass growth rate slider 
+    app.ggrLineTopX = app.ggrTextX - 100
+    app.ggrLineTopY = app.ggrTextY + 30
+    app.ggrLineBottomX = app.ggrTextX + 100
+    app.ggrLineBottomY = app.ggrLineTopY
+    app.ggrLineLength = app.ggrLineBottomX - app.ggrLineTopX
+
+    app.ggrSliderTopX = app.ggrLineTopX + (app.ggrLineLength/2) - 4
+    app.ggrSliderTopY = app.ggrLineTopY - 10
+    app.ggrSliderBottomX = app.ggrSliderTopX + 8
+    app.ggrSliderBottomY = app.ggrLineTopY + 10
 
 
 ######################################################################
@@ -154,16 +175,45 @@ def drawCell(app, canvas, row, col, color):
     canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline=color, width = 1)
 
 def simulateScreen_redrawAll(app, canvas):
+
+    #Draws terrain with border
     canvas.create_rectangle(app.margin, app.margin, (app.width//2) + app.margin, app.height-app.margin, outline='black', width=20)
     drawBoard(app, canvas)
 
+    #Draws wolves
     for i in range(len(WolfNames)): 
         canvas.create_image(WolfStartingPosition[i][0], WolfStartingPosition[i][1], image=ImageTk.PhotoImage(app.wolfImage))  
 
+
+    #Draws sheep
     for i in range(len(SheepNames)): #display sheep after wolves because sheep are smaller. This ensures user can see sheep (unless size mutation of wolf, for example)
-        canvas.create_image(SheepStartingPosition[i][0], SheepStartingPosition[i][1], image=ImageTk.PhotoImage(app.sheepImage))  
+        canvas.create_image(SheepStartingPosition[i][0], SheepStartingPosition[i][1], image=ImageTk.PhotoImage(app.sheepImage)) 
+
+    
+    canvas.create_text(app.ggrTextX, app.ggrTextY, text=f"Grass Growth Rate: {app.ggrNum}", fill='black', font='Ariel 18')
+    canvas.create_line(app.ggrLineTopX, app.ggrLineTopY, app.ggrLineBottomX, app.ggrLineBottomY, fill='grey', width=3)
+    canvas.create_rectangle(app.ggrSliderTopX, app.ggrSliderTopY, app.ggrSliderBottomX, app.ggrSliderBottomY, fill='black')
+
+def simulateScreen_mouseReleased(app, event): 
+    print("RELEASED")
+    app.ggrSliding = False
 
 
+
+def simulateScreen_mouseDragged(app, event): 
+    print("Dragging")
+    if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY < event.y < app.ggrSliderBottomY:
+        print("YOU ARE IN THE SLIDER")
+
+        app.ggrSliding = True
+
+    if app.ggrSliding:
+        app.ggrSliderTopX = event.x
+        app.ggrSliderBottomX = app.ggrSliderTopX + 8
+
+
+    # print("X:", event.x)
+    # print("Y:", event.y)
 
 def runSim():
     # rows = 40
