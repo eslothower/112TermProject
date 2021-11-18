@@ -18,16 +18,10 @@ animalCount = {'Wolf': 10, 'Sheep': 10}
 SheepNames = set()
 WolfNames = set()
 SheepStartingPosition = []
-WolfStartingPosition =[]
-
-
-sheep1 = Sheep(offspringRate=99)
-print(sheep1)
+WolfStartingPosition = []
 
 def initializeAnimals(app):
 
-
-    
     for key in animalCount:
         for _ in range(animalCount[key]):
             
@@ -51,10 +45,16 @@ def initializeAnimals(app):
 ######################################################################
 
 def appStarted(app):
+
+    #System Settings
+    ###############################################
+
     #app.mode = "titleScreen"
     app.mode = 'simulateScreen'
     app._root.resizable(False, False) #Contributed by Anita (TA)
+
     #Code for terrain generation
+    ###############################################
     app.rows = 30
     app.cols = 30
     app.cellSize = 25
@@ -67,20 +67,24 @@ def appStarted(app):
     #print(len(app.cellColorsList))
 
     #Code for animals
+    ###############################################
     initializeAnimals(app)
     app.wolfImage = app.scaleImage(app.loadImage('assets/Modified/black_wolf.png'), 1/10)
     app.sheepImage = app.scaleImage(app.loadImage('assets/Modified/white_sheep.png'), 1/10)
 
 
-    #Slider attributes
-    #Grass growth rate text (note: app.ggr stands for grassGrowthRate)
-    app.ggrSliding = False
+    #Sliders
+    ###############################################
 
+    #Grass Growth Rate (ggr)
+    #############################
+
+    app.ggrSliding = False
     app.ggrNum = 5
+
     app.ggrTextX = app.width/1.65
     app.ggrTextY = app.margin
 
-    #Grass growth rate slider 
     app.ggrLineTopX = app.ggrTextX - 100
     app.ggrLineTopY = app.ggrTextY + 30
     app.ggrLineBottomX = app.ggrTextX + 100
@@ -91,6 +95,26 @@ def appStarted(app):
     app.ggrSliderTopY = app.ggrLineTopY - 10
     app.ggrSliderBottomX = app.ggrSliderTopX + 8
     app.ggrSliderBottomY = app.ggrLineTopY + 10
+
+    #Water Fall Rate (wfr)
+    #############################
+
+    app.wfrSliding = False
+    app.wfrNum = 5
+
+    app.wfrTextX = app.width/1.3
+    app.wfrTextY = app.margin
+
+    app.wfrLineTopX = app.wfrTextX - 100
+    app.wfrLineTopY = app.wfrTextY + 30
+    app.wfrLineBottomX = app.wfrTextX + 100
+    app.wfrLineBottomY = app.wfrLineTopY
+    app.wfrLineLength = app.wfrLineBottomX - app.wfrLineTopX
+
+    app.wfrSliderTopX = app.wfrLineTopX + (app.wfrLineLength/2) - 4
+    app.wfrSliderTopY = app.wfrLineTopY - 10
+    app.wfrSliderBottomX = app.wfrSliderTopX + 8
+    app.wfrSliderBottomY = app.wfrLineTopY + 10
 
 
 ######################################################################
@@ -194,41 +218,71 @@ def simulateScreen_redrawAll(app, canvas):
     canvas.create_line(app.ggrLineTopX, app.ggrLineTopY, app.ggrLineBottomX, app.ggrLineBottomY, fill='grey', width=3)
     canvas.create_rectangle(app.ggrSliderTopX, app.ggrSliderTopY, app.ggrSliderBottomX, app.ggrSliderBottomY, fill='black')
 
-def simulateScreen_mouseReleased(app, event): 
-    print("RELEASED")
-    app.ggrSliding = False
+    canvas.create_text(app.wfrTextX, app.wfrTextY, text=f"Water Fall Rate: {app.wfrNum}", fill='black', font='Ariel 18')
+    canvas.create_line(app.wfrLineTopX, app.wfrLineTopY, app.wfrLineBottomX, app.wfrLineBottomY, fill='grey', width=3)
+    canvas.create_rectangle(app.wfrSliderTopX, app.wfrSliderTopY, app.wfrSliderBottomX, app.wfrSliderBottomY, fill='black')
 
+def simulateScreen_mouseReleased(app, event): 
+    app.ggrSliding = False
+    app.wfrSliding = False
+
+def simulateScreen_mousePressed(app, event):
+    if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY < event.y < app.ggrSliderBottomY:
+        app.ggrSliding = True
+
+    if app.wfrSliderTopX <= event.x <= app.wfrSliderBottomX and app.wfrSliderTopY < event.y < app.wfrSliderBottomY:
+        app.wfrSliding = True
 
 
 def simulateScreen_mouseDragged(app, event): 
     print("Dragging")
-    if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY < event.y < app.ggrSliderBottomY:
-        print("YOU ARE IN THE SLIDER")
 
+    #Logic for Grass Growth Rate (ggr) slider
+    ################################################
+    if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY < event.y < app.ggrSliderBottomY:
         app.ggrSliding = True
 
-    if app.ggrSliding:
+    if app.ggrSliding and app.ggrLineTopX < event.x < app.ggrLineBottomX:
         app.ggrSliderTopX = event.x
         app.ggrSliderBottomX = app.ggrSliderTopX + 8
+    elif app.ggrSliding and event.x < app.ggrLineTopX:
+        app.ggrSliderTopX = app.ggrLineTopX
+        app.ggrSliderBottomX = app.ggrSliderTopX + 8
+    elif app.ggrSliding and app.ggrLineBottomX < event.x:
+        app.ggrSliderTopX = app.ggrLineBottomX
+        app.ggrSliderBottomX = app.ggrSliderTopX + 8
+
+    app.ggrNum = int(((app.ggrSliderTopX-app.ggrLineTopX)/app.ggrLineLength)*10)
+
+    #1-10 as the scale is more readable for users, rather than 0-9
+    if app.ggrNum == 0: app.ggrNum = 1
+    elif app.ggrNum == 9: app.ggrNum = 10
 
 
-    # print("X:", event.x)
-    # print("Y:", event.y)
+    #Logic for Water Fall Rate (wfr) slider
+    ################################################
 
-def runSim():
-    # rows = 40
-    # cols = 40
-    # cellSize = 25
-    # margin = 25
-    # width = (cellSize * cols) + (2 * margin)
-    # height = (cellSize * rows) + (2 * margin)
+    if app.wfrSliderTopX <= event.x <= app.wfrSliderBottomX and app.wfrSliderTopY < event.y < app.wfrSliderBottomY:
+        app.wfrSliding = True
 
-    #runApp(width=width, height=height)
+    if app.wfrSliding and app.wfrLineTopX < event.x < app.wfrLineBottomX:
+        app.wfrSliderTopX = event.x
+        app.wfrSliderBottomX = app.wfrSliderTopX + 8
+    elif app.wfrSliding and event.x < app.wfrLineTopX:
+        app.wfrSliderTopX = app.wfrLineTopX
+        app.wfrSliderBottomX = app.wfrSliderTopX + 8
+    elif app.wfrSliding and app.wfrLineBottomX < event.x:
+        app.wfrSliderTopX = app.wfrLineBottomX
+        app.wfrSliderBottomX = app.wfrSliderTopX + 8
 
-    runApp(width=1728, height=905)
+    app.wfrNum = int(((app.wfrSliderTopX-app.wfrLineTopX)/app.wfrLineLength)*10)
 
-runSim()
+    #1-10 as the scale is more readable for users, rather than 0-9
+    if app.wfrNum == 0: app.wfrNum = 1
+    elif app.wfrNum == 9: app.wfrNum = 10
 
+
+runApp(width=1728, height=905)
 
 ######################################################################
 #Testing
