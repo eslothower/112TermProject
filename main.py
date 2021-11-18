@@ -62,7 +62,9 @@ def appStarted(app):
     app.colors = ['green', 'tan', 'blue']
     app.waterPuddles = random.randrange(3)
     app.waterAmount = 'Regular'
-    app.cellColorsList = getCellColorsList(app, app.rows, app.cols) 
+    app.flowerColorOptions = ['pink', 'red', 'purple', 'yellow', 'orange']
+    app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
+    print(app.cellColorsList)
     #print(app.cellColorsList)
     #print(len(app.cellColorsList))
 
@@ -140,42 +142,12 @@ def titleScreen_mousePressed(app, event):
 #Drawing grid
 ######################################################################
 
-#Creates a list of digits that all correspond to a color. Used for generating the terrain
 def getCellColorsList(app, rows, cols):
-
-    resultingList = []
-    currentPuddles = 0
-
-    for row in range(rows):
-        currentRow = []
-        for col in range(cols):
-            colorNum = random.randrange(0,3)
-
-            #if blue and still need more puddles
-                #Look in all directions
-                #If that is a valid position in the grid
-                    #Make that postion blue
-                    #Look in all positions from there again and repeat
-            #else
-                #roll again until it's not blue
-
-
-            # if app.colors[colorNum] == 'blue' and currentPuddles < app.waterPuddles:
-
-            #     currentPuddles += 1
-
-            #     if resultingList[row][col]
-
-            
-
-
-            currentRow.append(colorNum)
-            
-        resultingList.append(currentRow)
-
-    return resultingList
-
-
+    cellColorsList = [['green' for _ in range(app.rows)] for _ in range(app.cols)]
+    cellColorsList = getAddedWaterList(app, cellColorsList)
+    cellColorsList = getAddedFlowersList(app, cellColorsList)
+    cellColorsList = getAddedBareSpotsList(app, cellColorsList)
+    return cellColorsList
 
 def getCellBounds(app, row, col):
 
@@ -187,11 +159,87 @@ def getCellBounds(app, row, col):
     y1 = app.margin + gridHeight * (row+1) / app.rows
     return (x0, y0, x1, y1)
 
+def getAddedBareSpotsList(app, currentCellColorsList):
+
+    numberOfBareSpots = random.randrange(5, (app.rows*app.cols)//10)
+
+    for _ in range(numberOfBareSpots + 1):
+        row = random.randrange(app.rows)
+        col = random.randrange(app.cols)
+        if currentCellColorsList[row][col] in ['blue', 'pink', 'red', 'purple', 'yellow', 'orange']:
+            continue
+        else:
+            currentCellColorsList[row][col] = 'tan'
+
+    return currentCellColorsList
+
+
+def getAddedFlowersList(app, currentCellColorsList):
+
+    numberOfFlowers = random.randrange(5, (app.rows*app.cols)//40)
+
+    for _ in range(numberOfFlowers + 1):
+        flowerColor = app.flowerColorOptions[random.randrange(0,5)]
+        row = random.randrange(app.rows)
+        col = random.randrange(app.cols)
+
+        if currentCellColorsList[row][col] == 'blue':
+            continue
+        else:
+            currentCellColorsList[row][col] = flowerColor
+
+    return currentCellColorsList
+
+def getAddedWaterList(app, currentCellColorsList):
+
+    numberOfBodiesOfWater = random.randrange(0,3)
+    
+    for bodyOfWater in range(numberOfBodiesOfWater + 1):
+        layersOfWater = random.randrange(3,7)
+        row = random.randrange(app.rows)
+        col = random.randrange(app.cols)
+
+        currentCellColorsList[row][col] = 'blue'
+
+        
+        for drow in [-1, 0, +1]:
+            for dcol in [-1, 0, +1]: 
+                if (drow, dcol) != (0, 0):
+                    for layer in range(layersOfWater + 1):
+                        rowBeingChecked = row + layer*drow
+                        colBeingChecked = col + layer*dcol
+
+                        if ((rowBeingChecked < 0) or (rowBeingChecked >= app.rows) or (colBeingChecked < 0) or (colBeingChecked >= app.cols)):
+                            continue
+                        else:
+                            currentCellColorsList[rowBeingChecked][colBeingChecked] = 'blue'
+
+                            for drowTwo in [-1, 0, +1]:
+                                for dcolTwo in [-1, 0, +1]: 
+                                    if (drowTwo, dcolTwo) != (0, 0):
+                                        for layerTwo in range(2):
+                                            rowBeingCheckedTwo = rowBeingChecked + layerTwo*drowTwo
+                                            colBeingCheckedTwo = colBeingChecked + layerTwo*dcolTwo
+
+                                            if ((rowBeingCheckedTwo < 0) or (rowBeingCheckedTwo >= app.rows) or (colBeingCheckedTwo < 0) or (colBeingCheckedTwo >= app.cols)):
+                                                continue
+                                            else:
+                                                currentCellColorsList[rowBeingCheckedTwo][colBeingCheckedTwo] = 'blue'
+
+                                                if bodyOfWater == numberOfBodiesOfWater:
+                                                    chance = random.randrange(2)
+                                                    if chance == 0:
+                                                        currentCellColorsList[rowBeingCheckedTwo][colBeingCheckedTwo] = 'blue'
+                                                else:
+                                                    currentCellColorsList[rowBeingChecked][colBeingChecked] = 'blue'
+    return currentCellColorsList
+
+
 def drawBoard(app, canvas):   
     for row in range(app.rows):
         for col in range(app.cols):
             color = app.cellColorsList[row][col]
-            drawCell(app, canvas, row, col, app.colors[color])
+            drawCell(app, canvas, row, col, color)
 
 def drawCell(app, canvas, row, col, color):
     (x0, y0, x1, y1) = getCellBounds(app, row, col)
