@@ -161,7 +161,7 @@ def getCellBounds(app, row, col):
 
 def getAddedBareSpotsList(app, currentCellColorsList):
 
-    numberOfBareSpots = random.randrange(5, (app.rows*app.cols)//10)
+    numberOfBareSpots = random.randrange(5, (app.rows*app.cols)//8)
 
     for _ in range(numberOfBareSpots + 1):
         row = random.randrange(app.rows)
@@ -232,6 +232,25 @@ def getAddedWaterList(app, currentCellColorsList):
                                                         currentCellColorsList[rowBeingCheckedTwo][colBeingCheckedTwo] = 'blue'
                                                 else:
                                                     currentCellColorsList[rowBeingChecked][colBeingChecked] = 'blue'
+
+                                                    # for drowThree in [-1, 0, +1]:
+                                                    #     for dcolThree in [-1, 0, +1]: 
+                                                    #         if (drowThree, dcolThree) != (0, 0):
+                                                    #             for layerThree in range(2):
+                                                    #                 rowBeingCheckedThree = rowBeingCheckedTwo + layerThree*drowThree
+                                                    #                 colBeingCheckedThree = colBeingCheckedTwo + layerTwo*dcolThree
+
+                                                    #                 if ((rowBeingCheckedThree < 0) or (rowBeingCheckedThree >= app.rows) or (colBeingCheckedThree < 0) or (colBeingCheckedThree >= app.cols)):
+                                                    #                     continue
+                                                    #                 else:
+                                                    #                     currentCellColorsList[rowBeingCheckedThree][colBeingCheckedThree] = 'blue'
+
+                                                    #                     if bodyOfWater == numberOfBodiesOfWater:
+                                                    #                         chance = random.randrange(2)
+                                                    #                         if chance == 0:
+                                                    #                             currentCellColorsList[rowBeingCheckedThree][colBeingCheckedThree] = 'blue'
+                                                    #                     else:
+                                                    #                         currentCellColorsList[rowBeingCheckedTwo][colBeingCheckedTwo] = 'blue'
     return currentCellColorsList
 
 
