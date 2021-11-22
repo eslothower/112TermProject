@@ -17,8 +17,8 @@ import random
 animalCount = {'Wolf': 10, 'Sheep': 10}
 SheepNames = set()
 WolfNames = set()
-SheepStartingPosition = []
-WolfStartingPosition = []
+SheepPosition = []
+WolfPosition = []
 
 def initializeAnimals(app):
 
@@ -31,11 +31,11 @@ def initializeAnimals(app):
                 if animalName not in globals()[key+'Names']: 
                     globals()[key+'Names'].add(animalName)
                     globals()[animalName] = eval(key+'()') 
-                    globals()[key+'StartingPosition'].append((random.randrange((app.margin + 10), (app.width/2 + 5)), random.randrange(app.margin + 12, app.height-app.margin-12)))
+                    globals()[key+'Position'].append([random.randrange((app.margin + 10), (app.width/2 + 5)), random.randrange(app.margin + 12, app.height-app.margin-12)])
 
-                    print(f'This is {key.lower()} {animalName}')
-                    print(f'This is the sheep position list now: {SheepStartingPosition}')
-                    print(f'This is the wolf position list now: {WolfStartingPosition}')
+                    # print(f'This is {key.lower()} {animalName}')
+                    print(f'This is the sheep position list now: {SheepPosition}')
+                    # print(f'This is the wolf position list now: {WolfPosition}')
                     break
 
 
@@ -52,6 +52,7 @@ def appStarted(app):
     #app.mode = "titleScreen"
     app.mode = 'simulateScreen'
     app._root.resizable(False, False) #Contributed by Anita (TA)
+    app.timerDelay = 0
 
     #Code for terrain generation
     ###############################################
@@ -59,14 +60,13 @@ def appStarted(app):
     app.cols = 30
     app.cellSize = 25
     app.margin = 25
+    app.gridWidth  = app.width//2 #this makes the grid go to the left side of the screen
+    app.gridHeight = app.height - 2*app.margin
     app.colors = ['green', 'tan', 'blue']
     app.waterPuddles = random.randrange(3)
     app.waterAmount = 'Regular'
     app.flowerColorOptions = ['pink', 'red', 'purple', 'yellow', 'orange']
     app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
-    print(app.cellColorsList)
-    #print(app.cellColorsList)
-    #print(len(app.cellColorsList))
 
     #Code for animals
     ###############################################
@@ -151,12 +151,11 @@ def getCellColorsList(app, rows, cols):
 
 def getCellBounds(app, row, col):
 
-    gridWidth  = app.width//2 #this makes the grid go to the left side of the screen
-    gridHeight = app.height - 2*app.margin
-    x0 = app.margin + gridWidth * col / app.cols
-    x1 = app.margin + gridWidth * (col+1) / app.cols
-    y0 = app.margin + gridHeight * row / app.rows
-    y1 = app.margin + gridHeight * (row+1) / app.rows
+
+    x0 = app.margin + app.gridWidth * col / app.cols
+    x1 = app.margin + app.gridWidth * (col+1) / app.cols
+    y0 = app.margin + app.gridHeight * row / app.rows
+    y1 = app.margin + app.gridHeight * (row+1) / app.rows
     return (x0, y0, x1, y1)
 
 def getAddedBareSpotsList(app, currentCellColorsList):
@@ -254,6 +253,79 @@ def getAddedWaterList(app, currentCellColorsList):
     return currentCellColorsList
 
 
+def drawSheep(app, canvas):
+
+    for sheep in range(len(SheepNames)): #display sheep after wolves because sheep are smaller. This ensures user can see sheep (unless size mutation of wolf, for example)
+        canvas.create_image(SheepPosition[sheep][0], SheepPosition[sheep][1], image=ImageTk.PhotoImage(app.sheepImage)) 
+
+
+
+def moveWolvesTowardSheep(wolf, app, canvas):
+    currentWolfPositionRow = WolfPosition[wolf][0]
+    currentWolfPositionCol = WolfPosition[wolf][1]
+    foundMove = False
+
+    #WolfPosition[wolf][0] += random.randrange(-5,5)
+    #WolfPosition[wolf][1] += random.randrange(-5,5)
+    #print(WolfPosition)
+
+
+    for drow in [-1, 0, +1]:
+        for dcol in [-1, 0, +1]: 
+            if foundMove: break
+            
+            elif (drow, dcol) != (0, 0):
+                for i in range(-200, 200):
+                    rowBeingChecked = currentWolfPositionRow + i*drow
+                    colBeingChecked = currentWolfPositionCol + i*dcol
+
+                    #print(f"[{rowBeingChecked}, {colBeingChecked}]")
+
+                    if [rowBeingChecked, colBeingChecked] in SheepPosition:
+                        
+
+                        # if [WolfPosition[wolf][0], WolfPosition[wolf][1]] in SheepPosition:
+                        #     WolfPosition[wolf][0] = rowBeingChecked
+                        #     WolfPosition[wolf][1] = colBeingChecked
+                            # print("ATE THE SHEEP", random.randint(0,100))
+                            # foundMove = True
+                        
+                            # break
+                        
+                        if rowBeingChecked - WolfPosition[wolf][0] < 1 or colBeingChecked - WolfPosition[wolf][1] < 1:
+                            print("ATE THE SHEEP", random.randint(0,100))
+                            foundMove = True
+                        
+                            break
+                        
+                        else:
+                            WolfPosition[wolf][0] += (rowBeingChecked - WolfPosition[wolf][0])/5
+                            WolfPosition[wolf][1] += (colBeingChecked - WolfPosition[wolf][1])/5
+                            print("IT", random.randint(0,100))
+
+                        
+            
+
+        if foundMove: break                   
+        for _ in range(random.randrange(0,200)):
+            newWolfRow =  WolfPosition[wolf][0] + random.randrange(-1,2)
+            newWolfCol = WolfPosition[wolf][1] + random.randrange(-1,2)
+
+            if app.margin + 12 < newWolfRow < app.gridWidth + 12 and app.margin + 12 < newWolfCol < app.gridHeight + 12:
+                WolfPosition[wolf][0] = newWolfRow
+                WolfPosition[wolf][1] = newWolfCol
+
+
+
+
+
+def drawWolves(app, canvas):
+
+    for wolf in range(len(WolfNames)): 
+        moveWolvesTowardSheep(wolf, app, canvas)
+        canvas.create_image(WolfPosition[wolf][0], WolfPosition[wolf][1], image=ImageTk.PhotoImage(app.wolfImage))  
+
+
 def drawBoard(app, canvas):   
     for row in range(app.rows):
         for col in range(app.cols):
@@ -271,16 +343,9 @@ def simulateScreen_redrawAll(app, canvas):
     canvas.create_rectangle(app.margin, app.margin, (app.width//2) + app.margin, app.height-app.margin, outline='black', width=20)
     drawBoard(app, canvas)
 
-    #Draws wolves
-    for i in range(len(WolfNames)): 
-        canvas.create_image(WolfStartingPosition[i][0], WolfStartingPosition[i][1], image=ImageTk.PhotoImage(app.wolfImage))  
+    drawWolves(app, canvas)
+    drawSheep(app, canvas)
 
-
-    #Draws sheep
-    for i in range(len(SheepNames)): #display sheep after wolves because sheep are smaller. This ensures user can see sheep (unless size mutation of wolf, for example)
-        canvas.create_image(SheepStartingPosition[i][0], SheepStartingPosition[i][1], image=ImageTk.PhotoImage(app.sheepImage)) 
-
-    
     canvas.create_text(app.ggrTextX, app.ggrTextY, text=f"Grass Growth Rate: {app.ggrNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.ggrLineTopX, app.ggrLineTopY, app.ggrLineBottomX, app.ggrLineBottomY, fill='grey', width=3)
     canvas.create_rectangle(app.ggrSliderTopX, app.ggrSliderTopY, app.ggrSliderBottomX, app.ggrSliderBottomY, fill='black')
