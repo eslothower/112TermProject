@@ -3,3 +3,5 @@ White Sheep: https://www.shutterstock.com/image-vector/pixelated-cute-fun-sheep-
 Black Wolf: https://www.shutterstock.com/image-vector/vector-pixel-art-black-wolf-isolated-1303550320
 
 "app._root.resizable(False, False)" in main.py: Contributed by Anita (TA) from Piazza
+
+roundHalfUp: from the HW assignments on https://www.cs.cmu.edu/~112/index.html

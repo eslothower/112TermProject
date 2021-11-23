@@ -9,9 +9,7 @@ from Animal import *
 from Sheep import *
 from Wolf import *
 import random
-import copy
 import decimal
-from tkinter import *
 
 def roundHalfUp(d): #helper-fn
     # Round to nearest with ties going away from zero.
