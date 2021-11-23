@@ -11,6 +11,7 @@ from Wolf import *
 import random
 import copy
 import decimal
+from tkinter import *
 
 def roundHalfUp(d): #helper-fn
     # Round to nearest with ties going away from zero.
@@ -24,8 +25,9 @@ def roundHalfUp(d): #helper-fn
 ######################################################################
 
 wolfCount = 5
+sheepCount = 5
 
-animalCount = {'Wolf': wolfCount, 'Sheep': 10}
+animalCount = {'Wolf': wolfCount, 'Sheep': sheepCount}
 SheepNames = set()
 WolfNames = set()
 SheepPosition = []
@@ -147,8 +149,8 @@ def appStarted(app):
     app.swpSliding = False
     app.swpNum = 5
 
-    app.swpTextX = app.width/1.08
-    app.swpTextY = app.margin
+    app.swpTextX = app.width/1.65
+    app.swpTextY = app.height/4
 
     app.swpLineTopX = app.swpTextX - 100
     app.swpLineTopY = app.swpTextY + 30
@@ -160,6 +162,46 @@ def appStarted(app):
     app.swpSliderTopY = app.swpLineTopY - 10
     app.swpSliderBottomX = app.swpSliderTopX + 8
     app.swpSliderBottomY = app.swpLineTopY + 10
+
+    #Starting Sheep Population (ssp)
+    #############################
+
+    app.sspSliding = False
+    app.sspNum = 5
+
+    app.sspTextX = app.width/1.3
+    app.sspTextY = app.height/4
+
+    app.sspLineTopX = app.sspTextX - 100
+    app.sspLineTopY = app.sspTextY + 30
+    app.sspLineBottomX = app.sspTextX + 100
+    app.sspLineBottomY = app.sspLineTopY
+    app.sspLineLength = app.sspLineBottomX - app.sspLineTopX
+
+    app.sspSliderTopX = app.sspLineTopX + (app.sspLineLength/2) - 4
+    app.sspSliderTopY = app.sspLineTopY - 10
+    app.sspSliderBottomX = app.sspSliderTopX + 8
+    app.sspSliderBottomY = app.sspLineTopY + 10
+
+    #Flower Growth Rate (fgr)
+    #############################
+
+    app.fgrSliding = False
+    app.fgrNum = 5
+
+    app.fgrTextX = app.width/1.08
+    app.fgrTextY = app.margin
+
+    app.fgrLineTopX = app.fgrTextX - 100
+    app.fgrLineTopY = app.fgrTextY + 30
+    app.fgrLineBottomX = app.fgrTextX + 100
+    app.fgrLineBottomY = app.fgrLineTopY
+    app.fgrLineLength = app.fgrLineBottomX - app.fgrLineTopX
+
+    app.fgrSliderTopX = app.fgrLineTopX + (app.fgrLineLength/2) - 4
+    app.fgrSliderTopY = app.fgrLineTopY - 10
+    app.fgrSliderBottomX = app.fgrSliderTopX + 8
+    app.fgrSliderBottomY = app.fgrLineTopY + 10
 
 
     #Requires variables from above, so must go here
@@ -241,8 +283,28 @@ def getAddedBareSpotsList(app, currentCellColorsList):
 
 def getAddedFlowersList(app, currentCellColorsList):
 
-    numberOfFlowers = random.randrange(5, (app.rows*app.cols)//40)
 
+    if app.fgrNum == 10:
+        numberOfFlowers = 150
+    elif app.fgrNum == 9:
+        numberOfFlowers = 110
+    elif app.fgrNum == 8:
+        numberOfFlowers = 80
+    elif app.fgrNum == 7:
+        numberOfFlowers = 65
+    elif app.fgrNum == 6:
+        numberOfFlowers = 45
+    elif app.fgrNum == 5:
+        numberOfFlowers = 35
+    elif app.fgrNum == 4:
+        numberOfFlowers = 20
+    elif app.fgrNum == 3:
+        numberOfFlowers = 10
+    elif app.fgrNum == 2:
+        numberOfFlowers = 5
+    elif app.fgrNum == 1:
+        numberOfFlowers = 2
+    print(numberOfFlowers)
     for _ in range(numberOfFlowers + 1):
         flowerColor = app.flowerColorOptions[random.randrange(0,5)]
         row = random.randrange(app.rows)
@@ -428,6 +490,30 @@ def drawStartingWolfPopulationSlider(app, canvas):
     canvas.create_line(app.swpLineTopX, app.swpLineTopY, app.swpLineBottomX, app.swpLineBottomY, fill='grey', width=3)
     canvas.create_rectangle(app.swpSliderTopX, app.swpSliderTopY, app.swpSliderBottomX, app.swpSliderBottomY, fill='black')
 
+def drawStartingSheepPopulationSlider(app, canvas):
+    canvas.create_text(app.sspTextX, app.sspTextY, text=f"Starting Sheep Population: {app.sspNum}", fill='black', font='Ariel 18')
+    canvas.create_line(app.sspLineTopX, app.sspLineTopY, app.sspLineBottomX, app.sspLineBottomY, fill='grey', width=3)
+    canvas.create_rectangle(app.sspSliderTopX, app.sspSliderTopY, app.sspSliderBottomX, app.sspSliderBottomY, fill='black')
+
+def drawFlowerGrowthRateSlider(app, canvas):
+    canvas.create_text(app.fgrTextX, app.fgrTextY, text=f"Flower Growth Rate: {app.fgrNum}", fill='black', font='Ariel 18')
+    canvas.create_line(app.fgrLineTopX, app.fgrLineTopY, app.fgrLineBottomX, app.fgrLineBottomY, fill='grey', width=3)
+    canvas.create_rectangle(app.fgrSliderTopX, app.fgrSliderTopY, app.fgrSliderBottomX, app.fgrSliderBottomY, fill='black')
+
+def drawGraph(app, canvas):
+    canvas.create_rectangle(app.width/1.845, app.height/1.7, app.width - app.margin + 10, app.height/1.12, outline='black')
+    canvas.create_text(app.width/1.875, app.height/1.12, text='0', fill='black')
+    canvas.create_text(app.width/1.87, app.height/1.23, text='5', fill='black')
+    canvas.create_text(app.width/1.87, app.height/1.34, text='10', fill='black')
+    canvas.create_text(app.width/1.87, app.height/1.49, text='15', fill='black')
+    canvas.create_text(app.width/1.87, app.height/1.7, text='20+', fill='black')
+
+    firstRun = True
+    for key in animalCount:
+
+        if firstRun:
+            canvas.create_line(app.width/1.845, app.height/1.12, app.width/1.6, app.height/1.15, fill='red', width=4)
+
 def simulateScreen_redrawAll(app, canvas):
 
     if app.runSim:
@@ -442,15 +528,28 @@ def simulateScreen_redrawAll(app, canvas):
     drawGrassGrowthRateSlider(app, canvas)
     drawWaterFallRateSlider(app, canvas)
     drawStartingWolfPopulationSlider(app, canvas)
+    drawStartingSheepPopulationSlider(app, canvas)
+    drawFlowerGrowthRateSlider(app, canvas)
+    drawGraph(app, canvas)
 
     #Draws "Run Simulation" Button/Text
     canvas.create_rectangle(app.width/1.3, app.height/1.1, app.width - app.margin + 10, app.height - app.margin + 10, fill='black')
-    canvas.create_text(app.width/1.133, app.height/1.06, text='Run Simulation', font='Ariel 30', fill='white')
+    canvas.create_text(app.width/1.133, app.height/1.06, text='Run New Simulation', font='Ariel 30', fill='white')
+
+    #Draws "Pause Simulation" Button/Text
+    if app.runSim:
+        canvas.create_rectangle(app.width/1.885, app.height/1.1, app.width/1.315, app.height - app.margin + 10, fill='black', outline='black')
+    else:
+        canvas.create_rectangle(app.width/1.885, app.height/1.1, app.width/1.315, app.height - app.margin + 10, fill='grey', outline='grey')
+    canvas.create_text(app.width/1.545, app.height/1.06, text='End Current Simulation', font='Ariel 30', fill='white')
 
 
 def simulateScreen_mouseReleased(app, event): 
     app.ggrSliding = False
     app.aawSliding = False
+    app.fgrSliding = False
+    app.swpSliding = False
+    app.sshpSliding = False
 
 def simulateScreen_mousePressed(app, event):
     if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY <= event.y <= app.ggrSliderBottomY:
@@ -459,13 +558,16 @@ def simulateScreen_mousePressed(app, event):
     if app.aawSliderTopX <= event.x <= app.aawSliderBottomX and app.aawSliderTopY <= event.y <= app.aawSliderBottomY:
         app.aawSliding = True
 
-    if app.width/1.3 <= event.x <= app.width-app.margin and app.height/1.1 <= event.y <= app.height - app.margin + 10:
+    if app.width/1.885 <= event.x <= app.width/1.315 and app.height/1.1 <= event.y <= app.height - app.margin + 10:
+        if app.runSim:
+            app.runSim = False
+
+    if app.width/1.3 <= event.x <= app.width-app.margin + 10 and app.height/1.1 <= event.y <= app.height - app.margin + 10:
         app.runSim = True
         app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
         global animalCount
-        animalCount = {'Wolf': wolfCount, 'Sheep': 10}
+        animalCount = {'Wolf': wolfCount, 'Sheep': sheepCount}
         initializeAnimals(app)
-
 
 def simulateScreen_mouseDragged(app, event): 
     print("Dragging")
@@ -518,6 +620,27 @@ def simulateScreen_mouseDragged(app, event):
     elif app.aawNum in [7,8,9,10]:
         app.aawNum = 3
 
+    #Logic for Flower Growth Rate (fgr) slider
+    ################################################
+    if app.fgrSliderTopX <= event.x <= app.fgrSliderBottomX and app.fgrSliderTopY < event.y < app.fgrSliderBottomY:
+        app.fgrSliding = True
+
+    if app.fgrSliding and app.fgrLineTopX < event.x < app.fgrLineBottomX:
+        app.fgrSliderTopX = event.x
+        app.fgrSliderBottomX = app.fgrSliderTopX + 8
+    elif app.fgrSliding and event.x < app.fgrLineTopX:
+        app.fgrSliderTopX = app.fgrLineTopX
+        app.fgrSliderBottomX = app.fgrSliderTopX + 8
+    elif app.fgrSliding and app.fgrLineBottomX < event.x:
+        app.fgrSliderTopX = app.fgrLineBottomX
+        app.fgrSliderBottomX = app.fgrSliderTopX + 8
+
+    app.fgrNum = int(((app.fgrSliderTopX-app.fgrLineTopX)/app.fgrLineLength)*10)
+
+    #1-10 as the scale is more readable for users, rather than 0-9
+    if app.fgrNum == 0: app.fgrNum = 1
+    elif app.fgrNum == 9: app.fgrNum = 10
+
     #Logic for Starting Wolf Population (swp) slider
     ################################################
     if app.swpSliderTopX <= event.x <= app.swpSliderBottomX and app.swpSliderTopY < event.y < app.swpSliderBottomY:
@@ -541,6 +664,32 @@ def simulateScreen_mouseDragged(app, event):
     #1-10 as the scale is more readable for users, rather than 0-9
     if app.swpNum == 0: app.swpNum = 1
     elif app.swpNum == 9: app.swpNum = 10
+
+    #Logic for Starting Sheep Population (ssp) slider
+    ################################################
+    if app.sspSliderTopX <= event.x <= app.sspSliderBottomX and app.sspSliderTopY < event.y < app.sspSliderBottomY:
+        app.sspSliding = True
+
+    if app.sspSliding and app.sspLineTopX < event.x < app.sspLineBottomX:
+        app.sspSliderTopX = event.x
+        app.sspSliderBottomX = app.sspSliderTopX + 8
+    elif app.sspSliding and event.x < app.sspLineTopX:
+        app.sspSliderTopX = app.sspLineTopX
+        app.sspSliderBottomX = app.sspSliderTopX + 8
+    elif app.sspSliding and app.sspLineBottomX < event.x:
+        app.sspSliderTopX = app.sspLineBottomX
+        app.sspSliderBottomX = app.sspSliderTopX + 8
+
+    app.sspNum = int(((app.sspSliderTopX-app.sspLineTopX)/app.sspLineLength)*10)
+
+    global sheepCount
+    sheepCount = app.sspNum
+
+    #1-10 as the scale is more readable for users, rather than 0-9
+    if app.sspNum == 0: app.sspNum = 1
+    elif app.sspNum == 9: app.sspNum = 10
+
+
 
 
 runApp(width=1728, height=905)
