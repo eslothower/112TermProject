@@ -9,6 +9,7 @@ from Animal import *
 from Sheep import *
 from Wolf import *
 import random
+import copy
 
 ######################################################################
 #Animal Code
@@ -253,14 +254,10 @@ def getAddedWaterList(app, currentCellColorsList):
     return currentCellColorsList
 
 
-def drawSheep(app, canvas):
-
-    for sheep in range(len(SheepNames)): #display sheep after wolves because sheep are smaller. This ensures user can see sheep (unless size mutation of wolf, for example)
-        canvas.create_image(SheepPosition[sheep][0], SheepPosition[sheep][1], image=ImageTk.PhotoImage(app.sheepImage)) 
 
 
 
-def moveWolvesTowardSheep(wolf, app, canvas):
+def moveWolvesTowardSheep(wolf, app):
     currentWolfPositionRow = WolfPosition[wolf][0]
     currentWolfPositionCol = WolfPosition[wolf][1]
     foundMove = False
@@ -280,8 +277,8 @@ def moveWolvesTowardSheep(wolf, app, canvas):
                     colBeingChecked = currentWolfPositionCol + i*dcol
 
                     #print(f"[{rowBeingChecked}, {colBeingChecked}]")
-
-                    if [rowBeingChecked, colBeingChecked] in SheepPosition:
+                    tempSheepPosition = SheepPosition
+                    if [rowBeingChecked, colBeingChecked] in tempSheepPosition:
                         
 
                         # if [WolfPosition[wolf][0], WolfPosition[wolf][1]] in SheepPosition:
@@ -291,20 +288,29 @@ def moveWolvesTowardSheep(wolf, app, canvas):
                             # foundMove = True
                         
                             # break
-                        
-                        if rowBeingChecked - WolfPosition[wolf][0] < 1 or colBeingChecked - WolfPosition[wolf][1] < 1:
-                            print("ATE THE SHEEP", random.randint(0,100))
-                            foundMove = True
-                        
-                            break
-                        
-                        else:
-                            WolfPosition[wolf][0] += (rowBeingChecked - WolfPosition[wolf][0])/5
-                            WolfPosition[wolf][1] += (colBeingChecked - WolfPosition[wolf][1])/5
-                            print("IT", random.randint(0,100))
 
                         
-            
+                            
+                        for sheep in range(len(tempSheepPosition)):
+                            if len(tempSheepPosition) > 0:
+                                print(f"WOLF: {wolf}, WOLF POSITION: {WolfPosition[wolf][1]}")
+                                print(f"TEMP SHEEP: {tempSheepPosition}")
+                                print(f"SHEEP: {sheep}")
+                                print(f"SHEEP: {sheep}, SHEEP POSITION 0: {tempSheepPosition[sheep][0]}")
+                                print(f"SHEEP: {sheep}, SHEEP POSITION 1: {tempSheepPosition[sheep][1]}")
+                                if tempSheepPosition[sheep][0] - WolfPosition[wolf][0] < 1 and tempSheepPosition[sheep][1] - WolfPosition[wolf][1] < 1:
+                                    rowBeingChecked = tempSheepPosition[sheep][0]
+                                    colBeingChecked = tempSheepPosition[sheep][1]
+                                    tempSheepPosition.pop(sheep-1)
+                                    print("ate the sheep", random.randint(0,100))
+                                    foundMove = True
+                                    break
+                                
+                                else:
+                                    WolfPosition[wolf][0] += (rowBeingChecked - WolfPosition[wolf][0])/5
+                                    WolfPosition[wolf][1] += (colBeingChecked - WolfPosition[wolf][1])/5
+                                    print("IT", random.randint(0,100))
+           
 
         if foundMove: break                   
         for _ in range(random.randrange(0,200)):
@@ -322,8 +328,13 @@ def moveWolvesTowardSheep(wolf, app, canvas):
 def drawWolves(app, canvas):
 
     for wolf in range(len(WolfNames)): 
-        moveWolvesTowardSheep(wolf, app, canvas)
+        moveWolvesTowardSheep(wolf, app)
         canvas.create_image(WolfPosition[wolf][0], WolfPosition[wolf][1], image=ImageTk.PhotoImage(app.wolfImage))  
+
+def drawSheep(app, canvas):
+
+    for sheep in range(len(SheepPosition)): #display sheep after wolves because sheep are smaller. This ensures user can see sheep (unless size mutation of wolf, for example)
+        canvas.create_image(SheepPosition[sheep][0], SheepPosition[sheep][1], image=ImageTk.PhotoImage(app.sheepImage)) 
 
 
 def drawBoard(app, canvas):   
