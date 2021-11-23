@@ -10,6 +10,14 @@ from Sheep import *
 from Wolf import *
 import random
 import copy
+import decimal
+
+def roundHalfUp(d): #helper-fn
+    # Round to nearest with ties going away from zero.
+    rounding = decimal.ROUND_HALF_UP
+    # See other rounding options here:
+    # https://docs.python.org/3/library/decimal.html#rounding-modes
+    return int(decimal.Decimal(d).to_integral_value(rounding=rounding))
 
 ######################################################################
 #Animal Code
@@ -35,7 +43,7 @@ def initializeAnimals(app):
                     globals()[key+'Position'].append([random.randrange((app.margin + 10), (app.width/2 + 5)), random.randrange(app.margin + 12, app.height-app.margin-12)])
 
                     # print(f'This is {key.lower()} {animalName}')
-                    print(f'This is the sheep position list now: {SheepPosition}')
+                    # print(f'This is the sheep position list now: {SheepPosition}')
                     # print(f'This is the wolf position list now: {WolfPosition}')
                     break
 
@@ -50,10 +58,12 @@ def appStarted(app):
     #System Settings
     ###############################################
 
-    #app.mode = "titleScreen"
-    app.mode = 'simulateScreen'
+    app.mode = "titleScreen"
+    #app.mode = 'simulateScreen'
     app._root.resizable(False, False) #Contributed by Anita (TA)
     app.timerDelay = 0
+    app.runSim = False
+    app.stockSimWithOverlayWithTextImage = app.scaleImage(app.loadImage('assets/Modified/stockSimWithOverlayWithTextImage.png'), 1/2.04)
 
     #Code for terrain generation
     ###############################################
@@ -67,7 +77,7 @@ def appStarted(app):
     app.waterPuddles = random.randrange(3)
     app.waterAmount = 'Regular'
     app.flowerColorOptions = ['pink', 'red', 'purple', 'yellow', 'orange']
-    app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
+    
 
     #Code for animals
     ###############################################
@@ -99,11 +109,12 @@ def appStarted(app):
     app.ggrSliderBottomX = app.ggrSliderTopX + 8
     app.ggrSliderBottomY = app.ggrLineTopY + 10
 
-    #Water Fall Rate (wfr)
+    #Average Average Amount of Water (formally known as water fall rate (wfr))
+    #Everytime I change the variable 'wfr' to 'bws', it doesn't work, so I am leaving it as this
     #############################
 
     app.wfrSliding = False
-    app.wfrNum = 5
+    app.wfrNum = 2
 
     app.wfrTextX = app.width/1.3
     app.wfrTextY = app.margin
@@ -120,6 +131,8 @@ def appStarted(app):
     app.wfrSliderBottomY = app.wfrLineTopY + 10
 
 
+    #Requires variables from above, so must go here
+    app.cellColorsList = getCellColorsList(app, app.rows, app.cols)    
 ######################################################################
 #Title Screen
 ######################################################################
@@ -145,9 +158,10 @@ def titleScreen_mousePressed(app, event):
 
 def getCellColorsList(app, rows, cols):
     cellColorsList = [['green' for _ in range(app.rows)] for _ in range(app.cols)]
+    cellColorsList = getAddedBareSpotsList(app, cellColorsList)
     cellColorsList = getAddedWaterList(app, cellColorsList)
     cellColorsList = getAddedFlowersList(app, cellColorsList)
-    cellColorsList = getAddedBareSpotsList(app, cellColorsList)
+    
     return cellColorsList
 
 def getCellBounds(app, row, col):
@@ -160,15 +174,35 @@ def getCellBounds(app, row, col):
     return (x0, y0, x1, y1)
 
 def getAddedBareSpotsList(app, currentCellColorsList):
+    if app.ggrNum == 10:
+        numberOfBareSpots = 0
+    elif app.ggrNum == 9:
+        numberOfBareSpots = (app.rows*app.cols)//100
+    elif app.ggrNum == 8:
+        numberOfBareSpots = (app.rows*app.cols)//40
+    elif app.ggrNum == 7:
+        numberOfBareSpots = (app.rows*app.cols)//15
+    elif app.ggrNum == 6:
+        numberOfBareSpots = (app.rows*app.cols)//10
+    elif app.ggrNum == 5:
+        numberOfBareSpots = (app.rows*app.cols)//7
+    elif app.ggrNum == 4:
+        numberOfBareSpots = (app.rows*app.cols)//4
+    elif app.ggrNum == 3:
+        numberOfBareSpots = (app.rows*app.cols)//2
+    elif app.ggrNum == 2:
+        numberOfBareSpots = roundHalfUp((app.rows*app.cols)/1.2)
+    elif app.ggrNum == 1:
+        numberOfBareSpots = (app.rows*app.cols)
 
-    numberOfBareSpots = random.randrange(5, (app.rows*app.cols)//8)
 
-    for _ in range(numberOfBareSpots + 1):
-        row = random.randrange(app.rows)
-        col = random.randrange(app.cols)
-        if currentCellColorsList[row][col] in ['blue', 'pink', 'red', 'purple', 'yellow', 'orange']:
-            continue
-        else:
+    if app.ggrNum == 1:
+        currentCellColorsList = [['tan' for _ in range(app.rows)] for _ in range(app.cols)]
+    else:
+        for _ in range(numberOfBareSpots + 1):
+            row = random.randrange(app.rows)
+            col = random.randrange(app.cols)
+
             currentCellColorsList[row][col] = 'tan'
 
     return currentCellColorsList
@@ -191,10 +225,9 @@ def getAddedFlowersList(app, currentCellColorsList):
     return currentCellColorsList
 
 def getAddedWaterList(app, currentCellColorsList):
-
-    numberOfBodiesOfWater = random.randrange(0,3)
+    numberOfBodiesOfWater = app.wfrNum
     
-    for bodyOfWater in range(numberOfBodiesOfWater + 1):
+    for bodyOfWater in range(numberOfBodiesOfWater):
         layersOfWater = random.randrange(3,7)
         row = random.randrange(app.rows)
         col = random.randrange(app.cols)
@@ -293,23 +326,23 @@ def moveWolvesTowardSheep(wolf, app):
                             
                         for sheep in range(len(tempSheepPosition)):
                             if len(tempSheepPosition) > 0:
-                                print(f"WOLF: {wolf}, WOLF POSITION: {WolfPosition[wolf][1]}")
-                                print(f"TEMP SHEEP: {tempSheepPosition}")
-                                print(f"SHEEP: {sheep}")
-                                print(f"SHEEP: {sheep}, SHEEP POSITION 0: {tempSheepPosition[sheep][0]}")
-                                print(f"SHEEP: {sheep}, SHEEP POSITION 1: {tempSheepPosition[sheep][1]}")
+                                # print(f"WOLF: {wolf}, WOLF POSITION: {WolfPosition[wolf][1]}")
+                                # print(f"TEMP SHEEP: {tempSheepPosition}")
+                                # print(f"SHEEP: {sheep}")
+                                # print(f"SHEEP: {sheep}, SHEEP POSITION 0: {tempSheepPosition[sheep][0]}")
+                                # print(f"SHEEP: {sheep}, SHEEP POSITION 1: {tempSheepPosition[sheep][1]}")
                                 if tempSheepPosition[sheep][0] - WolfPosition[wolf][0] < 1 and tempSheepPosition[sheep][1] - WolfPosition[wolf][1] < 1:
                                     rowBeingChecked = tempSheepPosition[sheep][0]
                                     colBeingChecked = tempSheepPosition[sheep][1]
                                     tempSheepPosition.pop(sheep-1)
-                                    print("ate the sheep", random.randint(0,100))
+                                    #print("ate the sheep", random.randint(0,100))
                                     foundMove = True
                                     break
                                 
                                 else:
                                     WolfPosition[wolf][0] += (rowBeingChecked - WolfPosition[wolf][0])/5
                                     WolfPosition[wolf][1] += (colBeingChecked - WolfPosition[wolf][1])/5
-                                    print("IT", random.randint(0,100))
+                                    #print("IT", random.randint(0,100))
            
 
         if foundMove: break                   
@@ -337,7 +370,8 @@ def drawSheep(app, canvas):
         canvas.create_image(SheepPosition[sheep][0], SheepPosition[sheep][1], image=ImageTk.PhotoImage(app.sheepImage)) 
 
 
-def drawBoard(app, canvas):   
+def drawBoard(app, canvas):  
+    canvas.create_rectangle(app.margin, app.margin, (app.width//2) + app.margin, app.height-app.margin, outline='black', width=20)
     for row in range(app.rows):
         for col in range(app.cols):
             color = app.cellColorsList[row][col]
@@ -348,33 +382,49 @@ def drawCell(app, canvas, row, col, color):
     
     canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline=color, width = 1)
 
-def simulateScreen_redrawAll(app, canvas):
-
-    #Draws terrain with border
-    canvas.create_rectangle(app.margin, app.margin, (app.width//2) + app.margin, app.height-app.margin, outline='black', width=20)
-    drawBoard(app, canvas)
-
-    drawWolves(app, canvas)
-    drawSheep(app, canvas)
-
+def drawGrassGrowthRateSlider(app, canvas):
     canvas.create_text(app.ggrTextX, app.ggrTextY, text=f"Grass Growth Rate: {app.ggrNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.ggrLineTopX, app.ggrLineTopY, app.ggrLineBottomX, app.ggrLineBottomY, fill='grey', width=3)
     canvas.create_rectangle(app.ggrSliderTopX, app.ggrSliderTopY, app.ggrSliderBottomX, app.ggrSliderBottomY, fill='black')
 
-    canvas.create_text(app.wfrTextX, app.wfrTextY, text=f"Water Fall Rate: {app.wfrNum}", fill='black', font='Ariel 18')
+def drawWaterFallRateSlider(app, canvas):
+    canvas.create_text(app.wfrTextX, app.wfrTextY, text=f"Average Amount of Water: {app.wfrNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.wfrLineTopX, app.wfrLineTopY, app.wfrLineBottomX, app.wfrLineBottomY, fill='grey', width=3)
     canvas.create_rectangle(app.wfrSliderTopX, app.wfrSliderTopY, app.wfrSliderBottomX, app.wfrSliderBottomY, fill='black')
+
+def simulateScreen_redrawAll(app, canvas):
+
+    if app.runSim:
+
+        drawBoard(app, canvas)
+        drawWolves(app, canvas)
+        drawSheep(app, canvas)
+    
+    else:
+        canvas.create_image(app.width/3.75, app.height/2, image=ImageTk.PhotoImage(app.stockSimWithOverlayWithTextImage))  
+
+    drawGrassGrowthRateSlider(app, canvas)
+    drawWaterFallRateSlider(app, canvas)
+
+    #Draws "Run Simulation" Button/Text
+    canvas.create_rectangle(app.width/1.3, app.height/1.1, app.width - app.margin + 10, app.height - app.margin + 10, fill='black')
+    canvas.create_text(app.width/1.133, app.height/1.06, text='Run Simulation', font='Ariel 30', fill='white')
+
 
 def simulateScreen_mouseReleased(app, event): 
     app.ggrSliding = False
     app.wfrSliding = False
 
 def simulateScreen_mousePressed(app, event):
-    if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY < event.y < app.ggrSliderBottomY:
+    if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY <= event.y <= app.ggrSliderBottomY:
         app.ggrSliding = True
 
-    if app.wfrSliderTopX <= event.x <= app.wfrSliderBottomX and app.wfrSliderTopY < event.y < app.wfrSliderBottomY:
+    if app.wfrSliderTopX <= event.x <= app.wfrSliderBottomX and app.wfrSliderTopY <= event.y <= app.wfrSliderBottomY:
         app.wfrSliding = True
+
+    if app.width/1.3 <= event.x <= app.width-app.margin and app.height/1.1 <= event.y <= app.height - app.margin + 10:
+        app.runSim = True
+        app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
 
 
 def simulateScreen_mouseDragged(app, event): 
@@ -421,8 +471,12 @@ def simulateScreen_mouseDragged(app, event):
     app.wfrNum = int(((app.wfrSliderTopX-app.wfrLineTopX)/app.wfrLineLength)*10)
 
     #1-10 as the scale is more readable for users, rather than 0-9
-    if app.wfrNum == 0: app.wfrNum = 1
-    elif app.wfrNum == 9: app.wfrNum = 10
+    if app.wfrNum in [0,1,2,3]: 
+        app.wfrNum = 1
+    elif app.wfrNum in [4,5,6]: 
+        app.wfrNum = 2
+    elif app.wfrNum in [7,8,9,10]:
+        app.wfrNum = 3
 
 
 runApp(width=1728, height=905)
