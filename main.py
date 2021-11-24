@@ -75,7 +75,7 @@ def appStarted(app):
     app.mode = "titleScreen"
     #app.mode = 'simulateScreen'
     app._root.resizable(False, False) #Contributed by Anita (TA)
-    app.timerDelay = 100
+    app.timerDelay = 10
     app.runSim = False
     app.stockSimWithOverlayWithTextImage = app.scaleImage(app.loadImage('assets/Modified/stockSimWithOverlayWithTextImage.png'), 1/2.04)
 
@@ -283,7 +283,6 @@ def getAddedBareSpotsList(app, currentCellColorsList):
 
 def getAddedFlowersList(app, currentCellColorsList):
 
-
     if app.fgrNum == 10:
         numberOfFlowers = 150
     elif app.fgrNum == 9:
@@ -304,7 +303,7 @@ def getAddedFlowersList(app, currentCellColorsList):
         numberOfFlowers = 5
     elif app.fgrNum == 1:
         numberOfFlowers = 2
-    print(numberOfFlowers)
+
     for _ in range(numberOfFlowers + 1):
         flowerColor = app.flowerColorOptions[random.randrange(0,5)]
         row = random.randrange(app.rows)
@@ -359,39 +358,27 @@ def getAddedWaterList(app, currentCellColorsList):
                                                 else:
                                                     currentCellColorsList[rowBeingChecked][colBeingChecked] = 'blue'
 
-                                                    # for drowThree in [-1, 0, +1]:
-                                                    #     for dcolThree in [-1, 0, +1]: 
-                                                    #         if (drowThree, dcolThree) != (0, 0):
-                                                    #             for layerThree in range(2):
-                                                    #                 rowBeingCheckedThree = rowBeingCheckedTwo + layerThree*drowThree
-                                                    #                 colBeingCheckedThree = colBeingCheckedTwo + layerTwo*dcolThree
-
-                                                    #                 if ((rowBeingCheckedThree < 0) or (rowBeingCheckedThree >= app.rows) or (colBeingCheckedThree < 0) or (colBeingCheckedThree >= app.cols)):
-                                                    #                     continue
-                                                    #                 else:
-                                                    #                     currentCellColorsList[rowBeingCheckedThree][colBeingCheckedThree] = 'blue'
-
-                                                    #                     if bodyOfWater == numberOfBodiesOfWater:
-                                                    #                         chance = random.randrange(2)
-                                                    #                         if chance == 0:
-                                                    #                             currentCellColorsList[rowBeingCheckedThree][colBeingCheckedThree] = 'blue'
-                                                    #                     else:
-                                                    #                         currentCellColorsList[rowBeingCheckedTwo][colBeingCheckedTwo] = 'blue'
     return currentCellColorsList
 
 
 
+def moveSheep(sheep, app):
+
+    for _ in range(random.randrange(0,200)):
+
+        newSheepRow =  SheepPosition[sheep][0] + random.randrange(-1,2)
+        newSheepCol = SheepPosition[sheep][1] + random.randrange(-1,2)
+
+        #keeps the sheep within bounds of the grid
+        if app.margin + 12 < newSheepRow < app.gridWidth + 12 and app.margin + 12 < newSheepCol < app.gridHeight + 12:
+            SheepPosition[sheep][0] = newSheepRow
+            SheepPosition[sheep][1] = newSheepCol
 
 
 def moveWolvesTowardSheep(wolf, app):
     currentWolfPositionRow = WolfPosition[wolf][0]
     currentWolfPositionCol = WolfPosition[wolf][1]
     foundMove = False
-
-    #WolfPosition[wolf][0] += random.randrange(-5,5)
-    #WolfPosition[wolf][1] += random.randrange(-5,5)
-    #print(WolfPosition)
-
 
     for drow in [-1, 0, +1]:
         for dcol in [-1, 0, +1]: 
@@ -402,21 +389,9 @@ def moveWolvesTowardSheep(wolf, app):
                     rowBeingChecked = currentWolfPositionRow + i*drow
                     colBeingChecked = currentWolfPositionCol + i*dcol
 
-                    #print(f"[{rowBeingChecked}, {colBeingChecked}]")
                     tempSheepPosition = SheepPosition
                     if [rowBeingChecked, colBeingChecked] in tempSheepPosition:
                         
-
-                        # if [WolfPosition[wolf][0], WolfPosition[wolf][1]] in SheepPosition:
-                        #     WolfPosition[wolf][0] = rowBeingChecked
-                        #     WolfPosition[wolf][1] = colBeingChecked
-                            # print("ATE THE SHEEP", random.randint(0,100))
-                            # foundMove = True
-                        
-                            # break
-
-                        
-                            
                         for sheep in range(len(tempSheepPosition)):
                             if len(tempSheepPosition) > 0:
                                 # print(f"WOLF: {wolf}, WOLF POSITION: {WolfPosition[wolf][1]}")
@@ -438,11 +413,13 @@ def moveWolvesTowardSheep(wolf, app):
                                     #print("IT", random.randint(0,100))
            
 
-        if foundMove: break                   
+        if foundMove: break  
+
         for _ in range(random.randrange(0,200)):
             newWolfRow =  WolfPosition[wolf][0] + random.randrange(-1,2)
             newWolfCol = WolfPosition[wolf][1] + random.randrange(-1,2)
 
+            #keeps the wolves within bounds of the grid
             if app.margin + 12 < newWolfRow < app.gridWidth + 12 and app.margin + 12 < newWolfCol < app.gridHeight + 12:
                 WolfPosition[wolf][0] = newWolfRow
                 WolfPosition[wolf][1] = newWolfCol
@@ -460,6 +437,7 @@ def drawWolves(app, canvas):
 def drawSheep(app, canvas):
 
     for sheep in range(len(SheepPosition)): #display sheep after wolves because sheep are smaller. This ensures user can see sheep (unless size mutation of wolf, for example)
+        moveSheep(sheep, app)
         canvas.create_image(SheepPosition[sheep][0], SheepPosition[sheep][1], image=ImageTk.PhotoImage(app.sheepImage)) 
 
 
