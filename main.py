@@ -527,7 +527,7 @@ def simulateScreen_mouseReleased(app, event):
     app.aawSliding = False
     app.fgrSliding = False
     app.swpSliding = False
-    app.sshpSliding = False
+    app.sspSliding = False
 
 def simulateScreen_mousePressed(app, event):
     if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY <= event.y <= app.ggrSliderBottomY:
