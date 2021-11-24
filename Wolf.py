@@ -6,7 +6,7 @@ class Wolf(Animal):
 
     def __init__(self):
 
-        if random.randrange(0,11) == random.randrange(0,11):
+        if random.randrange(0,2) == random.randrange(0,2):
 
             self.mutationStatus = True
 

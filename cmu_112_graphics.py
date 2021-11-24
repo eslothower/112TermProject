@@ -565,9 +565,10 @@ class App(object):
 
     @_safeMethod
     def _mouseMotionWrapper(app):
+        
         if (not app._running): return
         mouseMovedExists = app._methodIsOverridden('mouseMoved')
-        mouseDraggedExists = app._methodIsOverridden('mouseDragged')
+        mouseDraggedExists = True #app._methodIsOverridden('mouseDragged')
         if ((not app._paused) and
             (not app._mousePressedOutsideWindow) and
             (((not app._mouseIsPressed) and mouseMovedExists) or
@@ -581,7 +582,9 @@ class App(object):
             if ((app._lastMousePosn !=  (event.x, event.y)) and
                 (event.x >= 0) and (event.x <= app.width) and
                 (event.y >= 0) and (event.y <= app.height)):
-                if (app._mouseIsPressed): app.mouseDragged(event)
+                if (app._mouseIsPressed):
+                    print("draggedWrapper") 
+                    app.mouseDragged(event)
                 else: app.mouseMoved(event)
                 app._lastMousePosn = (event.x, event.y)
                 app._redrawAllWrapper()

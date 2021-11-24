@@ -10,7 +10,9 @@ from Sheep import *
 from Wolf import *
 import random
 import decimal
+import time
 
+#from the HW assignments on https://www.cs.cmu.edu/~112/index.html
 def roundHalfUp(d): #helper-fn
     # Round to nearest with ties going away from zero.
     rounding = decimal.ROUND_HALF_UP
@@ -73,7 +75,7 @@ def appStarted(app):
     app.mode = "titleScreen"
     #app.mode = 'simulateScreen'
     app._root.resizable(False, False) #Contributed by Anita (TA)
-    app.timerDelay = 0
+    app.timerDelay = 100
     app.runSim = False
     app.stockSimWithOverlayWithTextImage = app.scaleImage(app.loadImage('assets/Modified/stockSimWithOverlayWithTextImage.png'), 1/2.04)
 
@@ -513,7 +515,7 @@ def drawGraph(app, canvas):
             canvas.create_line(app.width/1.845, app.height/1.12, app.width/1.6, app.height/1.15, fill='red', width=4)
 
 def simulateScreen_redrawAll(app, canvas):
-
+    t = time.time()
     if app.runSim:
 
         drawBoard(app, canvas)
@@ -540,7 +542,7 @@ def simulateScreen_redrawAll(app, canvas):
     else:
         canvas.create_rectangle(app.width/1.885, app.height/1.1, app.width/1.315, app.height - app.margin + 10, fill='grey', outline='grey')
     canvas.create_text(app.width/1.545, app.height/1.06, text='End Current Simulation', font='Ariel 30', fill='white')
-
+    #print("Drawing time:", time.time() - t)
 
 def simulateScreen_mouseReleased(app, event): 
     app.ggrSliding = False
@@ -567,8 +569,14 @@ def simulateScreen_mousePressed(app, event):
         animalCount = {'Wolf': wolfCount, 'Sheep': sheepCount}
         initializeAnimals(app)
 
+def mouseDragged(app, event):
+    print("*****")
+
+
 def simulateScreen_mouseDragged(app, event): 
-    print("Dragging")
+    t = time.time()
+    print("Dragging", event.x, event.y)
+    
 
     #Logic for Grass Growth Rate (ggr) slider
     ################################################
@@ -666,7 +674,7 @@ def simulateScreen_mouseDragged(app, event):
     #Logic for Starting Sheep Population (ssp) slider
     ################################################
     if app.sspSliderTopX <= event.x <= app.sspSliderBottomX and app.sspSliderTopY < event.y < app.sspSliderBottomY:
-        app.sspSliding = True
+        app.sspSliding  = True
 
     if app.sspSliding and app.sspLineTopX < event.x < app.sspLineBottomX:
         app.sspSliderTopX = event.x
@@ -687,7 +695,7 @@ def simulateScreen_mouseDragged(app, event):
     if app.sspNum == 0: app.sspNum = 1
     elif app.sspNum == 9: app.sspNum = 10
 
-
+    print(time.time() - t)
 
 
 runApp(width=1728, height=905)
