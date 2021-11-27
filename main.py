@@ -86,7 +86,7 @@ def appStarted(app):
     app.mode = "titleScreen"
     #app.mode = 'simulateScreen'
     app._root.resizable(False, False) #Contributed by Anita (TA)
-    app.timerDelay = 10
+    app.timerDelay = 20 #usually 10
     app.runSim = False
     app.stockSimWithOverlayWithTextImage = app.scaleImage(app.loadImage('assets/Modified/stockSimWithOverlayWithTextImage.png'), 1/2.04)
 
@@ -378,7 +378,9 @@ def moveSheep(row, col, app):
     drow = random.randrange(-1, 2) #-1, 0, or 1
     dcol = random.randrange(-1, 2) #-1, 0, or 1
 
-    while ((not(0 <= row + drow <= app.rows - 1)) or (not (0 <= col + dcol <= app.cols - 1))):
+    while ((not(0 <= row + drow <= app.rows - 1)) or 
+          (not (0 <= col + dcol <= app.cols - 1)) or 
+          ([row + drow, col + dcol] in WolfPosition)): #sheep won't step into a wolf
 
         drow = random.randrange(-1, 2) #-1, 0, or 1
         dcol = random.randrange(-1, 2) #-1, 0, or 1
@@ -396,71 +398,39 @@ def moveWolvesTowardSheep(row, col, app):
     
 
     while foundSheep == False:
-            
-        for drow in [-1, 0, +1]:
-            for dcol in [-1, 0, +1]:
+        
+        for drow in range(-(app.rows), app.cols):
+            for dcol in range(-(app.rows), app.cols):
                 if (drow, dcol) != (0, 0):
+
+                    #We don't have to check whether or not the new row/col is
+                    #within the bounds of the grid or not because we do it 
+                    #already with the sheep. Therefore, if this boolean is True,
+                    #then we already know it's a valid move
                     if [tempRow + drow, tempCol + dcol] in SheepPosition:
-                        print("YUP")
                         foundSheep = True
-                        return [originalRow + drow, originalCol + dcol]
+
+                        if drow > 0 and dcol > 0:
+                            return [originalRow + 1, originalCol + 1]
+                        elif drow == 0 and dcol > 0:
+                            return [originalRow, originalCol + 1] 
+                        elif drow > 0 and dcol == 0:
+                            return [originalRow + 1, originalCol]
+                        elif drow < 0 and dcol < 0:
+                            return [originalRow - 1, originalCol - 1]
+                        elif drow == 0 and dcol < 0:
+                            return [originalRow, originalCol - 1]
+                        elif drow < 0 and dcol == 0:
+                            return [originalRow - 1, originalCol]
+                        elif drow > 0 and dcol < 0:
+                            return [originalRow + 1, originalCol - 1]
+                        elif drow < 0 and dcol > 0:
+                            return [originalRow - 1, originalCol + 1]
+                        else:
+                            print("You missed one")
+
 
         return [originalRow, originalCol]
-
-
-
-
-
-    # currentWolfPositionRow = WolfPosition[wolf][0]
-    # currentWolfPositionCol = WolfPosition[wolf][1]
-    # foundMove = False
-
-    # for drow in [-1, 0, +1]:
-    #     for dcol in [-1, 0, +1]: 
-    #         if foundMove: break
-            
-    #         elif (drow, dcol) != (0, 0):
-    #             for i in range(-200, 200):
-    #                 rowBeingChecked = currentWolfPositionRow + i*drow
-    #                 colBeingChecked = currentWolfPositionCol + i*dcol
-
-    #                 tempSheepPosition = SheepPosition
-    #                 if [rowBeingChecked, colBeingChecked] in tempSheepPosition:
-                        
-    #                     for sheep in range(len(tempSheepPosition)):
-    #                         if len(tempSheepPosition) > 0:
-    #                             # print(f"WOLF: {wolf}, WOLF POSITION: {WolfPosition[wolf][1]}")
-    #                             # print(f"TEMP SHEEP: {tempSheepPosition}")
-    #                             # print(f"SHEEP: {sheep}")
-    #                             # print(f"SHEEP: {sheep}, SHEEP POSITION 0: {tempSheepPosition[sheep][0]}")
-    #                             # print(f"SHEEP: {sheep}, SHEEP POSITION 1: {tempSheepPosition[sheep][1]}")
-    #                             if tempSheepPosition[sheep][0] - WolfPosition[wolf][0] < 1 and tempSheepPosition[sheep][1] - WolfPosition[wolf][1] < 1:
-    #                                 rowBeingChecked = tempSheepPosition[sheep][0]
-    #                                 colBeingChecked = tempSheepPosition[sheep][1]
-    #                                 tempSheepPosition.pop(sheep-1)
-    #                                 #print("ate the sheep", random.randint(0,100))
-    #                                 foundMove = True
-    #                                 break
-                                
-    #                             else:
-    #                                 WolfPosition[wolf][0] += (rowBeingChecked - WolfPosition[wolf][0])/5
-    #                                 WolfPosition[wolf][1] += (colBeingChecked - WolfPosition[wolf][1])/5
-    #                                 #print("IT", random.randint(0,100))
-           
-
-    #     if foundMove: break  
-
-    #     for _ in range(random.randrange(0,200)):
-    #         newWolfRow =  WolfPosition[wolf][0] + random.randrange(-1,2)
-    #         newWolfCol = WolfPosition[wolf][1] + random.randrange(-1,2)
-
-    #         #keeps the wolves within bounds of the grid
-    #         if app.margin + 12 < newWolfRow < app.gridWidth + 12 and app.margin + 12 < newWolfCol < app.gridHeight + 12:
-    #             WolfPosition[wolf][0] = newWolfRow
-    #             WolfPosition[wolf][1] = newWolfCol
-
-
-
 
 
 def drawWolves(app, canvas):
@@ -469,6 +439,13 @@ def drawWolves(app, canvas):
         [row, col] = WolfPosition[i]
         [row, col] = moveWolvesTowardSheep(row, col, app)
         WolfPosition[i] = [row, col]
+
+        #delete the sheep because the sheep was EATEN!
+        for i in range(len(SheepPosition)):
+            if SheepPosition[i] == [row, col]: 
+                SheepPosition.pop(i)
+                break
+
         #we don't need x1 and y1
         (x0, y0, x1, y1) = getCellBounds(app, row, col)
         x0 += 15
