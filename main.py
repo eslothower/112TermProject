@@ -56,8 +56,15 @@ def initializeAnimals(app):
                 if animalName not in globals()[key+'Names']: 
                     globals()[key+'Names'].add(animalName)
                     globals()[animalName] = eval(key+'()') 
-                    #globals()[key+'Position'].append([random.randrange((app.margin + 10), (app.width/2 + 5)), random.randrange(app.margin + 12, app.height-app.margin-12)])
-                    globals()[key+'Position'].append([random.randrange(0, app.rows), random.randrange(0, app.cols)])
+
+                    row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
+
+                    while app.cellColorsList[row][col] == 'blue':
+
+                        row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
+
+
+                    globals()[key+'Position'].append([row, col])
 
                     # print(f'This is {key.lower()} {animalName}')
                     print(f'This is the sheep position list now: {SheepPosition}')
