@@ -23,7 +23,9 @@ def roundHalfUp(d): #helper-fn
 ######################################################################
 #Animal Code
 ######################################################################
-
+import sys
+print(sys.version)
+print(sys.executable)
 wolfCount = 5
 sheepCount = 5
 
@@ -54,11 +56,12 @@ def initializeAnimals(app):
                 if animalName not in globals()[key+'Names']: 
                     globals()[key+'Names'].add(animalName)
                     globals()[animalName] = eval(key+'()') 
-                    globals()[key+'Position'].append([random.randrange((app.margin + 10), (app.width/2 + 5)), random.randrange(app.margin + 12, app.height-app.margin-12)])
+                    #globals()[key+'Position'].append([random.randrange((app.margin + 10), (app.width/2 + 5)), random.randrange(app.margin + 12, app.height-app.margin-12)])
+                    globals()[key+'Position'].append([random.randrange(0, app.rows), random.randrange(0, app.cols)])
 
                     # print(f'This is {key.lower()} {animalName}')
-                    # print(f'This is the sheep position list now: {SheepPosition}')
-                    # print(f'This is the wolf position list now: {WolfPosition}')
+                    print(f'This is the sheep position list now: {SheepPosition}')
+                    print(f'This is the wolf position list now: {WolfPosition}')
                     break
 
 
@@ -338,7 +341,7 @@ def getAddedWaterList(app, currentCellColorsList):
                             continue
                         else:
                             currentCellColorsList[rowBeingChecked][colBeingChecked] = 'blue'
-
+ 
                             for drowTwo in [-1, 0, +1]:
                                 for dcolTwo in [-1, 0, +1]: 
                                     if (drowTwo, dcolTwo) != (0, 0):
@@ -430,15 +433,22 @@ def moveWolvesTowardSheep(wolf, app):
 
 def drawWolves(app, canvas):
 
-    for wolf in range(len(WolfNames)): 
-        moveWolvesTowardSheep(wolf, app)
-        canvas.create_image(WolfPosition[wolf][0], WolfPosition[wolf][1], image=ImageTk.PhotoImage(app.wolfImage))  
+    for [row, col] in WolfPosition:
+        #we don't need x1 and y1
+        (x0, y0, x1, y1) = getCellBounds(app, row, col)
+        x0 += 15
+        y0 += 13
+        canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.wolfImage)) 
 
 def drawSheep(app, canvas):
 
-    for sheep in range(len(SheepPosition)): #display sheep after wolves because sheep are smaller. This ensures user can see sheep (unless size mutation of wolf, for example)
-        moveSheep(sheep, app)
-        canvas.create_image(SheepPosition[sheep][0], SheepPosition[sheep][1], image=ImageTk.PhotoImage(app.sheepImage)) 
+
+    for [row, col] in SheepPosition:
+        #we don't need x1 and y1
+        (x0, y0, x1, y1) = getCellBounds(app, row, col)
+        x0 += 15
+        y0 += 13
+        canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.sheepImage))
 
 
 def drawBoard(app, canvas):  
@@ -451,7 +461,7 @@ def drawBoard(app, canvas):
 def drawCell(app, canvas, row, col, color):
     (x0, y0, x1, y1) = getCellBounds(app, row, col)
     
-    canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline=color, width = 1)
+    canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline='black', width = 1)
 
 def drawGrassGrowthRateSlider(app, canvas):
     canvas.create_text(app.ggrTextX, app.ggrTextY, text=f"Grass Growth Rate: {app.ggrNum}", fill='black', font='Ariel 18')
@@ -547,8 +557,7 @@ def simulateScreen_mousePressed(app, event):
         animalCount = {'Wolf': wolfCount, 'Sheep': sheepCount}
         initializeAnimals(app)
 
-def mouseDragged(app, event):
-    print("*****")
+
 
 
 def simulateScreen_mouseDragged(app, event): 
