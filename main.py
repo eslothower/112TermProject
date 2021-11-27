@@ -53,7 +53,8 @@ def initializeAnimals(app):
             while True:
                 number = random.randrange(1000000000000)
                 animalName = '%s%s' % ([key], number)
-                if animalName not in globals()[key+'Names']: 
+                if animalName not in globals()[key+'Names']:
+
                     globals()[key+'Names'].add(animalName)
                     globals()[animalName] = eval(key+'()') 
 
@@ -372,67 +373,91 @@ def getAddedWaterList(app, currentCellColorsList):
 
 
 
-def moveSheep(sheep, app):
+def moveSheep(row, col, app):
 
-    for _ in range(random.randrange(0,200)):
+    drow = random.randrange(-1, 2) #-1, 0, or 1
+    dcol = random.randrange(-1, 2) #-1, 0, or 1
 
-        newSheepRow =  SheepPosition[sheep][0] + random.randrange(-1,2)
-        newSheepCol = SheepPosition[sheep][1] + random.randrange(-1,2)
+    while ((not(0 <= row + drow <= app.rows - 1)) or (not (0 <= col + dcol <= app.cols - 1))):
 
-        #keeps the sheep within bounds of the grid
-        if app.margin + 12 < newSheepRow < app.gridWidth + 12 and app.margin + 12 < newSheepCol < app.gridHeight + 12:
-            SheepPosition[sheep][0] = newSheepRow
-            SheepPosition[sheep][1] = newSheepCol
+        drow = random.randrange(-1, 2) #-1, 0, or 1
+        dcol = random.randrange(-1, 2) #-1, 0, or 1
+
+    return [row + drow, col + dcol]
 
 
-def moveWolvesTowardSheep(wolf, app):
-    currentWolfPositionRow = WolfPosition[wolf][0]
-    currentWolfPositionCol = WolfPosition[wolf][1]
-    foundMove = False
+def moveWolvesTowardSheep(row, col, app):
 
-    for drow in [-1, 0, +1]:
-        for dcol in [-1, 0, +1]: 
-            if foundMove: break
+    foundSheep = False
+    originalRow = row
+    originalCol = col
+    tempRow = row
+    tempCol = col
+    
+
+    while foundSheep == False:
             
-            elif (drow, dcol) != (0, 0):
-                for i in range(-200, 200):
-                    rowBeingChecked = currentWolfPositionRow + i*drow
-                    colBeingChecked = currentWolfPositionCol + i*dcol
+        for drow in [-1, 0, +1]:
+            for dcol in [-1, 0, +1]:
+                if (drow, dcol) != (0, 0):
+                    if [tempRow + drow, tempCol + dcol] in SheepPosition:
+                        print("YUP")
+                        foundSheep = True
+                        return [originalRow + drow, originalCol + dcol]
 
-                    tempSheepPosition = SheepPosition
-                    if [rowBeingChecked, colBeingChecked] in tempSheepPosition:
+        return [originalRow, originalCol]
+
+
+
+
+
+    # currentWolfPositionRow = WolfPosition[wolf][0]
+    # currentWolfPositionCol = WolfPosition[wolf][1]
+    # foundMove = False
+
+    # for drow in [-1, 0, +1]:
+    #     for dcol in [-1, 0, +1]: 
+    #         if foundMove: break
+            
+    #         elif (drow, dcol) != (0, 0):
+    #             for i in range(-200, 200):
+    #                 rowBeingChecked = currentWolfPositionRow + i*drow
+    #                 colBeingChecked = currentWolfPositionCol + i*dcol
+
+    #                 tempSheepPosition = SheepPosition
+    #                 if [rowBeingChecked, colBeingChecked] in tempSheepPosition:
                         
-                        for sheep in range(len(tempSheepPosition)):
-                            if len(tempSheepPosition) > 0:
-                                # print(f"WOLF: {wolf}, WOLF POSITION: {WolfPosition[wolf][1]}")
-                                # print(f"TEMP SHEEP: {tempSheepPosition}")
-                                # print(f"SHEEP: {sheep}")
-                                # print(f"SHEEP: {sheep}, SHEEP POSITION 0: {tempSheepPosition[sheep][0]}")
-                                # print(f"SHEEP: {sheep}, SHEEP POSITION 1: {tempSheepPosition[sheep][1]}")
-                                if tempSheepPosition[sheep][0] - WolfPosition[wolf][0] < 1 and tempSheepPosition[sheep][1] - WolfPosition[wolf][1] < 1:
-                                    rowBeingChecked = tempSheepPosition[sheep][0]
-                                    colBeingChecked = tempSheepPosition[sheep][1]
-                                    tempSheepPosition.pop(sheep-1)
-                                    #print("ate the sheep", random.randint(0,100))
-                                    foundMove = True
-                                    break
+    #                     for sheep in range(len(tempSheepPosition)):
+    #                         if len(tempSheepPosition) > 0:
+    #                             # print(f"WOLF: {wolf}, WOLF POSITION: {WolfPosition[wolf][1]}")
+    #                             # print(f"TEMP SHEEP: {tempSheepPosition}")
+    #                             # print(f"SHEEP: {sheep}")
+    #                             # print(f"SHEEP: {sheep}, SHEEP POSITION 0: {tempSheepPosition[sheep][0]}")
+    #                             # print(f"SHEEP: {sheep}, SHEEP POSITION 1: {tempSheepPosition[sheep][1]}")
+    #                             if tempSheepPosition[sheep][0] - WolfPosition[wolf][0] < 1 and tempSheepPosition[sheep][1] - WolfPosition[wolf][1] < 1:
+    #                                 rowBeingChecked = tempSheepPosition[sheep][0]
+    #                                 colBeingChecked = tempSheepPosition[sheep][1]
+    #                                 tempSheepPosition.pop(sheep-1)
+    #                                 #print("ate the sheep", random.randint(0,100))
+    #                                 foundMove = True
+    #                                 break
                                 
-                                else:
-                                    WolfPosition[wolf][0] += (rowBeingChecked - WolfPosition[wolf][0])/5
-                                    WolfPosition[wolf][1] += (colBeingChecked - WolfPosition[wolf][1])/5
-                                    #print("IT", random.randint(0,100))
+    #                             else:
+    #                                 WolfPosition[wolf][0] += (rowBeingChecked - WolfPosition[wolf][0])/5
+    #                                 WolfPosition[wolf][1] += (colBeingChecked - WolfPosition[wolf][1])/5
+    #                                 #print("IT", random.randint(0,100))
            
 
-        if foundMove: break  
+    #     if foundMove: break  
 
-        for _ in range(random.randrange(0,200)):
-            newWolfRow =  WolfPosition[wolf][0] + random.randrange(-1,2)
-            newWolfCol = WolfPosition[wolf][1] + random.randrange(-1,2)
+    #     for _ in range(random.randrange(0,200)):
+    #         newWolfRow =  WolfPosition[wolf][0] + random.randrange(-1,2)
+    #         newWolfCol = WolfPosition[wolf][1] + random.randrange(-1,2)
 
-            #keeps the wolves within bounds of the grid
-            if app.margin + 12 < newWolfRow < app.gridWidth + 12 and app.margin + 12 < newWolfCol < app.gridHeight + 12:
-                WolfPosition[wolf][0] = newWolfRow
-                WolfPosition[wolf][1] = newWolfCol
+    #         #keeps the wolves within bounds of the grid
+    #         if app.margin + 12 < newWolfRow < app.gridWidth + 12 and app.margin + 12 < newWolfCol < app.gridHeight + 12:
+    #             WolfPosition[wolf][0] = newWolfRow
+    #             WolfPosition[wolf][1] = newWolfCol
 
 
 
@@ -440,7 +465,10 @@ def moveWolvesTowardSheep(wolf, app):
 
 def drawWolves(app, canvas):
 
-    for [row, col] in WolfPosition:
+    for i in range(len(WolfPosition)):
+        [row, col] = WolfPosition[i]
+        [row, col] = moveWolvesTowardSheep(row, col, app)
+        WolfPosition[i] = [row, col]
         #we don't need x1 and y1
         (x0, y0, x1, y1) = getCellBounds(app, row, col)
         x0 += 15
@@ -450,7 +478,10 @@ def drawWolves(app, canvas):
 def drawSheep(app, canvas):
 
 
-    for [row, col] in SheepPosition:
+    for i in range(len(SheepPosition)):
+        [row, col] = SheepPosition[i]
+        [row, col] = moveSheep(row, col, app)
+        SheepPosition[i] = [row, col]
         #we don't need x1 and y1
         (x0, y0, x1, y1) = getCellBounds(app, row, col)
         x0 += 15
