@@ -399,8 +399,10 @@ def moveWolvesTowardSheep(row, col, app):
 
     while foundSheep == False:
         
-        for drow in range(-(app.rows), app.cols):
-            for dcol in range(-(app.rows), app.cols):
+        # for drow in range(-(app.rows), app.cols):
+        #     for dcol in range(-(app.rows), app.cols):
+        for drow in range(-8, 8):
+            for dcol in range(-8, 8):
                 if (drow, dcol) != (0, 0):
 
                     #We don't have to check whether or not the new row/col is
@@ -430,7 +432,17 @@ def moveWolvesTowardSheep(row, col, app):
                             print("You missed one")
 
 
-        return [originalRow, originalCol]
+        newDrow = random.randrange(-1, 2) #-1, 0, or 1
+        newDcol = random.randrange(-1, 2) #-1, 0, or 1
+
+        while ((not(0 <= row + newDrow <= app.rows - 1)) or 
+            (not (0 <= col + newDcol <= app.cols - 1)) or 
+            ([row + newDrow, col + newDcol] in WolfPosition)): #sheep won't step into a wolf
+
+            newDrow = random.randrange(-1, 2) #-1, 0, or 1
+            newDcol = random.randrange(-1, 2) #-1, 0, or 1
+
+        return [row + newDrow, col + newDcol]
 
 
 def drawWolves(app, canvas):
