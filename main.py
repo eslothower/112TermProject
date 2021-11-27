@@ -401,35 +401,34 @@ def moveWolvesTowardSheep(row, col, app):
         
         # for drow in range(-(app.rows), app.cols):
         #     for dcol in range(-(app.rows), app.cols):
-        for drow in range(-8, 8):
-            for dcol in range(-8, 8):
-                if (drow, dcol) != (0, 0):
+        if len(SheepPosition) > 0:
+            for drow in range(-8, 8):
+                for dcol in range(-8, 8):
+                    if (drow, dcol) != (0, 0):
 
-                    #We don't have to check whether or not the new row/col is
-                    #within the bounds of the grid or not because we do it 
-                    #already with the sheep. Therefore, if this boolean is True,
-                    #then we already know it's a valid move
-                    if [tempRow + drow, tempCol + dcol] in SheepPosition:
-                        foundSheep = True
+                        #We don't have to check whether or not the new row/col is
+                        #within the bounds of the grid or not because we do it 
+                        #already with the sheep. Therefore, if this boolean is True,
+                        #then we already know it's a valid move
+                        if [tempRow + drow, tempCol + dcol] in SheepPosition:
+                            foundSheep = True
 
-                        if drow > 0 and dcol > 0:
-                            return [originalRow + 1, originalCol + 1]
-                        elif drow == 0 and dcol > 0:
-                            return [originalRow, originalCol + 1] 
-                        elif drow > 0 and dcol == 0:
-                            return [originalRow + 1, originalCol]
-                        elif drow < 0 and dcol < 0:
-                            return [originalRow - 1, originalCol - 1]
-                        elif drow == 0 and dcol < 0:
-                            return [originalRow, originalCol - 1]
-                        elif drow < 0 and dcol == 0:
-                            return [originalRow - 1, originalCol]
-                        elif drow > 0 and dcol < 0:
-                            return [originalRow + 1, originalCol - 1]
-                        elif drow < 0 and dcol > 0:
-                            return [originalRow - 1, originalCol + 1]
-                        else:
-                            print("You missed one")
+                            if drow > 0 and dcol > 0:
+                                return [originalRow + 1, originalCol + 1]
+                            elif drow == 0 and dcol > 0:
+                                return [originalRow, originalCol + 1] 
+                            elif drow > 0 and dcol == 0:
+                                return [originalRow + 1, originalCol]
+                            elif drow < 0 and dcol < 0:
+                                return [originalRow - 1, originalCol - 1]
+                            elif drow == 0 and dcol < 0:
+                                return [originalRow, originalCol - 1]
+                            elif drow < 0 and dcol == 0:
+                                return [originalRow - 1, originalCol]
+                            elif drow > 0 and dcol < 0:
+                                return [originalRow + 1, originalCol - 1]
+                            elif drow < 0 and dcol > 0:
+                                return [originalRow - 1, originalCol + 1]
 
 
         newDrow = random.randrange(-1, 2) #-1, 0, or 1
@@ -530,7 +529,7 @@ def drawGraph(app, canvas):
             canvas.create_line(app.width/1.845, app.height/1.12, app.width/1.6, app.height/1.15, fill='red', width=4)
 
 def simulateScreen_redrawAll(app, canvas):
-    t = time.time()
+
     if app.runSim:
 
         drawBoard(app, canvas)
@@ -557,7 +556,7 @@ def simulateScreen_redrawAll(app, canvas):
     else:
         canvas.create_rectangle(app.width/1.885, app.height/1.1, app.width/1.315, app.height - app.margin + 10, fill='grey', outline='grey')
     canvas.create_text(app.width/1.545, app.height/1.06, text='End Current Simulation', font='Ariel 30', fill='white')
-    #print("Drawing time:", time.time() - t)
+
 
 def simulateScreen_mouseReleased(app, event): 
     app.ggrSliding = False
@@ -588,7 +587,6 @@ def simulateScreen_mousePressed(app, event):
 
 
 def simulateScreen_mouseDragged(app, event): 
-    t = time.time()
     print("Dragging", event.x, event.y)
     
 
@@ -678,12 +676,12 @@ def simulateScreen_mouseDragged(app, event):
 
     app.swpNum = int(((app.swpSliderTopX-app.swpLineTopX)/app.swpLineLength)*10)
 
-    global wolfCount
-    wolfCount = app.swpNum
-
     #1-10 as the scale is more readable for users, rather than 0-9
     if app.swpNum == 0: app.swpNum = 1
     elif app.swpNum == 9: app.swpNum = 10
+
+    global wolfCount
+    wolfCount = app.swpNum
 
     #Logic for Starting Sheep Population (ssp) slider
     ################################################
@@ -702,14 +700,13 @@ def simulateScreen_mouseDragged(app, event):
 
     app.sspNum = int(((app.sspSliderTopX-app.sspLineTopX)/app.sspLineLength)*10)
 
-    global sheepCount
-    sheepCount = app.sspNum
-
     #1-10 as the scale is more readable for users, rather than 0-9
     if app.sspNum == 0: app.sspNum = 1
     elif app.sspNum == 9: app.sspNum = 10
 
-    print(time.time() - t)
+    global sheepCount
+    sheepCount = app.sspNum
+
 
 
 runApp(width=1728, height=905)
