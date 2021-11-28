@@ -561,7 +561,7 @@ def drawGraph(app, canvas):
             canvas.create_line(app.width/1.845, app.height/1.12, app.width/1.6, app.height/1.15, fill='red', width=4)
 
 def simulateScreen_timerFired(app):
-    if len(WolfPosition) + len(SheepPosition) < 200:
+    if len(WolfPosition) + len(SheepPosition) < 150:
         wolvesToBeBorn = 0
         wolvesThatGaveBirth = 0
         for wolf in WolfNames:
