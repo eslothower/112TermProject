@@ -409,8 +409,8 @@ class App(object):
         try:
             app.redrawAll(app._canvas)
             hash2 = getHash(app) if app._mvcCheck else None
-            if (hash1 != hash2):
-                app._mvcViolation('you may not change the app state (the model) in redrawAll (the view)')
+            #if (hash1 != hash2):
+            #   app._mvcViolation('you may not change the app state (the model) in redrawAll (the view)')
         finally:
             app._canvas.inRedrawAll = False
         app._canvas.update()

@@ -1,15 +1,10 @@
-from cmu_112_graphics import *
 from Animal import *
-import random
 
 class Wolf(Animal):
 
-    def __init__(self):
-
-        if random.randrange(0,2) == random.randrange(0,2):
-
-            self.mutationStatus = True
-
-    def __repr__(self):
-        
+    def __repr__(self):        
         return(f'I am a wolf and my offspring rate is {self.offspringRate}')
+
+    def getMutationStatus(self):
+        return(f"This is the wolf's mutation status {self.mutationStatus}")
+    

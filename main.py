@@ -54,9 +54,19 @@ def initializeAnimals(app):
                 number = random.randrange(1000000000000)
                 animalName = '%s%s' % ([key], number)
                 if animalName not in globals()[key+'Names']:
-
+                    
+                    #Adds unique name to respective set
+                    #i.e. SheepNames or WolfNames
+                    #This ensures there will never be more than one instance 
+                    #with the same name
                     globals()[key+'Names'].add(animalName)
-                    globals()[animalName] = eval(key+'()') 
+
+                    #Actually initializes animal instance
+                    #i.e. wolf1 = Wolf()
+                    if key == 'Sheep':
+                        globals()[animalName] = eval(key+'(offspringRate=50)')  
+                    elif key == 'Wolf':
+                        globals()[animalName] = eval(key+'(offspringRate=150)')  
 
                     row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
@@ -67,9 +77,15 @@ def initializeAnimals(app):
 
                     globals()[key+'Position'].append([row, col])
 
-                    # print(f'This is {key.lower()} {animalName}')
-                    print(f'This is the sheep position list now: {SheepPosition}')
-                    print(f'This is the wolf position list now: {WolfPosition}')
+                    #print(f'This is {key.lower()}: {animalName}')
+                    # print(f'This is the sheep position list now: {SheepPosition}')
+                    # print(f'This is the wolf position list now: {WolfPosition}')
+
+                    #THIS IS HOW YOU ACCESS ANIMAL INSTANCES!!!
+                    #This is necessary since animal instances are dynamic for the sim
+                    # for animalInstance in WolfNames:
+                    #     print(globals()[animalInstance].getMutationStatus())
+
                     break
 
 
@@ -86,7 +102,7 @@ def appStarted(app):
     app.mode = "titleScreen"
     #app.mode = 'simulateScreen'
     app._root.resizable(False, False) #Contributed by Anita (TA)
-    app.timerDelay = 20 #usually 10
+    app.timerDelay = 90 #usually 10
     app.runSim = False
     app.stockSimWithOverlayWithTextImage = app.scaleImage(app.loadImage('assets/Modified/stockSimWithOverlayWithTextImage.png'), 1/2.04)
 
@@ -487,32 +503,48 @@ def drawBoard(app, canvas):
 def drawCell(app, canvas, row, col, color):
     (x0, y0, x1, y1) = getCellBounds(app, row, col)
     
-    canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline='black', width = 1)
+    canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline=color
+    , width = 1)
 
 def drawGrassGrowthRateSlider(app, canvas):
     canvas.create_text(app.ggrTextX, app.ggrTextY, text=f"Grass Growth Rate: {app.ggrNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.ggrLineTopX, app.ggrLineTopY, app.ggrLineBottomX, app.ggrLineBottomY, fill='grey', width=3)
-    canvas.create_rectangle(app.ggrSliderTopX, app.ggrSliderTopY, app.ggrSliderBottomX, app.ggrSliderBottomY, fill='black')
+    if app.runSim:
+        canvas.create_rectangle(app.ggrSliderTopX, app.ggrSliderTopY, app.ggrSliderBottomX, app.ggrSliderBottomY, fill='#cfcfcf')
+    else:
+        canvas.create_rectangle(app.ggrSliderTopX, app.ggrSliderTopY, app.ggrSliderBottomX, app.ggrSliderBottomY, fill='black')
 
 def drawWaterFallRateSlider(app, canvas):
     canvas.create_text(app.aawTextX, app.aawTextY, text=f"Average Amount of Water: {app.aawNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.aawLineTopX, app.aawLineTopY, app.aawLineBottomX, app.aawLineBottomY, fill='grey', width=3)
-    canvas.create_rectangle(app.aawSliderTopX, app.aawSliderTopY, app.aawSliderBottomX, app.aawSliderBottomY, fill='black')
+    if app.runSim:
+        canvas.create_rectangle(app.aawSliderTopX, app.aawSliderTopY, app.aawSliderBottomX, app.aawSliderBottomY, fill='#cfcfcf')
+    else:
+        canvas.create_rectangle(app.aawSliderTopX, app.aawSliderTopY, app.aawSliderBottomX, app.aawSliderBottomY, fill='black')
 
 def drawStartingWolfPopulationSlider(app, canvas):
     canvas.create_text(app.swpTextX, app.swpTextY, text=f"Starting Wolf Population: {app.swpNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.swpLineTopX, app.swpLineTopY, app.swpLineBottomX, app.swpLineBottomY, fill='grey', width=3)
-    canvas.create_rectangle(app.swpSliderTopX, app.swpSliderTopY, app.swpSliderBottomX, app.swpSliderBottomY, fill='black')
+    if app.runSim:
+        canvas.create_rectangle(app.swpSliderTopX, app.swpSliderTopY, app.swpSliderBottomX, app.swpSliderBottomY, fill='#cfcfcf')
+    else:
+        canvas.create_rectangle(app.swpSliderTopX, app.swpSliderTopY, app.swpSliderBottomX, app.swpSliderBottomY, fill='black')
 
 def drawStartingSheepPopulationSlider(app, canvas):
     canvas.create_text(app.sspTextX, app.sspTextY, text=f"Starting Sheep Population: {app.sspNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.sspLineTopX, app.sspLineTopY, app.sspLineBottomX, app.sspLineBottomY, fill='grey', width=3)
-    canvas.create_rectangle(app.sspSliderTopX, app.sspSliderTopY, app.sspSliderBottomX, app.sspSliderBottomY, fill='black')
+    if app.runSim: 
+        canvas.create_rectangle(app.sspSliderTopX, app.sspSliderTopY, app.sspSliderBottomX, app.sspSliderBottomY, fill='#cfcfcf')
+    else:
+        canvas.create_rectangle(app.sspSliderTopX, app.sspSliderTopY, app.sspSliderBottomX, app.sspSliderBottomY, fill='black')
 
 def drawFlowerGrowthRateSlider(app, canvas):
     canvas.create_text(app.fgrTextX, app.fgrTextY, text=f"Flower Growth Rate: {app.fgrNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.fgrLineTopX, app.fgrLineTopY, app.fgrLineBottomX, app.fgrLineBottomY, fill='grey', width=3)
-    canvas.create_rectangle(app.fgrSliderTopX, app.fgrSliderTopY, app.fgrSliderBottomX, app.fgrSliderBottomY, fill='black')
+    if app.runSim:
+        canvas.create_rectangle(app.fgrSliderTopX, app.fgrSliderTopY, app.fgrSliderBottomX, app.fgrSliderBottomY, fill='#cfcfcf')
+    else:
+        canvas.create_rectangle(app.fgrSliderTopX, app.fgrSliderTopY, app.fgrSliderBottomX, app.fgrSliderBottomY, fill='black')
 
 def drawGraph(app, canvas):
     canvas.create_rectangle(app.width/1.845, app.height/1.7, app.width - app.margin + 10, app.height/1.12, outline='black')
@@ -527,6 +559,100 @@ def drawGraph(app, canvas):
 
         if firstRun:
             canvas.create_line(app.width/1.845, app.height/1.12, app.width/1.6, app.height/1.15, fill='red', width=4)
+
+def simulateScreen_timerFired(app):
+
+    wolvesToBeBorn = 0
+    wolvesThatGaveBirth = 0
+    for wolf in WolfNames:
+
+        offspringCounter = globals()[wolf].getOffspringCounter()
+        offspringRate = globals()[wolf].getOffspringRate() 
+
+        if offspringCounter < offspringRate:
+            globals()[wolf].addOneToOffspringCounter()
+            
+        else:
+            if wolvesThatGaveBirth < len(WolfPosition):
+                wolvesToBeBorn += 1
+            
+            globals()[wolf].resetOffspringCounter()
+
+    for _ in range(wolvesToBeBorn):
+
+        
+
+        number = random.randrange(1000000000000)
+        animalName = '%s%s' % ('Wolf', number)
+        if animalName not in globals()['WolfNames']:
+            
+            #Adds unique name to respective set
+            #i.e. SheepNames or WolfNames
+            #This ensures there will never be more than one instance 
+            #with the same name
+            globals()['WolfNames'].add(animalName)
+
+            #Actually initializes animal instance
+            #i.e. wolf1 = Wolf()
+
+            globals()[animalName] = eval('Wolf'+'(offspringRate=150)')  
+
+            row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
+
+            while app.cellColorsList[row][col] == 'blue':
+
+                row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
+
+
+            globals()['WolfPosition'].append([row, col])
+
+
+    sheepToBeBorn = 0
+    sheepThatGaveBirth = 0
+    for sheep in SheepNames:
+
+        offspringCounter = globals()[sheep].getOffspringCounter()
+        offspringRate = globals()[sheep].getOffspringRate() 
+
+        if offspringCounter < offspringRate:
+            globals()[sheep].addOneToOffspringCounter()
+            
+        else:
+            if sheepThatGaveBirth < len(SheepPosition):
+                sheepToBeBorn += 1
+            globals()[sheep].resetOffspringCounter()
+
+    for _ in range(sheepToBeBorn):
+
+        
+
+        number = random.randrange(1000000000000)
+        animalName = '%s%s' % ('Sheep', number)
+        if animalName not in globals()['SheepNames']:
+            
+            #Adds unique name to respective set
+            #i.e. SheepNames or WolfNames
+            #This ensures there will never be more than one instance 
+            #with the same name
+            globals()['SheepNames'].add(animalName)
+
+            #Actually initializes animal instance
+            #i.e. wolf1 = Wolf()
+
+            globals()[animalName] = eval('Sheep'+'(offspringRate=50)')  
+
+            row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
+
+            while app.cellColorsList[row][col] == 'blue':
+
+                row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
+
+
+            globals()['SheepPosition'].append([row, col])
+
+                
+
+
 
 def simulateScreen_redrawAll(app, canvas):
 
@@ -557,6 +683,8 @@ def simulateScreen_redrawAll(app, canvas):
         canvas.create_rectangle(app.width/1.885, app.height/1.1, app.width/1.315, app.height - app.margin + 10, fill='grey', outline='grey')
     canvas.create_text(app.width/1.545, app.height/1.06, text='End Current Simulation', font='Ariel 30', fill='white')
 
+    
+
 
 def simulateScreen_mouseReleased(app, event): 
     app.ggrSliding = False
@@ -581,7 +709,13 @@ def simulateScreen_mousePressed(app, event):
         app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
         global animalCount
         animalCount = {'Wolf': wolfCount, 'Sheep': sheepCount}
+        for sheep in SheepNames:
+            print(globals()[sheep].getOffspringRate())
+        for wolf in WolfNames:
+            print(globals()[wolf].getOffspringRate())
+
         initializeAnimals(app)
+        
 
 
 
@@ -590,122 +724,123 @@ def simulateScreen_mouseDragged(app, event):
     print("Dragging", event.x, event.y)
     
 
-    #Logic for Grass Growth Rate (ggr) slider
-    ################################################
-    if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY < event.y < app.ggrSliderBottomY:
-        app.ggrSliding = True
+    if app.runSim == False: #prevents changin sliders during a running simulation
+        #Logic for Grass Growth Rate (ggr) slider
+        ################################################
+        if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY < event.y < app.ggrSliderBottomY:
+            app.ggrSliding = True
 
-    if app.ggrSliding and app.ggrLineTopX < event.x < app.ggrLineBottomX:
-        app.ggrSliderTopX = event.x
-        app.ggrSliderBottomX = app.ggrSliderTopX + 8
-    elif app.ggrSliding and event.x < app.ggrLineTopX:
-        app.ggrSliderTopX = app.ggrLineTopX
-        app.ggrSliderBottomX = app.ggrSliderTopX + 8
-    elif app.ggrSliding and app.ggrLineBottomX < event.x:
-        app.ggrSliderTopX = app.ggrLineBottomX
-        app.ggrSliderBottomX = app.ggrSliderTopX + 8
+        if app.ggrSliding and app.ggrLineTopX < event.x < app.ggrLineBottomX:
+            app.ggrSliderTopX = event.x
+            app.ggrSliderBottomX = app.ggrSliderTopX + 8
+        elif app.ggrSliding and event.x < app.ggrLineTopX:
+            app.ggrSliderTopX = app.ggrLineTopX
+            app.ggrSliderBottomX = app.ggrSliderTopX + 8
+        elif app.ggrSliding and app.ggrLineBottomX < event.x:
+            app.ggrSliderTopX = app.ggrLineBottomX
+            app.ggrSliderBottomX = app.ggrSliderTopX + 8
 
-    app.ggrNum = int(((app.ggrSliderTopX-app.ggrLineTopX)/app.ggrLineLength)*10)
+        app.ggrNum = int(((app.ggrSliderTopX-app.ggrLineTopX)/app.ggrLineLength)*10)
 
-    #1-10 as the scale is more readable for users, rather than 0-9
-    if app.ggrNum == 0: app.ggrNum = 1
-    elif app.ggrNum == 9: app.ggrNum = 10
+        #1-10 as the scale is more readable for users, rather than 0-9
+        if app.ggrNum == 0: app.ggrNum = 1
+        elif app.ggrNum == 9: app.ggrNum = 10
 
 
-    #Logic for Average Amount of Water (aaw) slider
-    ################################################
+        #Logic for Average Amount of Water (aaw) slider
+        ################################################
 
-    if app.aawSliderTopX <= event.x <= app.aawSliderBottomX and app.aawSliderTopY < event.y < app.aawSliderBottomY:
-        app.aawSliding = True
+        if app.aawSliderTopX <= event.x <= app.aawSliderBottomX and app.aawSliderTopY < event.y < app.aawSliderBottomY:
+            app.aawSliding = True
 
-    if app.aawSliding and app.aawLineTopX < event.x < app.aawLineBottomX:
-        app.aawSliderTopX = event.x
-        app.aawSliderBottomX = app.aawSliderTopX + 8
-    elif app.aawSliding and event.x < app.aawLineTopX:
-        app.aawSliderTopX = app.aawLineTopX
-        app.aawSliderBottomX = app.aawSliderTopX + 8
-    elif app.aawSliding and app.aawLineBottomX < event.x:
-        app.aawSliderTopX = app.aawLineBottomX
-        app.aawSliderBottomX = app.aawSliderTopX + 8
+        if app.aawSliding and app.aawLineTopX < event.x < app.aawLineBottomX:
+            app.aawSliderTopX = event.x
+            app.aawSliderBottomX = app.aawSliderTopX + 8
+        elif app.aawSliding and event.x < app.aawLineTopX:
+            app.aawSliderTopX = app.aawLineTopX
+            app.aawSliderBottomX = app.aawSliderTopX + 8
+        elif app.aawSliding and app.aawLineBottomX < event.x:
+            app.aawSliderTopX = app.aawLineBottomX
+            app.aawSliderBottomX = app.aawSliderTopX + 8
 
-    app.aawNum = int(((app.aawSliderTopX-app.aawLineTopX)/app.aawLineLength)*10)
+        app.aawNum = int(((app.aawSliderTopX-app.aawLineTopX)/app.aawLineLength)*10)
 
-    #1-10 as the scale is more readable for users, rather than 0-9
-    if app.aawNum in [0,1,2,3]: 
-        app.aawNum = 1
-    elif app.aawNum in [4,5,6]: 
-        app.aawNum = 2
-    elif app.aawNum in [7,8,9,10]:
-        app.aawNum = 3
+        #1-10 as the scale is more readable for users, rather than 0-9
+        if app.aawNum in [0,1,2,3]: 
+            app.aawNum = 1
+        elif app.aawNum in [4,5,6]: 
+            app.aawNum = 2
+        elif app.aawNum in [7,8,9,10]:
+            app.aawNum = 3
 
-    #Logic for Flower Growth Rate (fgr) slider
-    ################################################
-    if app.fgrSliderTopX <= event.x <= app.fgrSliderBottomX and app.fgrSliderTopY < event.y < app.fgrSliderBottomY:
-        app.fgrSliding = True
+        #Logic for Flower Growth Rate (fgr) slider
+        ################################################
+        if app.fgrSliderTopX <= event.x <= app.fgrSliderBottomX and app.fgrSliderTopY < event.y < app.fgrSliderBottomY:
+            app.fgrSliding = True
 
-    if app.fgrSliding and app.fgrLineTopX < event.x < app.fgrLineBottomX:
-        app.fgrSliderTopX = event.x
-        app.fgrSliderBottomX = app.fgrSliderTopX + 8
-    elif app.fgrSliding and event.x < app.fgrLineTopX:
-        app.fgrSliderTopX = app.fgrLineTopX
-        app.fgrSliderBottomX = app.fgrSliderTopX + 8
-    elif app.fgrSliding and app.fgrLineBottomX < event.x:
-        app.fgrSliderTopX = app.fgrLineBottomX
-        app.fgrSliderBottomX = app.fgrSliderTopX + 8
+        if app.fgrSliding and app.fgrLineTopX < event.x < app.fgrLineBottomX:
+            app.fgrSliderTopX = event.x
+            app.fgrSliderBottomX = app.fgrSliderTopX + 8
+        elif app.fgrSliding and event.x < app.fgrLineTopX:
+            app.fgrSliderTopX = app.fgrLineTopX
+            app.fgrSliderBottomX = app.fgrSliderTopX + 8
+        elif app.fgrSliding and app.fgrLineBottomX < event.x:
+            app.fgrSliderTopX = app.fgrLineBottomX
+            app.fgrSliderBottomX = app.fgrSliderTopX + 8
 
-    app.fgrNum = int(((app.fgrSliderTopX-app.fgrLineTopX)/app.fgrLineLength)*10)
+        app.fgrNum = int(((app.fgrSliderTopX-app.fgrLineTopX)/app.fgrLineLength)*10)
 
-    #1-10 as the scale is more readable for users, rather than 0-9
-    if app.fgrNum == 0: app.fgrNum = 1
-    elif app.fgrNum == 9: app.fgrNum = 10
+        #1-10 as the scale is more readable for users, rather than 0-9
+        if app.fgrNum == 0: app.fgrNum = 1
+        elif app.fgrNum == 9: app.fgrNum = 10
 
-    #Logic for Starting Wolf Population (swp) slider
-    ################################################
-    if app.swpSliderTopX <= event.x <= app.swpSliderBottomX and app.swpSliderTopY < event.y < app.swpSliderBottomY:
-        app.swpSliding = True
+        #Logic for Starting Wolf Population (swp) slider
+        ################################################
+        if app.swpSliderTopX <= event.x <= app.swpSliderBottomX and app.swpSliderTopY < event.y < app.swpSliderBottomY:
+            app.swpSliding = True
 
-    if app.swpSliding and app.swpLineTopX < event.x < app.swpLineBottomX:
-        app.swpSliderTopX = event.x
-        app.swpSliderBottomX = app.swpSliderTopX + 8
-    elif app.swpSliding and event.x < app.swpLineTopX:
-        app.swpSliderTopX = app.swpLineTopX
-        app.swpSliderBottomX = app.swpSliderTopX + 8
-    elif app.swpSliding and app.swpLineBottomX < event.x:
-        app.swpSliderTopX = app.swpLineBottomX
-        app.swpSliderBottomX = app.swpSliderTopX + 8
+        if app.swpSliding and app.swpLineTopX < event.x < app.swpLineBottomX:
+            app.swpSliderTopX = event.x
+            app.swpSliderBottomX = app.swpSliderTopX + 8
+        elif app.swpSliding and event.x < app.swpLineTopX:
+            app.swpSliderTopX = app.swpLineTopX
+            app.swpSliderBottomX = app.swpSliderTopX + 8
+        elif app.swpSliding and app.swpLineBottomX < event.x:
+            app.swpSliderTopX = app.swpLineBottomX
+            app.swpSliderBottomX = app.swpSliderTopX + 8
 
-    app.swpNum = int(((app.swpSliderTopX-app.swpLineTopX)/app.swpLineLength)*10)
+        app.swpNum = int(((app.swpSliderTopX-app.swpLineTopX)/app.swpLineLength)*10)
 
-    #1-10 as the scale is more readable for users, rather than 0-9
-    if app.swpNum == 0: app.swpNum = 1
-    elif app.swpNum == 9: app.swpNum = 10
+        #1-10 as the scale is more readable for users, rather than 0-9
+        if app.swpNum == 0: app.swpNum = 1
+        elif app.swpNum == 9: app.swpNum = 10
 
-    global wolfCount
-    wolfCount = app.swpNum
+        global wolfCount
+        wolfCount = app.swpNum
 
-    #Logic for Starting Sheep Population (ssp) slider
-    ################################################
-    if app.sspSliderTopX <= event.x <= app.sspSliderBottomX and app.sspSliderTopY < event.y < app.sspSliderBottomY:
-        app.sspSliding  = True
+        #Logic for Starting Sheep Population (ssp) slider
+        ################################################
+        if app.sspSliderTopX <= event.x <= app.sspSliderBottomX and app.sspSliderTopY < event.y < app.sspSliderBottomY:
+            app.sspSliding  = True
 
-    if app.sspSliding and app.sspLineTopX < event.x < app.sspLineBottomX:
-        app.sspSliderTopX = event.x
-        app.sspSliderBottomX = app.sspSliderTopX + 8
-    elif app.sspSliding and event.x < app.sspLineTopX:
-        app.sspSliderTopX = app.sspLineTopX
-        app.sspSliderBottomX = app.sspSliderTopX + 8
-    elif app.sspSliding and app.sspLineBottomX < event.x:
-        app.sspSliderTopX = app.sspLineBottomX
-        app.sspSliderBottomX = app.sspSliderTopX + 8
+        if app.sspSliding and app.sspLineTopX < event.x < app.sspLineBottomX:
+            app.sspSliderTopX = event.x
+            app.sspSliderBottomX = app.sspSliderTopX + 8
+        elif app.sspSliding and event.x < app.sspLineTopX:
+            app.sspSliderTopX = app.sspLineTopX
+            app.sspSliderBottomX = app.sspSliderTopX + 8
+        elif app.sspSliding and app.sspLineBottomX < event.x:
+            app.sspSliderTopX = app.sspLineBottomX
+            app.sspSliderBottomX = app.sspSliderTopX + 8
 
-    app.sspNum = int(((app.sspSliderTopX-app.sspLineTopX)/app.sspLineLength)*10)
+        app.sspNum = int(((app.sspSliderTopX-app.sspLineTopX)/app.sspLineLength)*10)
 
-    #1-10 as the scale is more readable for users, rather than 0-9
-    if app.sspNum == 0: app.sspNum = 1
-    elif app.sspNum == 9: app.sspNum = 10
+        #1-10 as the scale is more readable for users, rather than 0-9
+        if app.sspNum == 0: app.sspNum = 1
+        elif app.sspNum == 9: app.sspNum = 10
 
-    global sheepCount
-    sheepCount = app.sspNum
+        global sheepCount
+        sheepCount = app.sspNum
 
 
 
