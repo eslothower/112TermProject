@@ -561,95 +561,94 @@ def drawGraph(app, canvas):
             canvas.create_line(app.width/1.845, app.height/1.12, app.width/1.6, app.height/1.15, fill='red', width=4)
 
 def simulateScreen_timerFired(app):
+    if len(WolfPosition) + len(SheepPosition) < 200:
+        wolvesToBeBorn = 0
+        wolvesThatGaveBirth = 0
+        for wolf in WolfNames:
 
-    wolvesToBeBorn = 0
-    wolvesThatGaveBirth = 0
-    for wolf in WolfNames:
+            offspringCounter = globals()[wolf].getOffspringCounter()
+            offspringRate = globals()[wolf].getOffspringRate() 
 
-        offspringCounter = globals()[wolf].getOffspringCounter()
-        offspringRate = globals()[wolf].getOffspringRate() 
+            if offspringCounter < offspringRate:
+                globals()[wolf].addOneToOffspringCounter()
+                
+            else:
+                if wolvesThatGaveBirth < len(WolfPosition):
+                    wolvesToBeBorn += 1
+                
+                globals()[wolf].resetOffspringCounter()
 
-        if offspringCounter < offspringRate:
-            globals()[wolf].addOneToOffspringCounter()
+        for _ in range(wolvesToBeBorn):
+
             
-        else:
-            if wolvesThatGaveBirth < len(WolfPosition):
-                wolvesToBeBorn += 1
-            
-            globals()[wolf].resetOffspringCounter()
 
-    for _ in range(wolvesToBeBorn):
+            number = random.randrange(1000000000000)
+            animalName = '%s%s' % ('Wolf', number)
+            if animalName not in globals()['WolfNames']:
+                
+                #Adds unique name to respective set
+                #i.e. SheepNames or WolfNames
+                #This ensures there will never be more than one instance 
+                #with the same name
+                globals()['WolfNames'].add(animalName)
 
-        
+                #Actually initializes animal instance
+                #i.e. wolf1 = Wolf()
 
-        number = random.randrange(1000000000000)
-        animalName = '%s%s' % ('Wolf', number)
-        if animalName not in globals()['WolfNames']:
-            
-            #Adds unique name to respective set
-            #i.e. SheepNames or WolfNames
-            #This ensures there will never be more than one instance 
-            #with the same name
-            globals()['WolfNames'].add(animalName)
-
-            #Actually initializes animal instance
-            #i.e. wolf1 = Wolf()
-
-            globals()[animalName] = eval('Wolf'+'(offspringRate=150)')  
-
-            row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
-
-            while app.cellColorsList[row][col] == 'blue':
+                globals()[animalName] = eval('Wolf'+'(offspringRate=150)')  
 
                 row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
+                while app.cellColorsList[row][col] == 'blue':
 
-            globals()['WolfPosition'].append([row, col])
+                    row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
 
-    sheepToBeBorn = 0
-    sheepThatGaveBirth = 0
-    for sheep in SheepNames:
+                globals()['WolfPosition'].append([row, col])
 
-        offspringCounter = globals()[sheep].getOffspringCounter()
-        offspringRate = globals()[sheep].getOffspringRate() 
 
-        if offspringCounter < offspringRate:
-            globals()[sheep].addOneToOffspringCounter()
+        sheepToBeBorn = 0
+        sheepThatGaveBirth = 0
+        for sheep in SheepNames:
+
+            offspringCounter = globals()[sheep].getOffspringCounter()
+            offspringRate = globals()[sheep].getOffspringRate() 
+
+            if offspringCounter < offspringRate:
+                globals()[sheep].addOneToOffspringCounter()
+                
+            else:
+                if sheepThatGaveBirth < len(SheepPosition):
+                    sheepToBeBorn += 1
+                globals()[sheep].resetOffspringCounter()
+
+        for _ in range(sheepToBeBorn):
+
             
-        else:
-            if sheepThatGaveBirth < len(SheepPosition):
-                sheepToBeBorn += 1
-            globals()[sheep].resetOffspringCounter()
 
-    for _ in range(sheepToBeBorn):
+            number = random.randrange(1000000000000)
+            animalName = '%s%s' % ('Sheep', number)
+            if animalName not in globals()['SheepNames']:
+                
+                #Adds unique name to respective set
+                #i.e. SheepNames or WolfNames
+                #This ensures there will never be more than one instance 
+                #with the same name
+                globals()['SheepNames'].add(animalName)
 
-        
+                #Actually initializes animal instance
+                #i.e. wolf1 = Wolf()
 
-        number = random.randrange(1000000000000)
-        animalName = '%s%s' % ('Sheep', number)
-        if animalName not in globals()['SheepNames']:
-            
-            #Adds unique name to respective set
-            #i.e. SheepNames or WolfNames
-            #This ensures there will never be more than one instance 
-            #with the same name
-            globals()['SheepNames'].add(animalName)
-
-            #Actually initializes animal instance
-            #i.e. wolf1 = Wolf()
-
-            globals()[animalName] = eval('Sheep'+'(offspringRate=50)')  
-
-            row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
-
-            while app.cellColorsList[row][col] == 'blue':
+                globals()[animalName] = eval('Sheep'+'(offspringRate=50)')  
 
                 row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
+                while app.cellColorsList[row][col] == 'blue':
 
-            globals()['SheepPosition'].append([row, col])
+                    row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
+
+                globals()['SheepPosition'].append([row, col])
                 
 
 
