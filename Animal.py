@@ -2,6 +2,7 @@ import random
 
 class Animal(object):
 
+    #default values for each animal type
     def __init__(self, offspringRate=0, hunger=0, hungerLevel=0, thirst=0, thirstLevel=0, lifespan=0, age=0, mutationRate=0, mutationStatus=None, nutritionalValue=0, speed=0, offspringCounter=0):
         self.offspringRate = offspringRate
         self.hunger = hunger
@@ -16,13 +17,10 @@ class Animal(object):
         self.speed = speed
         self.offspringCounter = offspringCounter
 
-
+        #Random chance for mutation
         if random.randrange(0,3) == random.randrange(0,3):
 
             self.mutationStatus = True
-
-    def __repr__(self):
-        return("I am an animal object")
 
     def getOffspringCounter(self):
         return self.offspringCounter

@@ -1,5 +1,17 @@
 #Created by Eli Slothower (Andrew ID: eslothow)
 
+#main.py is the primary file containing most of the code used for EcoSim.
+#It contains the code for the following processes:
+#   - Terrain Generation
+#   - User input (i.e. the sliders), which directly impacts the simulation
+#   - The custom-built graph which displays the current populations for each 
+#     animal type (i.e. sheep and wolves)
+#   - Animal attribute modifications (i.e., when it's time to give birth to 
+#     offspring, or when an animal's health decreases since they haven't 
+#     eaten in awhile, etc)
+#   - Animal movement (i.e. when the wolves track the sheep)
+#   - The drawing of the canvases (i.e. the title screen and the sim screen)
+
 ######################################################################
 #Imports
 ######################################################################
@@ -10,33 +22,40 @@ from Sheep import *
 from Wolf import *
 import random
 import decimal
-import time
 
 #from the HW assignments on https://www.cs.cmu.edu/~112/index.html
 def roundHalfUp(d): #helper-fn
-    # Round to nearest with ties going away from zero.
     rounding = decimal.ROUND_HALF_UP
-    # See other rounding options here:
-    # https://docs.python.org/3/library/decimal.html#rounding-modes
     return int(decimal.Decimal(d).to_integral_value(rounding=rounding))
 
 ######################################################################
 #Animal Code
 ######################################################################
-import sys
-print(sys.version)
-print(sys.executable)
+
+#The default amount for each animal type
 wolfCount = 5
 sheepCount = 5
 
+#A dictionary that keeps track of how many animals are 'alive' at once 
+#(i.e. on the screen)
 animalCount = {'Wolf': wolfCount, 'Sheep': sheepCount}
+
+#Uses sets for to ensure unique names, as well as for efficiency 
 SheepNames = set()
 WolfNames = set()
+
+#Keeps track of all the current 'alive' animals' positions on the grid
 SheepPosition = []
 WolfPosition = []
 
+
+#Initializes each animal instance with a unique name, provides them a position 
+#on the grid
 def initializeAnimals(app):
 
+    #Global variables... I know. This is necessary though because I need to 
+    #access these variables in certain functions that do not have access to the 
+    #attribute 'app'. This is why I cannot make these variables an 'app.' var.
     global SheepNames
     global WolfNames
     global SheepPosition 
@@ -51,8 +70,15 @@ def initializeAnimals(app):
         for _ in range(animalCount[key]):
             
             while True:
+
+                #a random number to put at the end of the instance's name
+                #(i.e. 'wolf8349'). This ensures a unique name for each instance
                 number = random.randrange(1000000000000)
+
+                #Creates a name with the animal type and number combined based
+                #off of the key of the dictionary, as well as the random number
                 animalName = '%s%s' % ([key], number)
+
                 if animalName not in globals()[key+'Names']:
                     
                     #Adds unique name to respective set
@@ -68,27 +94,15 @@ def initializeAnimals(app):
                     elif key == 'Wolf':
                         globals()[animalName] = eval(key+'(offspringRate=150)')  
 
+                    #Creates a random position that is not in water for the animal
                     row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
                     while app.cellColorsList[row][col] == 'blue':
 
                         row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
-
                     globals()[key+'Position'].append([row, col])
-
-                    #print(f'This is {key.lower()}: {animalName}')
-                    # print(f'This is the sheep position list now: {SheepPosition}')
-                    # print(f'This is the wolf position list now: {WolfPosition}')
-
-                    #THIS IS HOW YOU ACCESS ANIMAL INSTANCES!!!
-                    #This is necessary since animal instances are dynamic for the sim
-                    # for animalInstance in WolfNames:
-                    #     print(globals()[animalInstance].getMutationStatus())
-
                     break
-
-
 
 ######################################################################
 #App Started
@@ -100,19 +114,21 @@ def appStarted(app):
     ###############################################
 
     app.mode = "titleScreen"
-    #app.mode = 'simulateScreen'
-    app._root.resizable(False, False) #Contributed by Anita (TA)
-    app.timerDelay = 90 #usually 10
-    app.runSim = False
-    app.stockSimWithOverlayWithTextImage = app.scaleImage(app.loadImage('assets/Modified/stockSimWithOverlayWithTextImage.png'), 1/2.04)
+    app._root.resizable(False, False) #Contributed by Anita (TA) on Piazza @4354
+    app.timerDelay = 90 
+    app.runSim = False #signifies whether the sim is running or not
 
-    #Code for terrain generation
+    #used for when the sim is paused
+    app.stockSimWithOverlayWithTextImage = app.scaleImage(app.loadImage(
+                'assets/Modified/stockSimWithOverlayWithTextImage.png'), 1/2.04)
+
+    #Code for grid/terrain generation
     ###############################################
     app.rows = 30
     app.cols = 30
     app.cellSize = 25
     app.margin = 25
-    app.gridWidth  = app.width//2 #this makes the grid go to the left side of the screen
+    app.gridWidth  = app.width//2 #this makes the grid go to the left side
     app.gridHeight = app.height - 2*app.margin
     app.colors = ['green', 'tan', 'blue']
     app.waterPuddles = random.randrange(3)
@@ -120,11 +136,12 @@ def appStarted(app):
     app.flowerColorOptions = ['pink', 'red', 'purple', 'yellow', 'orange']
     
 
-    #Code for animals
+    #Code for animal images
     ###############################################
-    #initializeAnimals(app)
-    app.wolfImage = app.scaleImage(app.loadImage('assets/Modified/black_wolf.png'), 1/10)
-    app.sheepImage = app.scaleImage(app.loadImage('assets/Modified/white_sheep.png'), 1/10)
+    app.wolfImage = app.scaleImage(app.loadImage(
+                                        'assets/Modified/black_wolf.png'), 1/10)
+    app.sheepImage = app.scaleImage(app.loadImage(
+                                       'assets/Modified/white_sheep.png'), 1/10)
 
 
     #Sliders
@@ -136,15 +153,18 @@ def appStarted(app):
     app.ggrSliding = False
     app.ggrNum = 5
 
+    #Label
     app.ggrTextX = app.width/1.65
     app.ggrTextY = app.margin
 
+    #Slider Line
     app.ggrLineTopX = app.ggrTextX - 100
     app.ggrLineTopY = app.ggrTextY + 30
     app.ggrLineBottomX = app.ggrTextX + 100
     app.ggrLineBottomY = app.ggrLineTopY
     app.ggrLineLength = app.ggrLineBottomX - app.ggrLineTopX
 
+    #Slider Box
     app.ggrSliderTopX = app.ggrLineTopX + (app.ggrLineLength/2) - 4
     app.ggrSliderTopY = app.ggrLineTopY - 10
     app.ggrSliderBottomX = app.ggrSliderTopX + 8
@@ -156,15 +176,18 @@ def appStarted(app):
     app.aawSliding = False
     app.aawNum = 2
 
+    #Label
     app.aawTextX = app.width/1.3
     app.aawTextY = app.margin
 
+    #Slider Line
     app.aawLineTopX = app.aawTextX - 100
     app.aawLineTopY = app.aawTextY + 30
     app.aawLineBottomX = app.aawTextX + 100
     app.aawLineBottomY = app.aawLineTopY
     app.aawLineLength = app.aawLineBottomX - app.aawLineTopX
 
+    #Slider Box
     app.aawSliderTopX = app.aawLineTopX + (app.aawLineLength/2) - 4
     app.aawSliderTopY = app.aawLineTopY - 10
     app.aawSliderBottomX = app.aawSliderTopX + 8
@@ -176,15 +199,18 @@ def appStarted(app):
     app.swpSliding = False
     app.swpNum = 5
 
+    #Label
     app.swpTextX = app.width/1.65
     app.swpTextY = app.height/4
 
+    #Slider Line
     app.swpLineTopX = app.swpTextX - 100
     app.swpLineTopY = app.swpTextY + 30
     app.swpLineBottomX = app.swpTextX + 100
     app.swpLineBottomY = app.swpLineTopY
     app.swpLineLength = app.swpLineBottomX - app.swpLineTopX
 
+    #Slider Box
     app.swpSliderTopX = app.swpLineTopX + (app.swpLineLength/2) - 4
     app.swpSliderTopY = app.swpLineTopY - 10
     app.swpSliderBottomX = app.swpSliderTopX + 8
@@ -196,15 +222,18 @@ def appStarted(app):
     app.sspSliding = False
     app.sspNum = 5
 
+    #Label
     app.sspTextX = app.width/1.3
     app.sspTextY = app.height/4
 
+    #Slider Line
     app.sspLineTopX = app.sspTextX - 100
     app.sspLineTopY = app.sspTextY + 30
     app.sspLineBottomX = app.sspTextX + 100
     app.sspLineBottomY = app.sspLineTopY
     app.sspLineLength = app.sspLineBottomX - app.sspLineTopX
 
+    #Slider Box
     app.sspSliderTopX = app.sspLineTopX + (app.sspLineLength/2) - 4
     app.sspSliderTopY = app.sspLineTopY - 10
     app.sspSliderBottomX = app.sspSliderTopX + 8
@@ -216,47 +245,32 @@ def appStarted(app):
     app.fgrSliding = False
     app.fgrNum = 5
 
+    #Label
     app.fgrTextX = app.width/1.08
     app.fgrTextY = app.margin
 
+    #Slider Line
     app.fgrLineTopX = app.fgrTextX - 100
     app.fgrLineTopY = app.fgrTextY + 30
     app.fgrLineBottomX = app.fgrTextX + 100
     app.fgrLineBottomY = app.fgrLineTopY
     app.fgrLineLength = app.fgrLineBottomX - app.fgrLineTopX
 
+    #Slider Box
     app.fgrSliderTopX = app.fgrLineTopX + (app.fgrLineLength/2) - 4
     app.fgrSliderTopY = app.fgrLineTopY - 10
     app.fgrSliderBottomX = app.fgrSliderTopX + 8
     app.fgrSliderBottomY = app.fgrLineTopY + 10
 
-
     #Requires variables from above, so must go here
-    app.cellColorsList = getCellColorsList(app, app.rows, app.cols)    
-######################################################################
-#Title Screen
-######################################################################
-
-def titleScreen_redrawAll(app, canvas):
-    canvas.create_text(app.width//2, app.height/5, text="EcoSim", fill="black", font="Ariel 100")
-    canvas.create_rectangle(app.width/2.5, app.height/1.9, app.width/1.65, app.height/2.3, fill='black')
-    canvas.create_text(app.width//2, app.height/2.1, text="Enter Simulation", fill='white', font='Ariel 40')
-    canvas.create_text(app.width//2, app.height/1.025, text="Created by Eli Slothower, Carnegie Mellon University class of 2025", fill='black', font='Ariel 20')
-
-def titleScreen_mousePressed(app, event):
-    topLeftXTitleScreen = app.width/2.5
-    topLeftYTitleScreen = app.height/1.9
-    bottomRightXTitleScreen = app.width/1.65
-    bottomRightYTitleScreen = app.height/2.3
-
-    if(topLeftXTitleScreen < event.x < bottomRightXTitleScreen and bottomRightYTitleScreen < event.y < topLeftYTitleScreen):
-        app.mode = 'simulateScreen'
+    app.cellColorsList = getCellColorsList(app)  
 
 ######################################################################
-#Drawing grid
+#Terrain Generation
 ######################################################################
 
-def getCellColorsList(app, rows, cols):
+#creates a 2D list that represents the terrain in grid-form
+def getCellColorsList(app):
     cellColorsList = [['green' for _ in range(app.rows)] for _ in range(app.cols)]
     cellColorsList = getAddedBareSpotsList(app, cellColorsList)
     cellColorsList = getAddedWaterList(app, cellColorsList)
@@ -264,16 +278,10 @@ def getCellColorsList(app, rows, cols):
     
     return cellColorsList
 
-def getCellBounds(app, row, col):
-
-
-    x0 = app.margin + app.gridWidth * col / app.cols
-    x1 = app.margin + app.gridWidth * (col+1) / app.cols
-    y0 = app.margin + app.gridHeight * row / app.rows
-    y1 = app.margin + app.gridHeight * (row+1) / app.rows
-    return (x0, y0, x1, y1)
-
+#Adds bare spots to the terrain
 def getAddedBareSpotsList(app, currentCellColorsList):
+
+    #Changes the amount of bare spots added depending on the slider (user input)
     if app.ggrNum == 10:
         numberOfBareSpots = 0
     elif app.ggrNum == 9:
@@ -295,7 +303,7 @@ def getAddedBareSpotsList(app, currentCellColorsList):
     elif app.ggrNum == 1:
         numberOfBareSpots = (app.rows*app.cols)
 
-
+    #Makes the cells tan according to the numberOfBareSpots
     if app.ggrNum == 1:
         currentCellColorsList = [['tan' for _ in range(app.rows)] for _ in range(app.cols)]
     else:
@@ -307,9 +315,10 @@ def getAddedBareSpotsList(app, currentCellColorsList):
 
     return currentCellColorsList
 
-
+#Adds flowers to the terrain
 def getAddedFlowersList(app, currentCellColorsList):
 
+    #Changes the amount of flowers added depending on the slider (user input)
     if app.fgrNum == 10:
         numberOfFlowers = 150
     elif app.fgrNum == 9:
@@ -331,6 +340,7 @@ def getAddedFlowersList(app, currentCellColorsList):
     elif app.fgrNum == 1:
         numberOfFlowers = 2
 
+    #Makes the cells a random flowerColor according to the numberOfFlowers
     for _ in range(numberOfFlowers + 1):
         flowerColor = app.flowerColorOptions[random.randrange(0,5)]
         row = random.randrange(app.rows)
@@ -343,6 +353,7 @@ def getAddedFlowersList(app, currentCellColorsList):
 
     return currentCellColorsList
 
+#Adds bodies of water to the terrain
 def getAddedWaterList(app, currentCellColorsList):
     numberOfBodiesOfWater = app.aawNum
     
@@ -387,8 +398,11 @@ def getAddedWaterList(app, currentCellColorsList):
 
     return currentCellColorsList
 
+######################################################################
+#Animal movement
+######################################################################
 
-
+#Moves sheep in a semi-random order, ensuring that they don't move into a sheep
 def moveSheep(row, col, app):
 
     drow = random.randrange(-1, 2) #-1, 0, or 1
@@ -403,7 +417,7 @@ def moveSheep(row, col, app):
 
     return [row + drow, col + dcol]
 
-
+#Enables wolves to track sheep positions, then move towards sheep
 def moveWolvesTowardSheep(row, col, app):
 
     foundSheep = False
@@ -415,15 +429,18 @@ def moveWolvesTowardSheep(row, col, app):
 
     while foundSheep == False:
         
-        # for drow in range(-(app.rows), app.cols):
-        #     for dcol in range(-(app.rows), app.cols):
         if len(SheepPosition) > 0:
+
+            #The two following ranges define how large the radius is for the 
+            #wolve's sheep-detection. The larger these two ranges are, the 
+            #further the wolves can detect the sheep
             for drow in range(-8, 8):
                 for dcol in range(-8, 8):
                     if (drow, dcol) != (0, 0):
 
-                        #We don't have to check whether or not the new row/col is
-                        #within the bounds of the grid or not because we do it 
+                        #Code that tracks the sheep positions
+                        #We don't have to check whether or not the new row/col 
+                        #is within the bounds of the grid or not because we do it 
                         #already with the sheep. Therefore, if this boolean is True,
                         #then we already know it's a valid move
                         if [tempRow + drow, tempCol + dcol] in SheepPosition:
@@ -446,19 +463,47 @@ def moveWolvesTowardSheep(row, col, app):
                             elif drow < 0 and dcol > 0:
                                 return [originalRow - 1, originalCol + 1]
 
-
+        #Changes the wolves' direction according to where the nearest sheep is
         newDrow = random.randrange(-1, 2) #-1, 0, or 1
         newDcol = random.randrange(-1, 2) #-1, 0, or 1
 
         while ((not(0 <= row + newDrow <= app.rows - 1)) or 
             (not (0 <= col + newDcol <= app.cols - 1)) or 
-            ([row + newDrow, col + newDcol] in WolfPosition)): #sheep won't step into a wolf
+            ([row + newDrow, col + newDcol] in WolfPosition)): #wolf won't step into a wolf
 
             newDrow = random.randrange(-1, 2) #-1, 0, or 1
             newDcol = random.randrange(-1, 2) #-1, 0, or 1
 
         return [row + newDrow, col + newDcol]
 
+######################################################################
+#Draws grid
+######################################################################
+
+def getCellBounds(app, row, col):
+
+    x0 = app.margin + app.gridWidth * col / app.cols
+    x1 = app.margin + app.gridWidth * (col+1) / app.cols
+    y0 = app.margin + app.gridHeight * row / app.rows
+    y1 = app.margin + app.gridHeight * (row+1) / app.rows
+    return (x0, y0, x1, y1)
+
+def drawCell(app, canvas, row, col, color):
+
+    (x0, y0, x1, y1) = getCellBounds(app, row, col)
+    canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline=color, width = 1)
+
+def drawBoard(app, canvas):  
+
+    canvas.create_rectangle(app.margin, app.margin, (app.width//2) + app.margin, app.height-app.margin, outline='black', width=20)
+    for row in range(app.rows):
+        for col in range(app.cols):
+            color = app.cellColorsList[row][col]
+            drawCell(app, canvas, row, col, color)
+
+######################################################################
+#Draws animals
+######################################################################
 
 def drawWolves(app, canvas):
 
@@ -481,7 +526,6 @@ def drawWolves(app, canvas):
 
 def drawSheep(app, canvas):
 
-
     for i in range(len(SheepPosition)):
         [row, col] = SheepPosition[i]
         [row, col] = moveSheep(row, col, app)
@@ -492,23 +536,15 @@ def drawSheep(app, canvas):
         y0 += 13
         canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.sheepImage))
 
-
-def drawBoard(app, canvas):  
-    canvas.create_rectangle(app.margin, app.margin, (app.width//2) + app.margin, app.height-app.margin, outline='black', width=20)
-    for row in range(app.rows):
-        for col in range(app.cols):
-            color = app.cellColorsList[row][col]
-            drawCell(app, canvas, row, col, color)
-
-def drawCell(app, canvas, row, col, color):
-    (x0, y0, x1, y1) = getCellBounds(app, row, col)
-    
-    canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline=color
-    , width = 1)
+######################################################################
+#Draws sliders
+######################################################################
 
 def drawGrassGrowthRateSlider(app, canvas):
     canvas.create_text(app.ggrTextX, app.ggrTextY, text=f"Grass Growth Rate: {app.ggrNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.ggrLineTopX, app.ggrLineTopY, app.ggrLineBottomX, app.ggrLineBottomY, fill='grey', width=3)
+
+    #Greys out sliders when the sim is running to signify that the slider cannot be used while the sim is running
     if app.runSim:
         canvas.create_rectangle(app.ggrSliderTopX, app.ggrSliderTopY, app.ggrSliderBottomX, app.ggrSliderBottomY, fill='#cfcfcf')
     else:
@@ -517,6 +553,8 @@ def drawGrassGrowthRateSlider(app, canvas):
 def drawWaterFallRateSlider(app, canvas):
     canvas.create_text(app.aawTextX, app.aawTextY, text=f"Average Amount of Water: {app.aawNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.aawLineTopX, app.aawLineTopY, app.aawLineBottomX, app.aawLineBottomY, fill='grey', width=3)
+
+    #Greys out sliders when the sim is running to signify that the slider cannot be used while the sim is running
     if app.runSim:
         canvas.create_rectangle(app.aawSliderTopX, app.aawSliderTopY, app.aawSliderBottomX, app.aawSliderBottomY, fill='#cfcfcf')
     else:
@@ -525,6 +563,8 @@ def drawWaterFallRateSlider(app, canvas):
 def drawStartingWolfPopulationSlider(app, canvas):
     canvas.create_text(app.swpTextX, app.swpTextY, text=f"Starting Wolf Population: {app.swpNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.swpLineTopX, app.swpLineTopY, app.swpLineBottomX, app.swpLineBottomY, fill='grey', width=3)
+
+    #Greys out sliders when the sim is running to signify that the slider cannot be used while the sim is running
     if app.runSim:
         canvas.create_rectangle(app.swpSliderTopX, app.swpSliderTopY, app.swpSliderBottomX, app.swpSliderBottomY, fill='#cfcfcf')
     else:
@@ -533,6 +573,8 @@ def drawStartingWolfPopulationSlider(app, canvas):
 def drawStartingSheepPopulationSlider(app, canvas):
     canvas.create_text(app.sspTextX, app.sspTextY, text=f"Starting Sheep Population: {app.sspNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.sspLineTopX, app.sspLineTopY, app.sspLineBottomX, app.sspLineBottomY, fill='grey', width=3)
+
+    #Greys out sliders when the sim is running to signify that the slider cannot be used while the sim is running
     if app.runSim: 
         canvas.create_rectangle(app.sspSliderTopX, app.sspSliderTopY, app.sspSliderBottomX, app.sspSliderBottomY, fill='#cfcfcf')
     else:
@@ -541,10 +583,16 @@ def drawStartingSheepPopulationSlider(app, canvas):
 def drawFlowerGrowthRateSlider(app, canvas):
     canvas.create_text(app.fgrTextX, app.fgrTextY, text=f"Flower Growth Rate: {app.fgrNum}", fill='black', font='Ariel 18')
     canvas.create_line(app.fgrLineTopX, app.fgrLineTopY, app.fgrLineBottomX, app.fgrLineBottomY, fill='grey', width=3)
+
+    #Greys out sliders when the sim is running to signify that the slider cannot be used while the sim is running
     if app.runSim:
         canvas.create_rectangle(app.fgrSliderTopX, app.fgrSliderTopY, app.fgrSliderBottomX, app.fgrSliderBottomY, fill='#cfcfcf')
     else:
         canvas.create_rectangle(app.fgrSliderTopX, app.fgrSliderTopY, app.fgrSliderBottomX, app.fgrSliderBottomY, fill='black')
+
+######################################################################
+#Draws graph
+######################################################################
 
 def drawGraph(app, canvas):
     canvas.create_rectangle(app.width/1.845, app.height/1.7, app.width - app.margin + 10, app.height/1.12, outline='black')
@@ -560,10 +608,40 @@ def drawGraph(app, canvas):
         if firstRun:
             canvas.create_line(app.width/1.845, app.height/1.12, app.width/1.6, app.height/1.15, fill='red', width=4)
 
+######################################################################
+#Title Screen Logic
+######################################################################
+
+def titleScreen_redrawAll(app, canvas):
+    canvas.create_text(app.width//2, app.height/5, text="EcoSim", fill="black", font="Ariel 100")
+    canvas.create_rectangle(app.width/2.5, app.height/1.9, app.width/1.65, app.height/2.3, fill='black')
+    canvas.create_text(app.width//2, app.height/2.1, text="Enter Simulation", fill='white', font='Ariel 40')
+    canvas.create_text(app.width//2, app.height/1.025, text="Created by Eli Slothower, Carnegie Mellon University class of 2025", fill='black', font='Ariel 20')
+
+def titleScreen_mousePressed(app, event):
+    topLeftXTitleScreen = app.width/2.5
+    topLeftYTitleScreen = app.height/1.9
+    bottomRightXTitleScreen = app.width/1.65
+    bottomRightYTitleScreen = app.height/2.3
+
+    if(topLeftXTitleScreen < event.x < bottomRightXTitleScreen and bottomRightYTitleScreen < event.y < topLeftYTitleScreen):
+        app.mode = 'simulateScreen'
+
+######################################################################
+#Simulate Screen Logic
+######################################################################
+
 def simulateScreen_timerFired(app):
-    if len(WolfPosition) + len(SheepPosition) < 150:
+
+    #Caps combined animal population at 150 to ensure good performance
+    if len(WolfPosition) + len(SheepPosition) < 150: 
+
         wolvesToBeBorn = 0
         wolvesThatGaveBirth = 0
+
+        #Declares that new offspring will be born whenever offspringCounter is 
+        #equal to that specific animal instance's offspringRate (as each animal 
+        #instance could have a different offspringRate due to species and/or mutation)
         for wolf in WolfNames:
 
             offspringCounter = globals()[wolf].getOffspringCounter()
@@ -578,9 +656,8 @@ def simulateScreen_timerFired(app):
                 
                 globals()[wolf].resetOffspringCounter()
 
+        #Initializes new wolf offspring
         for _ in range(wolvesToBeBorn):
-
-            
 
             number = random.randrange(1000000000000)
             animalName = '%s%s' % ('Wolf', number)
@@ -609,6 +686,10 @@ def simulateScreen_timerFired(app):
 
         sheepToBeBorn = 0
         sheepThatGaveBirth = 0
+
+        #Declares that new offspring will be born whenever offspringCounter is 
+        #equal to that specific animal instance's offspringRate (as each animal 
+        #instance could have a different offspringRate due to species and/or mutation)
         for sheep in SheepNames:
 
             offspringCounter = globals()[sheep].getOffspringCounter()
@@ -622,6 +703,7 @@ def simulateScreen_timerFired(app):
                     sheepToBeBorn += 1
                 globals()[sheep].resetOffspringCounter()
 
+        #Initializes new sheep offspring
         for _ in range(sheepToBeBorn):
 
             
@@ -637,7 +719,7 @@ def simulateScreen_timerFired(app):
                 globals()['SheepNames'].add(animalName)
 
                 #Actually initializes animal instance
-                #i.e. wolf1 = Wolf()
+                #i.e. sheep1 = Sheep()
 
                 globals()[animalName] = eval('Sheep'+'(offspringRate=50)')  
 
@@ -652,39 +734,8 @@ def simulateScreen_timerFired(app):
                 
 
 
-
-def simulateScreen_redrawAll(app, canvas):
-
-    if app.runSim:
-
-        drawBoard(app, canvas)
-        drawWolves(app, canvas)
-        drawSheep(app, canvas)
-    
-    else:
-        canvas.create_image(app.width/3.75, app.height/2, image=ImageTk.PhotoImage(app.stockSimWithOverlayWithTextImage))  
-
-    drawGrassGrowthRateSlider(app, canvas)
-    drawWaterFallRateSlider(app, canvas)
-    drawStartingWolfPopulationSlider(app, canvas)
-    drawStartingSheepPopulationSlider(app, canvas)
-    drawFlowerGrowthRateSlider(app, canvas)
-    drawGraph(app, canvas)
-
-    #Draws "Run Simulation" Button/Text
-    canvas.create_rectangle(app.width/1.3, app.height/1.1, app.width - app.margin + 10, app.height - app.margin + 10, fill='black')
-    canvas.create_text(app.width/1.133, app.height/1.06, text='Run New Simulation', font='Ariel 30', fill='white')
-
-    #Draws "Pause Simulation" Button/Text
-    if app.runSim:
-        canvas.create_rectangle(app.width/1.885, app.height/1.1, app.width/1.315, app.height - app.margin + 10, fill='black', outline='black')
-    else:
-        canvas.create_rectangle(app.width/1.885, app.height/1.1, app.width/1.315, app.height - app.margin + 10, fill='grey', outline='grey')
-    canvas.create_text(app.width/1.545, app.height/1.06, text='End Current Simulation', font='Ariel 30', fill='white')
-
-    
-
-
+#Significantly improves the reliability of the sliders
+#Also necessary so that sliders that are on the same y-axis do not move together
 def simulateScreen_mouseReleased(app, event): 
     app.ggrSliding = False
     app.aawSliding = False
@@ -692,22 +743,37 @@ def simulateScreen_mouseReleased(app, event):
     app.swpSliding = False
     app.sspSliding = False
 
+
+
 def simulateScreen_mousePressed(app, event):
+
     if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY <= event.y <= app.ggrSliderBottomY:
         app.ggrSliding = True
 
     if app.aawSliderTopX <= event.x <= app.aawSliderBottomX and app.aawSliderTopY <= event.y <= app.aawSliderBottomY:
         app.aawSliding = True
 
+    if app.fgrSliderTopX <= event.x <= app.fgrSliderBottomX and app.fgrSliderTopY <= event.y <= app.fgrSliderBottomY:
+        app.fgrSliding = True
+    
+    if app.swpSliderTopX <= event.x <= app.swpSliderBottomX and app.swpSliderTopY <= event.y <= app.swpSliderBottomY:
+        app.swpSliding = True
+
+    if app.sspSliderTopX <= event.x <= app.sspSliderBottomX and app.sspSliderTopY <= event.y <= app.sspSliderBottomY:
+        app.sspSliding = True
+
     if app.width/1.885 <= event.x <= app.width/1.315 and app.height/1.1 <= event.y <= app.height - app.margin + 10:
         if app.runSim:
             app.runSim = False
 
+    #The hitbox for the "Start New Simulation" button
     if app.width/1.3 <= event.x <= app.width-app.margin + 10 and app.height/1.1 <= event.y <= app.height - app.margin + 10:
+
         app.runSim = True
-        app.cellColorsList = getCellColorsList(app, app.rows, app.cols)
+        app.cellColorsList = getCellColorsList(app)
         global animalCount
         animalCount = {'Wolf': wolfCount, 'Sheep': sheepCount}
+
         for sheep in SheepNames:
             print(globals()[sheep].getOffspringRate())
         for wolf in WolfNames:
@@ -717,13 +783,10 @@ def simulateScreen_mousePressed(app, event):
         
 
 
-
-
 def simulateScreen_mouseDragged(app, event): 
-    print("Dragging", event.x, event.y)
-    
 
-    if app.runSim == False: #prevents changin sliders during a running simulation
+    if app.runSim == False: #prevents changing sliders during a running simulation
+
         #Logic for Grass Growth Rate (ggr) slider
         ################################################
         if app.ggrSliderTopX <= event.x <= app.ggrSliderBottomX and app.ggrSliderTopY < event.y < app.ggrSliderBottomY:
@@ -843,34 +906,34 @@ def simulateScreen_mouseDragged(app, event):
 
 
 
+#Draws the simulation screen
+def simulateScreen_redrawAll(app, canvas):
+
+    if app.runSim:
+
+        drawBoard(app, canvas)
+        drawWolves(app, canvas)
+        drawSheep(app, canvas)
+    
+    else:
+        canvas.create_image(app.width/3.75, app.height/2, image=ImageTk.PhotoImage(app.stockSimWithOverlayWithTextImage))  
+
+    drawGrassGrowthRateSlider(app, canvas)
+    drawWaterFallRateSlider(app, canvas)
+    drawStartingWolfPopulationSlider(app, canvas)
+    drawStartingSheepPopulationSlider(app, canvas)
+    drawFlowerGrowthRateSlider(app, canvas)
+    drawGraph(app, canvas)
+
+    #Draws "Run Simulation" Button/Text
+    canvas.create_rectangle(app.width/1.3, app.height/1.1, app.width - app.margin + 10, app.height - app.margin + 10, fill='black')
+    canvas.create_text(app.width/1.133, app.height/1.06, text='Start New Simulation', font='Ariel 30', fill='white')
+
+    #Draws "Pause Simulation" Button/Text
+    if app.runSim:
+        canvas.create_rectangle(app.width/1.885, app.height/1.1, app.width/1.315, app.height - app.margin + 10, fill='black', outline='black')
+    else:
+        canvas.create_rectangle(app.width/1.885, app.height/1.1, app.width/1.315, app.height - app.margin + 10, fill='grey', outline='grey')
+    canvas.create_text(app.width/1.545, app.height/1.06, text='End Current Simulation', font='Ariel 30', fill='white')
+
 runApp(width=1728, height=905)
-
-######################################################################
-#Testing
-######################################################################
-
-from matplotlib import pyplot as plt
-import numpy as np
-
-xValues = [0,1,2,3,4,5]
-yValues = [0,6,25,4,6,2]
-
-otherXValues = [0,12,15,20,24,28]
-otherYValues = [0,25, 25, 8, 1, 14]
-
-plt.scatter(xValues, yValues)
-plt.plot(xValues, yValues, 'red',
-        otherXValues, otherYValues, 'purple')
-
-
-
-plt.title("Sample Plot")
-plt.xlabel("X Label")
-plt.ylabel("Y Label")
-plt.axis([0,30,0,42]) #changes the axis points, x values go from 0-30, y values go from 0-42
-
-
-for i in range(4):
-    plt.plot(np.random.rand(10))
-
-#plt.show()
