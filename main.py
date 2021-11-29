@@ -40,9 +40,9 @@ sheepCount = 5
 #(i.e. on the screen)
 animalCount = {'Wolf': wolfCount, 'Sheep': sheepCount}
 
-#Uses sets for to ensure unique names, as well as for efficiency 
-SheepNames = set()
-WolfNames = set()
+
+SheepNames = []
+WolfNames = []
 
 #Keeps track of all the current 'alive' animals' positions on the grid
 SheepPosition = []
@@ -61,8 +61,8 @@ def initializeAnimals(app):
     global SheepPosition 
     global WolfPosition
 
-    SheepNames = set()
-    WolfNames = set()
+    SheepNames = []
+    WolfNames = []
     SheepPosition = []
     WolfPosition = []
 
@@ -85,7 +85,7 @@ def initializeAnimals(app):
                     #i.e. SheepNames or WolfNames
                     #This ensures there will never be more than one instance 
                     #with the same name
-                    globals()[key+'Names'].add(animalName)
+                    globals()[key+'Names'].append(animalName)
 
                     #Actually initializes animal instance
                     #i.e. wolf1 = Wolf()
@@ -140,8 +140,12 @@ def appStarted(app):
     ###############################################
     app.wolfImage = app.scaleImage(app.loadImage(
                                         'assets/Modified/black_wolf.png'), 1/10)
+    app.mutatedLargeWolfImage = app.scaleImage(app.loadImage(
+                                         'assets/Modified/black_wolf.png'), 1/7)
     app.sheepImage = app.scaleImage(app.loadImage(
                                        'assets/Modified/white_sheep.png'), 1/10)
+    app.mutatedPurpleSheepImage = app.scaleImage(app.loadImage(
+                                        'assets/Modified/purple_sheep.png'), 1/10)
 
 
     #Sliders
@@ -513,9 +517,10 @@ def drawWolves(app, canvas):
         WolfPosition[i] = [row, col]
 
         #delete the sheep because the sheep was EATEN!
-        for i in range(len(SheepPosition)):
-            if SheepPosition[i] == [row, col]: 
-                SheepPosition.pop(i)
+        for w in range(len(SheepPosition)):
+            if SheepPosition[w] == [row, col]: 
+                SheepPosition.pop(w)
+                SheepNames.pop(w)
                 break
 
         #we don't need x1 and y1
@@ -523,6 +528,13 @@ def drawWolves(app, canvas):
         x0 += 15
         y0 += 13
         canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.wolfImage)) 
+
+        #handles drawing different wolf based of off mutations
+        currentWolf = WolfNames[i]
+        if globals()[currentWolf].getMutationType() == 0:
+            canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.wolfImage))
+        elif globals()[currentWolf].getMutationType() == 1:
+            canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.mutatedLargeWolfImage))
 
 def drawSheep(app, canvas):
 
@@ -534,7 +546,13 @@ def drawSheep(app, canvas):
         (x0, y0, x1, y1) = getCellBounds(app, row, col)
         x0 += 15
         y0 += 13
-        canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.sheepImage))
+        
+        #handles drawing different sheep based of off mutations
+        currentSheep = SheepNames[i]
+        if globals()[currentSheep].getMutationType() == 0:
+            canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.sheepImage))
+        elif globals()[currentSheep].getMutationType() == 1:
+            canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.mutatedPurpleSheepImage))
 
 ######################################################################
 #Draws sliders
@@ -667,7 +685,7 @@ def simulateScreen_timerFired(app):
                 #i.e. SheepNames or WolfNames
                 #This ensures there will never be more than one instance 
                 #with the same name
-                globals()['WolfNames'].add(animalName)
+                globals()['WolfNames'].append(animalName)
 
                 #Actually initializes animal instance
                 #i.e. wolf1 = Wolf()
@@ -716,7 +734,7 @@ def simulateScreen_timerFired(app):
                 #i.e. SheepNames or WolfNames
                 #This ensures there will never be more than one instance 
                 #with the same name
-                globals()['SheepNames'].add(animalName)
+                globals()['SheepNames'].append(animalName)
 
                 #Actually initializes animal instance
                 #i.e. sheep1 = Sheep()
