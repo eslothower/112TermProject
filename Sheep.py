@@ -1,3 +1,6 @@
+#This file is for the Sheep class, which inherits attributes and methods from 
+#the Animal class
+
 from Animal import *
 
 class Sheep(Animal):

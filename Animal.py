@@ -1,3 +1,6 @@
+#This file is for the Animal class, which which is the parent class for the 
+#Wolf and Sheep class (and all other animal classes to follow)
+
 import random
 
 class Animal(object):
