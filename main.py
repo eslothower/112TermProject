@@ -408,7 +408,7 @@ def getAddedWaterList(app, currentCellColorsList):
 ######################################################################
 
 #Moves sheep in a semi-random order, ensuring that they don't move into a sheep
-def moveSheep(row, col, app):
+def moveSheep(row, col, app, sheepIndex):
 
     foundWolf = False
     originalRow = row
@@ -417,8 +417,7 @@ def moveSheep(row, col, app):
     tempCol = col
 
     while foundWolf == False:
-        print("here: ", random.randrange(10000))
-        print(WolfPosition)
+        print("Wolf")
         if len(WolfPosition) > 0:
 
             #The two following ranges define how large the radius is for the 
@@ -464,17 +463,117 @@ def moveSheep(row, col, app):
                                 if 0 < originalRow - 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow - 1, originalCol + 1] not in SheepPosition:
                                     return [originalRow - 1, originalCol + 1]
 
+        #this is for if a wolf was never found, breaking the while loop
+        foundWolf = True
+
+    foundWater = False
+    foundFood = False
+    currentSheepThirstLevel = globals()[SheepNames[sheepIndex]].getCurrentThirstLevel()
+    currentSheepHungerLevel = globals()[SheepNames[sheepIndex]].getCurrentHungerLevel()
+
+    if currentSheepThirstLevel > 0 or currentSheepHungerLevel > 0:
+        if currentSheepThirstLevel <= currentSheepHungerLevel:
+
+            while foundWater == False: 
+                print("Water")
+                for drow in range(-8, 8):
+                    for dcol in range(-8, 8):
+                        if (drow, dcol) != (0, 0):
+
+                            #Code that tracks the wolve's positions
+                            if 0 < tempRow + drow < app.rows and 0 < tempCol + dcol < app.cols:
+                                if app.cellColorsList[tempRow + drow][tempCol + dcol] == 'blue':
+                                    foundWater = True
+
+                                    if drow > 0 and dcol > 0:
+                                        if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow + 1, originalCol + 1] not in SheepPosition:
+                                            return [originalRow + 1, originalCol + 1]
+
+                                    elif drow == 0 and dcol > 0:
+                                        if 0 < originalCol + 1 < app.cols and [originalRow, originalCol + 1] not in SheepPosition:
+                                            return [originalRow, originalCol + 1] 
+
+                                    elif drow > 0 and dcol == 0:
+                                        if 0 < originalRow + 1 < app.rows and [originalRow + 1, originalCol] not in SheepPosition:
+                                            return [originalRow + 1, originalCol]
+
+                                    elif drow < 0 and dcol < 0:
+                                        if 0 < originalRow - 1 < app.rows and 0 < originalCol - 1 < app.cols and [originalRow - 1, originalCol - 1] not in SheepPosition:
+                                            return [originalRow - 1, originalCol - 1]
+
+                                    elif drow == 0 and dcol < 0 and [originalRow, originalCol - 1] not in SheepPosition:
+                                        if 0 < originalCol - 1 < app.cols:
+                                            return [originalRow, originalCol - 1]
+
+                                    elif drow < 0 and dcol == 0:
+                                        if 0 < originalRow - 1 < app.rows and [originalRow - 1, originalCol] not in SheepPosition:
+                                            return [originalRow - 1, originalCol]
+
+                                    elif drow > 0 and dcol < 0:
+                                        if 0 < originalRow + 1 < app.rows and 0 < originalCol - 1 < app.cols and [originalRow + 1, originalCol - 1] not in SheepPosition:
+                                            return [originalRow + 1, originalCol - 1]
+                                            
+                                    elif drow < 0 and dcol > 0:
+                                        if 0 < originalRow - 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow - 1, originalCol + 1] not in SheepPosition:
+                                            return [originalRow - 1, originalCol + 1]
+                foundWater = True
+
+        elif currentSheepHungerLevel < currentSheepThirstLevel:
+            while foundFood == False:
+                print("Food")
+                for drow in range(-8, 8):
+                    for dcol in range(-8, 8):
+                        if (drow, dcol) != (0, 0):
+
+                            #Code that tracks the wolve's positions
+                            if 0 < tempRow + drow < app.rows and 0 < tempCol + dcol < app.cols:
+                                if app.cellColorsList[tempRow + drow][tempCol + dcol] in ['pink', 'red', 'purple', 'yellow', 'orange', 'green']:
+                                    foundFood = True
+
+                                    if drow > 0 and dcol > 0:
+                                        if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow + 1, originalCol + 1] not in SheepPosition:
+                                            return [originalRow + 1, originalCol + 1]
+
+                                    elif drow == 0 and dcol > 0:
+                                        if 0 < originalCol + 1 < app.cols and [originalRow, originalCol + 1] not in SheepPosition:
+                                            return [originalRow, originalCol + 1] 
+
+                                    elif drow > 0 and dcol == 0:
+                                        if 0 < originalRow + 1 < app.rows and [originalRow + 1, originalCol] not in SheepPosition:
+                                            return [originalRow + 1, originalCol]
+
+                                    elif drow < 0 and dcol < 0:
+                                        if 0 < originalRow - 1 < app.rows and 0 < originalCol - 1 < app.cols and [originalRow - 1, originalCol - 1] not in SheepPosition:
+                                            return [originalRow - 1, originalCol - 1]
+
+                                    elif drow == 0 and dcol < 0 and [originalRow, originalCol - 1] not in SheepPosition:
+                                        if 0 < originalCol - 1 < app.cols:
+                                            return [originalRow, originalCol - 1]
+
+                                    elif drow < 0 and dcol == 0:
+                                        if 0 < originalRow - 1 < app.rows and [originalRow - 1, originalCol] not in SheepPosition:
+                                            return [originalRow - 1, originalCol]
+
+                                    elif drow > 0 and dcol < 0:
+                                        if 0 < originalRow + 1 < app.rows and 0 < originalCol - 1 < app.cols and [originalRow + 1, originalCol - 1] not in SheepPosition:
+                                            return [originalRow + 1, originalCol - 1]
+                                            
+                                    elif drow < 0 and dcol > 0:
+                                        if 0 < originalRow - 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow - 1, originalCol + 1] not in SheepPosition:
+                                            return [originalRow - 1, originalCol + 1]
+                foundFood = True
+
+    drow = random.randrange(-1, 2) #-1, 0, or 1
+    dcol = random.randrange(-1, 2) #-1, 0, or 1
+
+    while ((not(0 <= row + drow <= app.rows - 1)) or 
+          (not (0 <= col + dcol <= app.cols - 1)) or 
+          ([row + drow, col + dcol] in WolfPosition)): #sheep won't step into a wolf
+
         drow = random.randrange(-1, 2) #-1, 0, or 1
         dcol = random.randrange(-1, 2) #-1, 0, or 1
 
-        while ((not(0 <= row + drow <= app.rows - 1)) or 
-            (not (0 <= col + dcol <= app.cols - 1)) or 
-            ([row + drow, col + dcol] in WolfPosition)): #sheep won't step into a wolf
-
-            drow = random.randrange(-1, 2) #-1, 0, or 1
-            dcol = random.randrange(-1, 2) #-1, 0, or 1
-
-        return [row + drow, col + dcol]
+    return [row + drow, col + dcol]
 
 #Enables wolves to track sheep positions, then move towards sheep
 def moveWolvesTowardSheep(row, col, app):
@@ -617,7 +716,7 @@ def drawSheep(app, canvas):
 
     for i in range(len(SheepPosition)):
         [row, col] = SheepPosition[i]
-        [row, col] = moveSheep(row, col, app)
+        [row, col] = moveSheep(row, col, app, i)
         SheepPosition[i] = [row, col]
         #we don't need x1 and y1
         (x0, y0, x1, y1) = getCellBounds(app, row, col)
