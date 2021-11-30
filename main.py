@@ -33,8 +33,8 @@ def roundHalfUp(d): #helper-fn
 ######################################################################
 
 #The default amount for each animal type
-wolfCount = 5
-sheepCount = 5
+wolfCount = 50
+sheepCount = 50
 
 #A dictionary that keeps track of how many animals are 'alive' at once 
 #(i.e. on the screen)
@@ -70,7 +70,7 @@ def initializeAnimals(app):
         for _ in range(animalCount[key]):
             
             while True:
-
+                print("thing 4")
                 #a random number to put at the end of the instance's name
                 #(i.e. 'wolf8349'). This ensures a unique name for each instance
                 number = random.randrange(1000000000000)
@@ -97,8 +97,11 @@ def initializeAnimals(app):
                     #Creates a random position that is not in water for the animal
                     row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
+                    iterations = 0
                     while app.cellColorsList[row][col] == 'blue':
-
+                        if iterations > 1000: break
+                        iterations += 1
+                        print("thing 5")
                         row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
                     globals()[key+'Position'].append([row, col])
@@ -114,6 +117,7 @@ def appStarted(app):
     ###############################################
 
     app.mode = "titleScreen"
+    app.mode = 'simulateScreen'
     app._root.resizable(False, False) #Contributed by Anita (TA) on Piazza @4354
     app.timerDelay = 90
     app.runSim = False #signifies whether the sim is running or not
@@ -121,6 +125,7 @@ def appStarted(app):
     #used for when the sim is paused
     app.stockSimWithOverlayWithTextImage = app.scaleImage(app.loadImage(
                 'assets/Modified/stockSimWithOverlayWithTextImage.png'), 1/2.04)
+    app.yAxis = app.scaleImage(app.loadImage('assets/Modified/y-axis.png'), 1/13)
 
     #Code for grid/terrain generation
     ###############################################
@@ -135,6 +140,8 @@ def appStarted(app):
     app.waterAmount = 'Regular'
     app.flowerColorOptions = ['pink', 'red', 'purple', 'yellow', 'orange']
     app.numberOfBareSpots = 0
+    app.wolfPopulationRecord = []
+    app.sheepPopulationRecord = []
     
 
     #Code for animal images
@@ -142,7 +149,7 @@ def appStarted(app):
     app.wolfImage = app.scaleImage(app.loadImage(
                                         'assets/Modified/black_wolf.png'), 1/10)
     app.mutatedLargeWolfImage = app.scaleImage(app.loadImage(
-                                         'assets/Modified/black_wolf.png'), 1/7)
+                                         'assets/Modified/black_wolf.png'), 1/5.5)
     app.sheepImage = app.scaleImage(app.loadImage(
                                        'assets/Modified/white_sheep.png'), 1/10)
     app.mutatedPurpleSheepImage = app.scaleImage(app.loadImage(
@@ -476,8 +483,8 @@ def moveSheep(row, col, app, sheepIndex):
 
             while foundWater == False: 
                 print("Water")
-                for drow in range(-8, 8):
-                    for dcol in range(-8, 8):
+                for drow in range(-app.rows, app.rows):
+                    for dcol in range(-app.cols, app.cols):
                         if (drow, dcol) != (0, 0):
 
                             #Code that tracks the wolve's positions
@@ -521,8 +528,8 @@ def moveSheep(row, col, app, sheepIndex):
         elif currentSheepHungerLevel < currentSheepThirstLevel:
             while foundFood == False:
                 print("Food")
-                for drow in range(-8, 8):
-                    for dcol in range(-8, 8):
+                for drow in range(-app.rows, app.rows):
+                    for dcol in range(-app.cols, app.cols):
                         if (drow, dcol) != (0, 0):
 
                             #Code that tracks the wolve's positions
@@ -566,10 +573,13 @@ def moveSheep(row, col, app, sheepIndex):
     drow = random.randrange(-1, 2) #-1, 0, or 1
     dcol = random.randrange(-1, 2) #-1, 0, or 1
 
+    iterations = 0
     while ((not(0 <= row + drow <= app.rows - 1)) or 
           (not (0 <= col + dcol <= app.cols - 1)) or 
           ([row + drow, col + dcol] in WolfPosition)): #sheep won't step into a wolf
 
+        if iterations > 1000: break
+        iterations += 1
         drow = random.randrange(-1, 2) #-1, 0, or 1
         dcol = random.randrange(-1, 2) #-1, 0, or 1
 
@@ -589,9 +599,9 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
     
     if currentWolfThirstLevel > 0 or currentWolfHungerLevel > 0:
         if currentWolfHungerLevel < currentWolfThirstLevel:
-            print("Looking for food")
+            
             while foundSheep == False:
-                
+                print("Looking for sheep")
                 if len(SheepPosition) > 0:
 
                     #The two following ranges define how large the radius is for the 
@@ -649,8 +659,8 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
                 #The two following ranges define how large the radius is for the 
                 #wolve's sheep-detection. The larger these two ranges are, the 
                 #further the wolves can detect the sheep
-                for drow in range(-8, 8):
-                    for dcol in range(-8, 8):
+                for drow in range(-app.rows, app.rows):
+                    for dcol in range(-app.cols, app.cols):
                         if (drow, dcol) != (0, 0):
 
                             #Code that tracks the sheep positions
@@ -699,12 +709,16 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
     newDrow = random.randrange(-1, 2) #-1, 0, or 1
     newDcol = random.randrange(-1, 2) #-1, 0, or 1
 
+    iterations = 0
     while ((not(0 <= row + newDrow <= app.rows - 1)) or 
         (not (0 <= col + newDcol <= app.cols - 1)) or 
         ([row + newDrow, col + newDcol] in WolfPosition)): #wolf won't step into a wolf
-
+        if iterations > 1000: break
+        iterations += 1
+        print("thing 1")
         newDrow = random.randrange(-1, 2) #-1, 0, or 1
         newDcol = random.randrange(-1, 2) #-1, 0, or 1
+
 
     return [row + newDrow, col + newDcol]
 
@@ -863,18 +877,169 @@ def drawFlowerGrowthRateSlider(app, canvas):
 ######################################################################
 
 def drawGraph(app, canvas):
-    canvas.create_rectangle(app.width/1.845, app.height/1.7, app.width - app.margin + 10, app.height/1.12, outline='black')
-    canvas.create_text(app.width/1.875, app.height/1.12, text='0', fill='black')
-    canvas.create_text(app.width/1.87, app.height/1.23, text='5', fill='black')
-    canvas.create_text(app.width/1.87, app.height/1.34, text='10', fill='black')
-    canvas.create_text(app.width/1.87, app.height/1.49, text='15', fill='black')
-    canvas.create_text(app.width/1.87, app.height/1.7, text='20+', fill='black')
+    canvas.create_text(app.width/1.3, app.height/3.08, text='Species Population ', fill='black', font='Ariel 25')
+    canvas.create_rectangle(app.width/1.8, app.height/2.9, app.width - app.margin + 10, app.height/1.18, outline='black')
+    canvas.create_rectangle(app.width/1.745, app.height/1.16, app.width/1.717, app.height/1.14, fill='red')
+    canvas.create_text(app.width/1.67, app.height/1.15, text='Wolf', fill='black', font='Arial 15')
 
-    firstRun = True
-    for key in animalCount:
+    canvas.create_rectangle(app.width/1.58, app.height/1.16, app.width/1.555, app.height/1.139, fill='Green')
+    canvas.create_text(app.width/1.5, app.height/1.15, text='Sheep', fill='black', font='Arial 15')
+    canvas.create_image(app.width/1.89, app.height/1.6, image=ImageTk.PhotoImage(app.yAxis))  
+    canvas.create_text(app.width/1.3, app.height/1.16, text='Time (simulation cycles)', fill='black', font='Ariel20')
 
-        if firstRun:
-            canvas.create_line(app.width/1.845, app.height/1.12, app.width/1.6, app.height/1.15, fill='red', width=4)
+    canvas.create_text(app.width/1.83, app.height/1.18, text='0', fill='black')
+    canvas.create_text(app.width/1.83, app.height/1.23, text='10', fill='black')
+    canvas.create_text(app.width/1.83, app.height/1.28, text='20', fill='black')
+    canvas.create_text(app.width/1.83, app.height/1.33, text='30', fill='black')
+    canvas.create_text(app.width/1.83, app.height/1.39, text='40', fill='black')
+    canvas.create_text(app.width/1.83, app.height/1.45, text='50', fill='black')
+    canvas.create_text(app.width/1.83, app.height/1.52, text='60', fill='black')
+    canvas.create_text(app.width/1.83, app.height/1.6, text='70', fill='black')
+    canvas.create_text(app.width/1.83, app.height/1.7, text='80', fill='black')
+    canvas.create_text(app.width/1.83, app.height/1.805, text='90', fill='black')
+    canvas.create_text(app.width/1.83, app.height/1.925, text='100', fill='black')
+    canvas.create_text(app.width/1.83, app.height/2.07, text='110', fill='black')
+    canvas.create_text(app.width/1.83, app.height/2.24, text='120', fill='black')
+    canvas.create_text(app.width/1.83, app.height/2.43, text='130', fill='black')
+    canvas.create_text(app.width/1.83, app.height/2.65, text='140', fill='black')
+    canvas.create_text(app.width/1.83, app.height/2.9, text='150', fill='black')
+
+    s = 0
+    for population in app.sheepPopulationRecord:
+    
+        s += 1
+        if s == 1:
+            startingWidth = app.width/1.8
+            endingWidth = app.width/1.6
+            startingHeight = app.height/1.18
+        elif s == 2:
+            startingWidth = app.width/1.6
+            endingWidth = app.width/1.4
+            startingHeight = endingHeight
+        elif s == 3:
+            startingWidth = app.width/1.4
+            endingWidth = app.width/1.25
+            startingHeight = endingHeight
+        elif s == 4:
+            startingWidth = app.width/1.25
+            endingWidth = app.width/1.1
+            startingHeight = endingHeight
+        elif s == 5:
+            startingWidth = app.width/1.1
+            endingWidth = app.width - app.margin + 10
+            startingHeight = endingHeight
+
+        if population == 0:
+            endingHeight = app.height/1.18
+        elif population <= 10:
+            endingHeight = app.height/1.2
+        elif population <= 20:
+            endingHeight = app.height/1.25
+        elif population <= 30:
+            endingHeight = app.height/1.3
+        elif population <= 40:
+            endingHeight = app.height/1.35
+        elif population <= 50:
+            endingHeight = app.height/1.4
+        elif population <= 60:
+            endingHeight = app.height/1.48
+        elif population <= 70:
+            endingHeight = app.height/1.55
+        elif population <= 80:
+            endingHeight = app.height/1.62
+        elif population <= 90:
+            endingHeight = app.height/1.75
+        elif population <= 100:
+            endingHeight = app.height/1.85
+        elif population <= 110:
+            endingHeight = app.height/2
+        elif population <= 120:
+            endingHeight = app.height/2.15
+        elif population <= 130:
+            endingHeight = app.height/2.33
+        elif population <= 140:
+            endingHeight = app.height/2.5
+        elif population <= 150:
+            endingHeight = app.height/2.72
+        elif population == 150:
+            endingHeight = app.height/2.895
+        
+        # print(endingHeight)
+
+        
+        
+        # canvas.create_line(app.width/1.8, app.height/1.18, app.width/1.6, endingHeight, fill='green', width=4)
+        # canvas.create_line(app.width/1.6, app.height/1.18, app.width/1.4, endingHeight, fill='red', width=4)
+        # canvas.create_line(app.width/1.4, app.height/1.18, app.width/1.25, endingHeight, fill='green', width=4)
+        # canvas.create_line(app.width/1.25, app.height/1.18, app.width/1.1, endingHeight, fill='red', width=4)
+        # canvas.create_line(app.width/1.1, app.height/1.18, app.width - app.margin + 10, endingHeight, fill='green', width=4)
+
+        canvas.create_line(startingWidth, startingHeight, endingWidth, endingHeight, fill='green', width=4)
+
+
+    w = 0
+    for population in app.wolfPopulationRecord:
+    
+        w += 1
+        if w == 1:
+            startingWidth = app.width/1.8
+            endingWidth = app.width/1.6
+            startingHeight = app.height/1.185
+        elif w == 2:
+            startingWidth = app.width/1.6
+            endingWidth = app.width/1.4
+            startingHeight = endingHeight
+        elif w == 3:
+            startingWidth = app.width/1.4
+            endingWidth = app.width/1.25
+            startingHeight = endingHeight
+        elif w == 4:
+            startingWidth = app.width/1.25
+            endingWidth = app.width/1.1
+            startingHeight = endingHeight
+        elif w == 5:
+            startingWidth = app.width/1.1
+            endingWidth = app.width - app.margin + 10
+            startingHeight = endingHeight
+
+        if population == 0:
+            endingHeight = app.height/1.185
+        elif population <= 10:
+            endingHeight = app.height/1.2
+        elif population <= 20:
+            endingHeight = app.height/1.25
+        elif population <= 30:
+            endingHeight = app.height/1.3
+        elif population <= 40:
+            endingHeight = app.height/1.35
+        elif population <= 50:
+            endingHeight = app.height/1.4
+        elif population <= 60:
+            endingHeight = app.height/1.48
+        elif population <= 70:
+            endingHeight = app.height/1.55
+        elif population <= 80:
+            endingHeight = app.height/1.62
+        elif population <= 90:
+            endingHeight = app.height/1.75
+        elif population <= 100:
+            endingHeight = app.height/1.85
+        elif population <= 110:
+            endingHeight = app.height/2
+        elif population <= 120:
+            endingHeight = app.height/2.15
+        elif population <= 130:
+            endingHeight = app.height/2.33
+        elif population <= 140:
+            endingHeight = app.height/2.5
+        elif population <= 150:
+            endingHeight = app.height/2.72
+        elif population == 150:
+            endingHeight = app.height/2.895
+
+        canvas.create_line(startingWidth, startingHeight, endingWidth, endingHeight, fill='red', width=4)
+    
+
 
 ######################################################################
 #Title Screen Logic
@@ -901,183 +1066,205 @@ def titleScreen_mousePressed(app, event):
 
 def simulateScreen_timerFired(app):
 
-    wolvesToBeBorn = 0
-    wolvesThatGaveBirth = 0
-
-    #Declares that new offspring will be born whenever offspringCounter is 
-    #equal to that specific animal instance's offspringRate (as each animal 
-    #instance could have a different offspringRate due to species and/or mutation)
-    #Also handles starvation, which declines animal instance's health and eventually
-    #kills the animal instance (unless there is always a supply of food, keeping)
-    #the hunger levels down and the health levels up
-    for wolf in range(len(WolfNames)):
-        
-        offspringCounter = globals()[WolfNames[wolf]].getOffspringCounter()
-        offspringRate = globals()[WolfNames[wolf]].getOffspringRate() 
-
-        if offspringCounter < offspringRate:
-            globals()[WolfNames[wolf]].addOneToOffspringCounter()
-            
+    if app.runSim:
+        if len(app.wolfPopulationRecord) == 5:
+            app.wolfPopulationRecord.pop(0)
+            app.wolfPopulationRecord.append(len(WolfPosition))
         else:
-            if wolvesThatGaveBirth < len(WolfPosition):
-                wolvesToBeBorn += 1
-            
-            globals()[WolfNames[wolf]].resetOffspringCounter()
-
+            app.wolfPopulationRecord.append(len(WolfPosition))
         
-        currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-        currentWolfHungerLevel = globals()[WolfNames[wolf]].getCurrentHungerLevel()
-        #print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-        if currentWolfHungerLevel < 100:
-            globals()[WolfNames[wolf]].getHungrier()
+        if len(app.sheepPopulationRecord) == 5:
+            app.sheepPopulationRecord.pop(0)
+            app.sheepPopulationRecord.append(len(SheepPosition))
         else:
-            globals()[WolfNames[wolf]].loseHealth()
+            app.sheepPopulationRecord.append(len(SheepPosition))
+
+
+
+
+        wolvesToBeBorn = 0
+        wolvesThatGaveBirth = 0
+
+        #Declares that new offspring will be born whenever offspringCounter is 
+        #equal to that specific animal instance's offspringRate (as each animal 
+        #instance could have a different offspringRate due to species and/or mutation)
+        #Also handles starvation, which declines animal instance's health and eventually
+        #kills the animal instance (unless there is always a supply of food, keeping)
+        #the hunger levels down and the health levels up
+        for wolf in range(len(WolfNames)):
+            
+            offspringCounter = globals()[WolfNames[wolf]].getOffspringCounter()
+            offspringRate = globals()[WolfNames[wolf]].getOffspringRate() 
+
+            if offspringCounter < offspringRate:
+                globals()[WolfNames[wolf]].addOneToOffspringCounter()
+                
+            else:
+                if wolvesThatGaveBirth < len(WolfPosition):
+                    wolvesToBeBorn += 1
+                
+                globals()[WolfNames[wolf]].resetOffspringCounter()
+
+            
             currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
+            currentWolfHungerLevel = globals()[WolfNames[wolf]].getCurrentHungerLevel()
             #print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-            #print("Current Wolf hunger:", currentWolfHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-        
-        if currentWolfHealth <= 0:
-            WolfNames.pop(wolf)
-            WolfPosition.pop(wolf)
-            break
+            if currentWolfHungerLevel < 100:
+                globals()[WolfNames[wolf]].getHungrier()
+            else:
+                globals()[WolfNames[wolf]].loseHealth()
+                currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
+                #print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                #print("Current Wolf hunger:", currentWolfHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            
+            if currentWolfHealth <= 0:
+                WolfNames.pop(wolf)
+                WolfPosition.pop(wolf)
+                break
 
 
-        currentWolfThirstLevel = globals()[WolfNames[wolf]].getCurrentThirstLevel()
-        # print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-
-        if currentWolfThirstLevel < 100:
-            globals()[WolfNames[wolf]].getThirstier()
-        else:
-            globals()[WolfNames[wolf]].loseHealth()
-            currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-            # print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            currentWolfThirstLevel = globals()[WolfNames[wolf]].getCurrentThirstLevel()
             # print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
+            if currentWolfThirstLevel < 100:
+                globals()[WolfNames[wolf]].getThirstier()
+            else:
+                globals()[WolfNames[wolf]].loseHealth()
+                currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
+                # print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                # print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+
+            
+
+
+        #Caps combined animal population at 150 to ensure good performance
+        if len(WolfPosition) + len(SheepPosition) < 150:
         
+            #Initializes new wolf offspring
+            for _ in range(wolvesToBeBorn):
 
+                number = random.randrange(1000000000000)
+                animalName = '%s%s' % ('Wolf', number)
+                if animalName not in globals()['WolfNames']:
+                    
+                    #Adds unique name to respective set
+                    #i.e. SheepNames or WolfNames
+                    #This ensures there will never be more than one instance 
+                    #with the same name
+                    globals()['WolfNames'].append(animalName)
 
-    #Caps combined animal population at 150 to ensure good performance
-    if len(WolfPosition) + len(SheepPosition) < 150:
-    
-        #Initializes new wolf offspring
-        for _ in range(wolvesToBeBorn):
+                    #Actually initializes animal instance
+                    #i.e. wolf1 = Wolf()
 
-            number = random.randrange(1000000000000)
-            animalName = '%s%s' % ('Wolf', number)
-            if animalName not in globals()['WolfNames']:
-                
-                #Adds unique name to respective set
-                #i.e. SheepNames or WolfNames
-                #This ensures there will never be more than one instance 
-                #with the same name
-                globals()['WolfNames'].append(animalName)
-
-                #Actually initializes animal instance
-                #i.e. wolf1 = Wolf()
-
-                globals()[animalName] = eval('Wolf'+'(offspringRate=150, health=250)')  
-
-                row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
-
-                while app.cellColorsList[row][col] == 'blue':
+                    globals()[animalName] = eval('Wolf'+'(offspringRate=150, health=250)')  
 
                     row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
+                    iterations = 0
+                    while app.cellColorsList[row][col] == 'blue':
+                        if iterations > 1000: break
+                        iterations += 1
+                        print("thing 2")
+                        row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
-                globals()['WolfPosition'].append([row, col])
+
+                    globals()['WolfPosition'].append([row, col])
 
 
-    sheepToBeBorn = 0
-    sheepThatGaveBirth = 0
+        sheepToBeBorn = 0
+        sheepThatGaveBirth = 0
 
-    #Declares that new offspring will be born whenever offspringCounter is 
-    #equal to that specific animal instance's offspringRate (as each animal 
-    #instance could have a different offspringRate due to species and/or mutation)
-    for sheep in range(len(SheepNames)):
+        #Declares that new offspring will be born whenever offspringCounter is 
+        #equal to that specific animal instance's offspringRate (as each animal 
+        #instance could have a different offspringRate due to species and/or mutation)
+        for sheep in range(len(SheepNames)):
 
-        offspringCounter = globals()[SheepNames[sheep]].getOffspringCounter()
-        offspringRate = globals()[SheepNames[sheep]].getOffspringRate() 
+            offspringCounter = globals()[SheepNames[sheep]].getOffspringCounter()
+            offspringRate = globals()[SheepNames[sheep]].getOffspringRate() 
 
-        if offspringCounter < offspringRate:
-            globals()[SheepNames[sheep]].addOneToOffspringCounter()
+            if offspringCounter < offspringRate:
+                globals()[SheepNames[sheep]].addOneToOffspringCounter()
+                
+            else:
+                if sheepThatGaveBirth < len(SheepPosition):
+                    sheepToBeBorn += 1
+                globals()[SheepNames[sheep]].resetOffspringCounter()
+
+
+            currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
+            currentSheepHungerLevel = globals()[SheepNames[sheep]].getCurrentHungerLevel()
+            # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            if currentSheepHungerLevel < 100:
+                globals()[SheepNames[sheep]].getHungrier()
+            else:
+                globals()[SheepNames[sheep]].loseHealth()
+                currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
+                # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                # print("Current Sheep hunger:", currentSheepHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
             
-        else:
-            if sheepThatGaveBirth < len(SheepPosition):
-                sheepToBeBorn += 1
-            globals()[SheepNames[sheep]].resetOffspringCounter()
-
-
-        currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
-        currentSheepHungerLevel = globals()[SheepNames[sheep]].getCurrentHungerLevel()
-        # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-        if currentSheepHungerLevel < 100:
-            globals()[SheepNames[sheep]].getHungrier()
-        else:
-            globals()[SheepNames[sheep]].loseHealth()
-            currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
-            # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-            # print("Current Sheep hunger:", currentSheepHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-        
 
 
 
-        currentSheepThirstLevel = globals()[SheepNames[sheep]].getCurrentThirstLevel()
-        # print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-
-        if currentSheepThirstLevel < 100:
-            globals()[SheepNames[sheep]].getThirstier()
-        else:
-            globals()[SheepNames[sheep]].loseHealth()
-            currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
-            # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            currentSheepThirstLevel = globals()[SheepNames[sheep]].getCurrentThirstLevel()
             # print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
+            if currentSheepThirstLevel < 100:
+                globals()[SheepNames[sheep]].getThirstier()
+            else:
+                globals()[SheepNames[sheep]].loseHealth()
+                currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
+                # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                # print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
-        if currentSheepHealth <= 0:
-            SheepNames.pop(sheep)
-            SheepPosition.pop(sheep)
-            break
- 
+
+            if currentSheepHealth <= 0:
+                SheepNames.pop(sheep)
+                SheepPosition.pop(sheep)
+                break
+    
 
 
-    #Caps combined animal population at 150 to ensure good performance
-    if len(WolfPosition) + len(SheepPosition) < 150:    
+        #Caps combined animal population at 150 to ensure good performance
+        if len(WolfPosition) + len(SheepPosition) < 150:    
 
-        #Initializes new sheep offspring
-        for _ in range(sheepToBeBorn):
+            #Initializes new sheep offspring
+            for _ in range(sheepToBeBorn):
 
-            
-
-            number = random.randrange(1000000000000)
-            animalName = '%s%s' % ('Sheep', number)
-            if animalName not in globals()['SheepNames']:
                 
-                #Adds unique name to respective set
-                #i.e. SheepNames or WolfNames
-                #This ensures there will never be more than one instance 
-                #with the same name
-                globals()['SheepNames'].append(animalName)
 
-                #Actually initializes animal instance
-                #i.e. sheep1 = Sheep()
+                number = random.randrange(1000000000000)
+                animalName = '%s%s' % ('Sheep', number)
+                if animalName not in globals()['SheepNames']:
+                    
+                    #Adds unique name to respective set
+                    #i.e. SheepNames or WolfNames
+                    #This ensures there will never be more than one instance 
+                    #with the same name
+                    globals()['SheepNames'].append(animalName)
 
-                globals()[animalName] = eval('Sheep'+'(offspringRate=50, health=100)')  
+                    #Actually initializes animal instance
+                    #i.e. sheep1 = Sheep()
 
-                row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
-
-                while app.cellColorsList[row][col] == 'blue':
+                    globals()[animalName] = eval('Sheep'+'(offspringRate=50, health=100)')  
 
                     row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
+                    iterations = 0
+                    while app.cellColorsList[row][col] == 'blue':
+                        if iterations > 1000: break
+                        iterations += 1
+                        print("thing 3")
+                        row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
-                globals()['SheepPosition'].append([row, col])
-                
-    #regrows grass
-    randomCellRow = random.randrange(app.rows)
-    randomCellCol = random.randrange(app.cols)
 
-    if app.cellColorsList[randomCellRow][randomCellCol] == 'tan':
-        app.cellColorsList[randomCellRow][randomCellCol] = 'green'
+                    globals()['SheepPosition'].append([row, col])
+                    
+        #regrows grass
+        randomCellRow = random.randrange(app.rows)
+        randomCellCol = random.randrange(app.cols)
+
+        if app.cellColorsList[randomCellRow][randomCellCol] == 'tan':
+            app.cellColorsList[randomCellRow][randomCellCol] = 'green'
     
     
 
@@ -1128,6 +1315,9 @@ def simulateScreen_mousePressed(app, event):
             print(globals()[wolf].getOffspringRate())
 
         initializeAnimals(app)
+
+        app.wolfPopulationRecord = []
+        app.sheepPopulationRecord = []
         
 
 
@@ -1226,7 +1416,27 @@ def simulateScreen_mouseDragged(app, event):
         elif app.swpNum == 9: app.swpNum = 10
 
         global wolfCount
-        wolfCount = app.swpNum
+        if app.swpNum == 1:
+            wolfCount = 10
+        elif app.swpNum == 2:
+            wolfCount = 20
+        elif app.swpNum == 3:
+            wolfCount = 28
+        elif app.swpNum == 4:
+            wolfCount = 38
+        elif app.swpNum == 5:
+            wolfCount = 50
+        elif app.swpNum == 6:
+            wolfCount = 55
+        elif app.swpNum == 7:
+            wolfCount = 60
+        elif app.swpNum == 8:
+            wolfCount = 65
+        elif app.swpNum == 9:
+            wolfCount = 70
+        elif app.swpNum == 10:
+            wolfCount = 75
+
 
         #Logic for Starting Sheep Population (ssp) slider
         ################################################
@@ -1250,7 +1460,27 @@ def simulateScreen_mouseDragged(app, event):
         elif app.sspNum == 9: app.sspNum = 10
 
         global sheepCount
-        sheepCount = app.sspNum
+        if app.sspNum == 1:
+            sheepCount = 10
+        elif app.sspNum == 2:
+            sheepCount = 20
+        elif app.sspNum == 3:
+            sheepCount = 28
+        elif app.sspNum == 4:
+            sheepCount = 38
+        elif app.sspNum == 5:
+            sheepCount = 50
+        elif app.sspNum == 6:
+            sheepCount = 55
+        elif app.sspNum == 7:
+            sheepCount = 60
+        elif app.sspNum == 8:
+            sheepCount = 65
+        elif app.sspNum == 9:
+            sheepCount = 70
+        elif app.sspNum == 10:
+            sheepCount = 75
+
 
 
 
