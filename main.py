@@ -117,7 +117,6 @@ def appStarted(app):
     ###############################################
 
     app.mode = "titleScreen"
-    app.mode = 'simulateScreen'
     app._root.resizable(False, False) #Contributed by Anita (TA) on Piazza @4354
     app.timerDelay = 90
     app.runSim = False #signifies whether the sim is running or not
