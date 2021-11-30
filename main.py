@@ -134,6 +134,7 @@ def appStarted(app):
     app.waterPuddles = random.randrange(3)
     app.waterAmount = 'Regular'
     app.flowerColorOptions = ['pink', 'red', 'purple', 'yellow', 'orange']
+    app.numberOfBareSpots = 0
     
 
     #Code for animal images
@@ -287,31 +288,31 @@ def getAddedBareSpotsList(app, currentCellColorsList):
 
     #Changes the amount of bare spots added depending on the slider (user input)
     if app.ggrNum == 10:
-        numberOfBareSpots = 0
+        app.numberOfBareSpots = 0
     elif app.ggrNum == 9:
-        numberOfBareSpots = (app.rows*app.cols)//100
+        app.numberOfBareSpots = (app.rows*app.cols)//100
     elif app.ggrNum == 8:
-        numberOfBareSpots = (app.rows*app.cols)//40
+        app.numberOfBareSpots = (app.rows*app.cols)//40
     elif app.ggrNum == 7:
-        numberOfBareSpots = (app.rows*app.cols)//15
+        app.numberOfBareSpots = (app.rows*app.cols)//15
     elif app.ggrNum == 6:
-        numberOfBareSpots = (app.rows*app.cols)//10
+        app.numberOfBareSpots = (app.rows*app.cols)//10
     elif app.ggrNum == 5:
-        numberOfBareSpots = (app.rows*app.cols)//7
+        app.numberOfBareSpots = (app.rows*app.cols)//7
     elif app.ggrNum == 4:
-        numberOfBareSpots = (app.rows*app.cols)//4
+        app.numberOfBareSpots = (app.rows*app.cols)//4
     elif app.ggrNum == 3:
-        numberOfBareSpots = (app.rows*app.cols)//2
+        app.numberOfBareSpots = (app.rows*app.cols)//2
     elif app.ggrNum == 2:
-        numberOfBareSpots = roundHalfUp((app.rows*app.cols)/1.2)
+        app.numberOfBareSpots = roundHalfUp((app.rows*app.cols)/1.2)
     elif app.ggrNum == 1:
-        numberOfBareSpots = (app.rows*app.cols)
+        app.numberOfBareSpots = (app.rows*app.cols)
 
-    #Makes the cells tan according to the numberOfBareSpots
+    #Makes the cells tan according to the app.numberOfBareSpots
     if app.ggrNum == 1:
         currentCellColorsList = [['tan' for _ in range(app.rows)] for _ in range(app.cols)]
     else:
-        for _ in range(numberOfBareSpots + 1):
+        for _ in range(app.numberOfBareSpots + 1):
             row = random.randrange(app.rows)
             col = random.randrange(app.cols)
 
@@ -714,15 +715,15 @@ def simulateScreen_timerFired(app):
 
 
         currentWolfThirstLevel = globals()[WolfNames[wolf]].getCurrentThirstLevel()
-        print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+        # print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
         if currentWolfThirstLevel < 100:
             globals()[WolfNames[wolf]].getThirstier()
         else:
             globals()[WolfNames[wolf]].loseHealth()
             currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-            print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-            print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            # print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            # print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
         
 
@@ -780,28 +781,28 @@ def simulateScreen_timerFired(app):
 
         currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
         currentSheepHungerLevel = globals()[SheepNames[sheep]].getCurrentHungerLevel()
-        print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+        # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
         if currentSheepHungerLevel < 100:
             globals()[SheepNames[sheep]].getHungrier()
         else:
             globals()[SheepNames[sheep]].loseHealth()
             currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
-            print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-            print("Current Sheep hunger:", currentSheepHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            # print("Current Sheep hunger:", currentSheepHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
         
 
 
 
         currentSheepThirstLevel = globals()[SheepNames[sheep]].getCurrentThirstLevel()
-        print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+        # print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
         if currentSheepThirstLevel < 100:
             globals()[SheepNames[sheep]].getThirstier()
         else:
             globals()[SheepNames[sheep]].loseHealth()
             currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
-            print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-            print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            # print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
 
         if currentSheepHealth <= 0:
@@ -843,6 +844,14 @@ def simulateScreen_timerFired(app):
 
                 globals()['SheepPosition'].append([row, col])
                 
+    #regrows grass
+    randomCellRow = random.randrange(app.rows)
+    randomCellCol = random.randrange(app.cols)
+
+    if app.cellColorsList[randomCellRow][randomCellCol] == 'tan':
+        app.cellColorsList[randomCellRow][randomCellCol] = 'green'
+    
+    
 
 
 #Significantly improves the reliability of the sliders
