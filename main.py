@@ -570,6 +570,10 @@ def drawSheep(app, canvas):
             if app.cellColorsList[row][col] in app.flowerColorOptions:
                 app.cellColorsList[row][col] = 'tan'
                 globals()[currentSheep].eatFlower()
+        
+        if globals()[currentSheep].getCurrentThirstLevel() > 0:
+            if app.cellColorsList[row][col] == 'blue':
+                globals()[currentSheep].drinkWater()
 
 ######################################################################
 #Draws sliders
@@ -718,7 +722,7 @@ def simulateScreen_timerFired(app):
             globals()[WolfNames[wolf]].loseHealth()
             currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
             print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-            print("Current Wolf hunger:", currentWolfHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
         
 
@@ -785,6 +789,21 @@ def simulateScreen_timerFired(app):
             print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
             print("Current Sheep hunger:", currentSheepHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
         
+
+
+
+        currentSheepThirstLevel = globals()[SheepNames[sheep]].getCurrentThirstLevel()
+        print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+
+        if currentSheepThirstLevel < 100:
+            globals()[SheepNames[sheep]].getThirstier()
+        else:
+            globals()[SheepNames[sheep]].loseHealth()
+            currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
+            print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+
+
         if currentSheepHealth <= 0:
             SheepNames.pop(sheep)
             SheepPosition.pop(sheep)
