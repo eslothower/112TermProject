@@ -576,78 +576,137 @@ def moveSheep(row, col, app, sheepIndex):
     return [row + drow, col + dcol]
 
 #Enables wolves to track sheep positions, then move towards sheep
-def moveWolvesTowardSheep(row, col, app):
+def moveWolvesTowardSheep(row, col, app, wolfIndex):
 
     foundSheep = False
+    foundWater = False
     originalRow = row
     originalCol = col
     tempRow = row
     tempCol = col
+    currentWolfThirstLevel = globals()[WolfNames[wolfIndex]].getCurrentThirstLevel()
+    currentWolfHungerLevel = globals()[WolfNames[wolfIndex]].getCurrentHungerLevel()
     
+    if currentWolfThirstLevel > 0 or currentWolfHungerLevel > 0:
+        if currentWolfHungerLevel < currentWolfThirstLevel:
+            print("Looking for food")
+            while foundSheep == False:
+                
+                if len(SheepPosition) > 0:
 
-    while foundSheep == False:
-        
-        if len(SheepPosition) > 0:
+                    #The two following ranges define how large the radius is for the 
+                    #wolve's sheep-detection. The larger these two ranges are, the 
+                    #further the wolves can detect the sheep
+                    for drow in range(-8, 8):
+                        for dcol in range(-8, 8):
+                            if (drow, dcol) != (0, 0):
 
-            #The two following ranges define how large the radius is for the 
-            #wolve's sheep-detection. The larger these two ranges are, the 
-            #further the wolves can detect the sheep
-            for drow in range(-8, 8):
-                for dcol in range(-8, 8):
-                    if (drow, dcol) != (0, 0):
+                                #Code that tracks the sheep positions
+                                #We don't necessarily have to check whether or not the 
+                                #new row/col is within the bounds of the grid or not 
+                                #because we do it already with the sheep. However, we do
+                                #it just in case anyways as a backup for error handling
+                                if [tempRow + drow, tempCol + dcol] in SheepPosition:
+                                    foundSheep = True
 
-                        #Code that tracks the sheep positions
-                        #We don't necessarily have to check whether or not the 
-                        #new row/col is within the bounds of the grid or not 
-                        #because we do it already with the sheep. However, we do
-                        #it just in case anyways as a backup for error handling
-                        if [tempRow + drow, tempCol + dcol] in SheepPosition:
-                            foundSheep = True
+                                    if drow > 0 and dcol > 0:
+                                        if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols:
+                                            return [originalRow + 1, originalCol + 1]
 
-                            if drow > 0 and dcol > 0:
-                                if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols:
-                                    return [originalRow + 1, originalCol + 1]
+                                    elif drow == 0 and dcol > 0:
+                                        if 0 < originalCol + 1 < app.cols:
+                                            return [originalRow, originalCol + 1] 
 
-                            elif drow == 0 and dcol > 0:
-                                if 0 < originalCol + 1 < app.cols:
-                                    return [originalRow, originalCol + 1] 
+                                    elif drow > 0 and dcol == 0:
+                                        if 0 < originalRow + 1 < app.rows:
+                                            return [originalRow + 1, originalCol]
 
-                            elif drow > 0 and dcol == 0:
-                                if 0 < originalRow + 1 < app.rows:
-                                    return [originalRow + 1, originalCol]
+                                    elif drow < 0 and dcol < 0:
+                                        if 0 < originalRow - 1 < app.rows and 0 < originalCol - 1 < app.cols:
+                                            return [originalRow - 1, originalCol - 1]
 
-                            elif drow < 0 and dcol < 0:
-                                if 0 < originalRow - 1 < app.rows and 0 < originalCol - 1 < app.cols:
-                                    return [originalRow - 1, originalCol - 1]
+                                    elif drow == 0 and dcol < 0:
+                                        if 0 < originalCol - 1 < app.cols:
+                                            return [originalRow, originalCol - 1]
 
-                            elif drow == 0 and dcol < 0:
-                                if 0 < originalCol - 1 < app.cols:
-                                    return [originalRow, originalCol - 1]
+                                    elif drow < 0 and dcol == 0:
+                                        if 0 < originalRow - 1 < app.rows:
+                                            return [originalRow - 1, originalCol]
 
-                            elif drow < 0 and dcol == 0:
-                                if 0 < originalRow - 1 < app.rows:
-                                    return [originalRow - 1, originalCol]
+                                    elif drow > 0 and dcol < 0:
+                                        if 0 < originalRow + 1 < app.rows and 0 < originalCol - 1 < app.cols:
+                                            return [originalRow + 1, originalCol - 1]
+                                            
+                                    elif drow < 0 and dcol > 0:
+                                        if 0 < originalRow - 1 < app.rows and 0 < originalCol + 1 < app.cols:
+                                            return [originalRow - 1, originalCol + 1]
+                foundSheep = True
 
-                            elif drow > 0 and dcol < 0:
-                                if 0 < originalRow + 1 < app.rows and 0 < originalCol - 1 < app.cols:
-                                    return [originalRow + 1, originalCol - 1]
-                                    
-                            elif drow < 0 and dcol > 0:
-                                if 0 < originalRow - 1 < app.rows and 0 < originalCol + 1 < app.cols:
-                                    return [originalRow - 1, originalCol + 1]
 
-        #Changes the wolves' direction according to where the nearest sheep is
+        elif currentWolfThirstLevel < currentWolfHungerLevel:
+            while foundWater == False:
+                print("Looking for water")
+                #The two following ranges define how large the radius is for the 
+                #wolve's sheep-detection. The larger these two ranges are, the 
+                #further the wolves can detect the sheep
+                for drow in range(-8, 8):
+                    for dcol in range(-8, 8):
+                        if (drow, dcol) != (0, 0):
+
+                            #Code that tracks the sheep positions
+                            #We don't necessarily have to check whether or not the 
+                            #new row/col is within the bounds of the grid or not 
+                            #because we do it already with the sheep. However, we do
+                            #it just in case anyways as a backup for error handling
+                            if 0 < tempRow + drow < app.rows and 0 < tempCol + dcol < app.cols:
+                                if app.cellColorsList[tempRow + drow][tempCol + dcol] == 'blue':
+                                    foundWater = True
+
+                                    if drow > 0 and dcol > 0:
+                                        if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols:
+                                            return [originalRow + 1, originalCol + 1]
+
+                                    elif drow == 0 and dcol > 0:
+                                        if 0 < originalCol + 1 < app.cols:
+                                            return [originalRow, originalCol + 1] 
+
+                                    elif drow > 0 and dcol == 0:
+                                        if 0 < originalRow + 1 < app.rows:
+                                            return [originalRow + 1, originalCol]
+
+                                    elif drow < 0 and dcol < 0:
+                                        if 0 < originalRow - 1 < app.rows and 0 < originalCol - 1 < app.cols:
+                                            return [originalRow - 1, originalCol - 1]
+
+                                    elif drow == 0 and dcol < 0:
+                                        if 0 < originalCol - 1 < app.cols:
+                                            return [originalRow, originalCol - 1]
+
+                                    elif drow < 0 and dcol == 0:
+                                        if 0 < originalRow - 1 < app.rows:
+                                            return [originalRow - 1, originalCol]
+
+                                    elif drow > 0 and dcol < 0:
+                                        if 0 < originalRow + 1 < app.rows and 0 < originalCol - 1 < app.cols:
+                                            return [originalRow + 1, originalCol - 1]
+                                            
+                                    elif drow < 0 and dcol > 0:
+                                        if 0 < originalRow - 1 < app.rows and 0 < originalCol + 1 < app.cols:
+                                            return [originalRow - 1, originalCol + 1]
+                foundWater = True
+
+    #Changes the wolves' direction according to where the nearest sheep is
+    newDrow = random.randrange(-1, 2) #-1, 0, or 1
+    newDcol = random.randrange(-1, 2) #-1, 0, or 1
+
+    while ((not(0 <= row + newDrow <= app.rows - 1)) or 
+        (not (0 <= col + newDcol <= app.cols - 1)) or 
+        ([row + newDrow, col + newDcol] in WolfPosition)): #wolf won't step into a wolf
+
         newDrow = random.randrange(-1, 2) #-1, 0, or 1
         newDcol = random.randrange(-1, 2) #-1, 0, or 1
 
-        while ((not(0 <= row + newDrow <= app.rows - 1)) or 
-            (not (0 <= col + newDcol <= app.cols - 1)) or 
-            ([row + newDrow, col + newDcol] in WolfPosition)): #wolf won't step into a wolf
-
-            newDrow = random.randrange(-1, 2) #-1, 0, or 1
-            newDcol = random.randrange(-1, 2) #-1, 0, or 1
-
-        return [row + newDrow, col + newDcol]
+    return [row + newDrow, col + newDcol]
 
 ######################################################################
 #Draws grid
@@ -682,7 +741,7 @@ def drawWolves(app, canvas):
 
     for i in range(len(WolfPosition)):
         [row, col] = WolfPosition[i]
-        [row, col] = moveWolvesTowardSheep(row, col, app)
+        [row, col] = moveWolvesTowardSheep(row, col, app, i)
         WolfPosition[i] = [row, col]
 
         #delete the sheep because the sheep was EATEN!
@@ -710,6 +769,7 @@ def drawWolves(app, canvas):
 
         if globals()[currentWolf].getCurrentThirstLevel() > 0:
             if app.cellColorsList[row][col] == 'blue':
+                print("DRIKNING WATER WOLF")
                 globals()[currentWolf].drinkWater()
 
 def drawSheep(app, canvas):
