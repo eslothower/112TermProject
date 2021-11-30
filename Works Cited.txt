@@ -1,9 +1,13 @@
 This file is the Works Cited text file. Everything that I have not personally created is cited here.
 
-White Sheep: https://www.shutterstock.com/image-vector/pixelated-cute-fun-sheep-farm-8-610849481
 
-Black Wolf: https://www.shutterstock.com/image-vector/vector-pixel-art-black-wolf-isolated-1303550320
+
+White Sheep Image: https://www.shutterstock.com/image-vector/pixelated-cute-fun-sheep-farm-8-610849481
+
+Black Wolf Image: https://www.shutterstock.com/image-vector/vector-pixel-art-black-wolf-isolated-1303550320
 
 "app._root.resizable(False, False)" in main.py: Contributed by Anita (TA) from Piazza
 
-roundHalfUp: from the HW assignments on https://www.cs.cmu.edu/~112/index.html
+roundHalfUp(): from the HW assignments on https://www.cs.cmu.edu/~112/index.html
+
+cmu_112_graphics.py: https://www.cs.cmu.edu/~112/notes/hw6.html 

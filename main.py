@@ -70,7 +70,7 @@ def initializeAnimals(app):
         for _ in range(animalCount[key]):
             
             while True:
-                print("thing 4")
+                #print("thing 4")
                 #a random number to put at the end of the instance's name
                 #(i.e. 'wolf8349'). This ensures a unique name for each instance
                 number = random.randrange(1000000000000)
@@ -90,7 +90,7 @@ def initializeAnimals(app):
                     #Actually initializes animal instance
                     #i.e. wolf1 = Wolf()
                     if key == 'Sheep':
-                        globals()[animalName] = eval(key+'(offspringRate=50, health=100)')  
+                        globals()[animalName] = eval(key+'(offspringRate=20, health=100)')  
                     elif key == 'Wolf':
                         globals()[animalName] = eval(key+'(offspringRate=150, health=250)')  
 
@@ -101,7 +101,7 @@ def initializeAnimals(app):
                     while app.cellColorsList[row][col] == 'blue':
                         if iterations > 1000: break
                         iterations += 1
-                        print("thing 5")
+                        #print("thing 5")
                         row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
                     globals()[key+'Position'].append([row, col])
@@ -423,7 +423,7 @@ def moveSheep(row, col, app, sheepIndex):
     tempCol = col
 
     while foundWolf == False:
-        print("Wolf")
+        #print("Wolf")
         if len(WolfPosition) > 0:
 
             #The two following ranges define how large the radius is for the 
@@ -481,7 +481,7 @@ def moveSheep(row, col, app, sheepIndex):
         if currentSheepThirstLevel <= currentSheepHungerLevel:
 
             while foundWater == False: 
-                print("Water")
+                #print("Water")
                 for drow in range(-app.rows, app.rows):
                     for dcol in range(-app.cols, app.cols):
                         if (drow, dcol) != (0, 0):
@@ -526,7 +526,7 @@ def moveSheep(row, col, app, sheepIndex):
 
         elif currentSheepHungerLevel < currentSheepThirstLevel:
             while foundFood == False:
-                print("Food")
+                #print("Food")
                 for drow in range(-app.rows, app.rows):
                     for dcol in range(-app.cols, app.cols):
                         if (drow, dcol) != (0, 0):
@@ -600,7 +600,7 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
         if currentWolfHungerLevel < currentWolfThirstLevel:
             
             while foundSheep == False:
-                print("Looking for sheep")
+                #print("Looking for sheep")
                 if len(SheepPosition) > 0:
 
                     #The two following ranges define how large the radius is for the 
@@ -654,7 +654,7 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
 
         elif currentWolfThirstLevel < currentWolfHungerLevel:
             while foundWater == False:
-                print("Looking for water")
+                #print("Looking for water")
                 #The two following ranges define how large the radius is for the 
                 #wolve's sheep-detection. The larger these two ranges are, the 
                 #further the wolves can detect the sheep
@@ -714,7 +714,7 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
         ([row + newDrow, col + newDcol] in WolfPosition)): #wolf won't step into a wolf
         if iterations > 1000: break
         iterations += 1
-        print("thing 1")
+        #print("thing 1")
         newDrow = random.randrange(-1, 2) #-1, 0, or 1
         newDcol = random.randrange(-1, 2) #-1, 0, or 1
 
@@ -782,7 +782,7 @@ def drawWolves(app, canvas):
 
         if globals()[currentWolf].getCurrentThirstLevel() > 0:
             if app.cellColorsList[row][col] == 'blue':
-                print("DRIKNING WATER WOLF")
+                #print("DRIKNING WATER WOLF")
                 globals()[currentWolf].drinkWater()
 
 def drawSheep(app, canvas):
@@ -1107,14 +1107,14 @@ def simulateScreen_timerFired(app):
             
             currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
             currentWolfHungerLevel = globals()[WolfNames[wolf]].getCurrentHungerLevel()
-            #print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
             if currentWolfHungerLevel < 100:
                 globals()[WolfNames[wolf]].getHungrier()
             else:
                 globals()[WolfNames[wolf]].loseHealth()
                 currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-                #print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-                #print("Current Wolf hunger:", currentWolfHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                print("Current Wolf hunger:", currentWolfHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
             
             if currentWolfHealth <= 0:
                 WolfNames.pop(wolf)
@@ -1123,15 +1123,15 @@ def simulateScreen_timerFired(app):
 
 
             currentWolfThirstLevel = globals()[WolfNames[wolf]].getCurrentThirstLevel()
-            # print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
             if currentWolfThirstLevel < 100:
                 globals()[WolfNames[wolf]].getThirstier()
             else:
                 globals()[WolfNames[wolf]].loseHealth()
                 currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-                # print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-                # print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
             
 
@@ -1163,7 +1163,7 @@ def simulateScreen_timerFired(app):
                     while app.cellColorsList[row][col] == 'blue':
                         if iterations > 1000: break
                         iterations += 1
-                        print("thing 2")
+                        #print("thing 2")
                         row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
 
@@ -1192,28 +1192,28 @@ def simulateScreen_timerFired(app):
 
             currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
             currentSheepHungerLevel = globals()[SheepNames[sheep]].getCurrentHungerLevel()
-            # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
             if currentSheepHungerLevel < 100:
                 globals()[SheepNames[sheep]].getHungrier()
             else:
                 globals()[SheepNames[sheep]].loseHealth()
                 currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
-                # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-                # print("Current Sheep hunger:", currentSheepHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                print("Current Sheep hunger:", currentSheepHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
             
 
 
 
             currentSheepThirstLevel = globals()[SheepNames[sheep]].getCurrentThirstLevel()
-            # print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
             if currentSheepThirstLevel < 100:
                 globals()[SheepNames[sheep]].getThirstier()
             else:
                 globals()[SheepNames[sheep]].loseHealth()
                 currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
-                # print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-                # print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+                print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
 
             if currentSheepHealth <= 0:
@@ -1244,7 +1244,7 @@ def simulateScreen_timerFired(app):
                     #Actually initializes animal instance
                     #i.e. sheep1 = Sheep()
 
-                    globals()[animalName] = eval('Sheep'+'(offspringRate=50, health=100)')  
+                    globals()[animalName] = eval('Sheep'+'(offspringRate=20, health=100)')  
 
                     row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
@@ -1252,7 +1252,7 @@ def simulateScreen_timerFired(app):
                     while app.cellColorsList[row][col] == 'blue':
                         if iterations > 1000: break
                         iterations += 1
-                        print("thing 3")
+                        #print("thing 3")
                         row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
 
@@ -1308,10 +1308,10 @@ def simulateScreen_mousePressed(app, event):
         global animalCount
         animalCount = {'Wolf': wolfCount, 'Sheep': sheepCount}
 
-        for sheep in SheepNames:
-            print(globals()[sheep].getOffspringRate())
-        for wolf in WolfNames:
-            print(globals()[wolf].getOffspringRate())
+        # for sheep in SheepNames:
+        #     print(globals()[sheep].getOffspringRate())
+        # for wolf in WolfNames:
+        #     print(globals()[wolf].getOffspringRate())
 
         initializeAnimals(app)
 

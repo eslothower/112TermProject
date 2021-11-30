@@ -93,7 +93,7 @@
     -  Hunger level
     -  Thirst level
     -  Health level
-    -  Hunger rate (decrese in 
+    -  Hunger rate
     -  Thirst rate
     -  Average lifespan (don't let them live past 80 cycles or something)
     -  Current age

@@ -5,3 +5,5 @@
 #This is necessary since animal instances are dynamic for the sim
 # for animalInstance in WolfNames:
 #     print(globals()[animalInstance].getMutationStatus())
+
+#find . -name ".DS_Store" -delete
