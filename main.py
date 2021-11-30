@@ -521,7 +521,7 @@ def drawWolves(app, canvas):
             if SheepPosition[w] == [row, col]: 
                 SheepPosition.pop(w)
                 SheepNames.pop(w)
-                globals()[WolfNames[i]].decreaseHungerLevelByFifty()
+                globals()[WolfNames[i]].eatSheep()
                 break
 
         #we don't need x1 and y1
@@ -558,6 +558,11 @@ def drawSheep(app, canvas):
 
         elif globals()[currentSheep].getMutationType() == 1:
             canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.mutatedPurpleSheepImage))
+
+        if globals()[currentSheep].getCurrentHungerLevel() > 0:
+            if app.cellColorsList[row][col] == 'green':
+                app.cellColorsList[row][col] = 'tan'
+                globals()[currentSheep].eatGrass()
 
 ######################################################################
 #Draws sliders
@@ -680,18 +685,18 @@ def simulateScreen_timerFired(app):
             globals()[WolfNames[wolf]].resetOffspringCounter()
 
         
-        currentHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-        currentHungerLevel = globals()[WolfNames[wolf]].getCurrentHungerLevel()
-        print("Current Health:", currentHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-        if currentHungerLevel < 100:
-            globals()[WolfNames[wolf]].addFiveToCurrentHungerLevel()
+        currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
+        currentWolfHungerLevel = globals()[WolfNames[wolf]].getCurrentHungerLevel()
+        print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+        if currentWolfHungerLevel < 100:
+            globals()[WolfNames[wolf]].getHungrier()
         else:
-            globals()[WolfNames[wolf]].decreaseTenFromHealth()
-            currentHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-            print("Current Health:", currentHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-            print("Current hunger:", currentHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            globals()[WolfNames[wolf]].loseHealth()
+            currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
+            print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            print("Current Wolf hunger:", currentWolfHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
         
-        if currentHealth <= 0:
+        if currentWolfHealth <= 0:
             WolfNames.pop(wolf)
             WolfPosition.pop(wolf)
             break
@@ -736,18 +741,36 @@ def simulateScreen_timerFired(app):
     #Declares that new offspring will be born whenever offspringCounter is 
     #equal to that specific animal instance's offspringRate (as each animal 
     #instance could have a different offspringRate due to species and/or mutation)
-    for sheep in SheepNames:
+    for sheep in range(len(SheepNames)):
 
-        offspringCounter = globals()[sheep].getOffspringCounter()
-        offspringRate = globals()[sheep].getOffspringRate() 
+        offspringCounter = globals()[SheepNames[sheep]].getOffspringCounter()
+        offspringRate = globals()[SheepNames[sheep]].getOffspringRate() 
 
         if offspringCounter < offspringRate:
-            globals()[sheep].addOneToOffspringCounter()
+            globals()[SheepNames[sheep]].addOneToOffspringCounter()
             
         else:
             if sheepThatGaveBirth < len(SheepPosition):
                 sheepToBeBorn += 1
-            globals()[sheep].resetOffspringCounter()
+            globals()[SheepNames[sheep]].resetOffspringCounter()
+
+
+        currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
+        currentSheepHungerLevel = globals()[SheepNames[sheep]].getCurrentHungerLevel()
+        print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+        if currentSheepHungerLevel < 100:
+            globals()[SheepNames[sheep]].getHungrier()
+        else:
+            globals()[SheepNames[sheep]].loseHealth()
+            currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
+            print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            print("Current Sheep hunger:", currentSheepHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+        
+        if currentSheepHealth <= 0:
+            SheepNames.pop(sheep)
+            SheepPosition.pop(sheep)
+            break
+ 
 
 
     #Caps combined animal population at 150 to ensure good performance

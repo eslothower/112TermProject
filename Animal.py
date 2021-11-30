@@ -47,17 +47,23 @@ class Animal(object):
     def getCurrentHungerLevel(self):
         return self.hungerLevel
 
-    def addFiveToCurrentHungerLevel(self):
+    def getHungrier(self):
         self.hungerLevel += 5
 
-    def decreaseTenFromHealth(self):
+    def loseHealth(self):
         self.health -= 10
 
-    def decreaseHungerLevelByFifty(self):
+    def eatSheep(self):
         if self.hungerLevel - 50 < 0:
             self.hungerLevel = 0
         else:
             self.hungerLevel -= 50
+
+    def eatGrass(self):
+        if self.hungerLevel - 4 < 0:
+            self.hungerLevel = 0
+        else:
+            self.hungerLevel -= 4
 
     
 
