@@ -6,11 +6,10 @@ import random
 class Animal(object):
 
     #default values for each animal type
-    def __init__(self, offspringRate=0, hunger=0, hungerLevel=0, thirst=0, thirstLevel=0, lifespan=0, age=0, mutation=0, mutationStatus=None, nutritionalValue=0, speed=0, offspringCounter=0):
+    def __init__(self, offspringRate=0, health=0, hungerLevel=0, thirstLevel=0, lifespan=0, age=0, mutation=0, mutationStatus=None, nutritionalValue=0, speed=0, offspringCounter=0):
         self.offspringRate = offspringRate
-        self.hunger = hunger
+        self.health = health
         self.hungerLevel = hungerLevel
-        self.thirst = thirst
         self.thirstLevel = thirstLevel
         self.lifespan = lifespan
         self.age = age
@@ -41,6 +40,24 @@ class Animal(object):
 
     def getMutationType(self):
         return self.mutation
+
+    def getCurrentHealth(self):
+        return self.health
+
+    def getCurrentHungerLevel(self):
+        return self.hungerLevel
+
+    def addFiveToCurrentHungerLevel(self):
+        self.hungerLevel += 5
+
+    def decreaseTenFromHealth(self):
+        self.health -= 10
+
+    def decreaseHungerLevelByFifty(self):
+        if self.hungerLevel - 50 < 0:
+            self.hungerLevel = 0
+        else:
+            self.hungerLevel -= 50
 
     
 

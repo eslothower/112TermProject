@@ -90,9 +90,9 @@ def initializeAnimals(app):
                     #Actually initializes animal instance
                     #i.e. wolf1 = Wolf()
                     if key == 'Sheep':
-                        globals()[animalName] = eval(key+'(offspringRate=50)')  
+                        globals()[animalName] = eval(key+'(offspringRate=50, health=100)')  
                     elif key == 'Wolf':
-                        globals()[animalName] = eval(key+'(offspringRate=150)')  
+                        globals()[animalName] = eval(key+'(offspringRate=150, health=250)')  
 
                     #Creates a random position that is not in water for the animal
                     row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
@@ -521,6 +521,7 @@ def drawWolves(app, canvas):
             if SheepPosition[w] == [row, col]: 
                 SheepPosition.pop(w)
                 SheepNames.pop(w)
+                globals()[WolfNames[i]].decreaseHungerLevelByFifty()
                 break
 
         #we don't need x1 and y1
@@ -531,8 +532,10 @@ def drawWolves(app, canvas):
 
         #handles drawing different wolf based of off mutations
         currentWolf = WolfNames[i]
+
         if globals()[currentWolf].getMutationType() == 0:
             canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.wolfImage))
+
         elif globals()[currentWolf].getMutationType() == 1:
             canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.mutatedLargeWolfImage))
 
@@ -549,8 +552,10 @@ def drawSheep(app, canvas):
         
         #handles drawing different sheep based of off mutations
         currentSheep = SheepNames[i]
+
         if globals()[currentSheep].getMutationType() == 0:
             canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.sheepImage))
+
         elif globals()[currentSheep].getMutationType() == 1:
             canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.mutatedPurpleSheepImage))
 
@@ -651,29 +656,52 @@ def titleScreen_mousePressed(app, event):
 
 def simulateScreen_timerFired(app):
 
+    wolvesToBeBorn = 0
+    wolvesThatGaveBirth = 0
+
+    #Declares that new offspring will be born whenever offspringCounter is 
+    #equal to that specific animal instance's offspringRate (as each animal 
+    #instance could have a different offspringRate due to species and/or mutation)
+    #Also handles starvation, which declines animal instance's health and eventually
+    #kills the animal instance (unless there is always a supply of food, keeping)
+    #the hunger levels down and the health levels up
+    for wolf in range(len(WolfNames)):
+        
+        offspringCounter = globals()[WolfNames[wolf]].getOffspringCounter()
+        offspringRate = globals()[WolfNames[wolf]].getOffspringRate() 
+
+        if offspringCounter < offspringRate:
+            globals()[WolfNames[wolf]].addOneToOffspringCounter()
+            
+        else:
+            if wolvesThatGaveBirth < len(WolfPosition):
+                wolvesToBeBorn += 1
+            
+            globals()[WolfNames[wolf]].resetOffspringCounter()
+
+        
+        currentHealth = globals()[WolfNames[wolf]].getCurrentHealth()
+        currentHungerLevel = globals()[WolfNames[wolf]].getCurrentHungerLevel()
+        print("Current Health:", currentHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+        if currentHungerLevel < 100:
+            globals()[WolfNames[wolf]].addFiveToCurrentHungerLevel()
+        else:
+            globals()[WolfNames[wolf]].decreaseTenFromHealth()
+            currentHealth = globals()[WolfNames[wolf]].getCurrentHealth()
+            print("Current Health:", currentHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            print("Current hunger:", currentHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+        
+        if currentHealth <= 0:
+            WolfNames.pop(wolf)
+            WolfPosition.pop(wolf)
+            break
+
+        
+
+
     #Caps combined animal population at 150 to ensure good performance
-    if len(WolfPosition) + len(SheepPosition) < 150: 
-
-        wolvesToBeBorn = 0
-        wolvesThatGaveBirth = 0
-
-        #Declares that new offspring will be born whenever offspringCounter is 
-        #equal to that specific animal instance's offspringRate (as each animal 
-        #instance could have a different offspringRate due to species and/or mutation)
-        for wolf in WolfNames:
-
-            offspringCounter = globals()[wolf].getOffspringCounter()
-            offspringRate = globals()[wolf].getOffspringRate() 
-
-            if offspringCounter < offspringRate:
-                globals()[wolf].addOneToOffspringCounter()
-                
-            else:
-                if wolvesThatGaveBirth < len(WolfPosition):
-                    wolvesToBeBorn += 1
-                
-                globals()[wolf].resetOffspringCounter()
-
+    if len(WolfPosition) + len(SheepPosition) < 150:
+    
         #Initializes new wolf offspring
         for _ in range(wolvesToBeBorn):
 
@@ -690,7 +718,7 @@ def simulateScreen_timerFired(app):
                 #Actually initializes animal instance
                 #i.e. wolf1 = Wolf()
 
-                globals()[animalName] = eval('Wolf'+'(offspringRate=150)')  
+                globals()[animalName] = eval('Wolf'+'(offspringRate=150, health=250)')  
 
                 row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
@@ -702,24 +730,28 @@ def simulateScreen_timerFired(app):
                 globals()['WolfPosition'].append([row, col])
 
 
-        sheepToBeBorn = 0
-        sheepThatGaveBirth = 0
+    sheepToBeBorn = 0
+    sheepThatGaveBirth = 0
 
-        #Declares that new offspring will be born whenever offspringCounter is 
-        #equal to that specific animal instance's offspringRate (as each animal 
-        #instance could have a different offspringRate due to species and/or mutation)
-        for sheep in SheepNames:
+    #Declares that new offspring will be born whenever offspringCounter is 
+    #equal to that specific animal instance's offspringRate (as each animal 
+    #instance could have a different offspringRate due to species and/or mutation)
+    for sheep in SheepNames:
 
-            offspringCounter = globals()[sheep].getOffspringCounter()
-            offspringRate = globals()[sheep].getOffspringRate() 
+        offspringCounter = globals()[sheep].getOffspringCounter()
+        offspringRate = globals()[sheep].getOffspringRate() 
 
-            if offspringCounter < offspringRate:
-                globals()[sheep].addOneToOffspringCounter()
-                
-            else:
-                if sheepThatGaveBirth < len(SheepPosition):
-                    sheepToBeBorn += 1
-                globals()[sheep].resetOffspringCounter()
+        if offspringCounter < offspringRate:
+            globals()[sheep].addOneToOffspringCounter()
+            
+        else:
+            if sheepThatGaveBirth < len(SheepPosition):
+                sheepToBeBorn += 1
+            globals()[sheep].resetOffspringCounter()
+
+
+    #Caps combined animal population at 150 to ensure good performance
+    if len(WolfPosition) + len(SheepPosition) < 150:    
 
         #Initializes new sheep offspring
         for _ in range(sheepToBeBorn):
@@ -739,7 +771,7 @@ def simulateScreen_timerFired(app):
                 #Actually initializes animal instance
                 #i.e. sheep1 = Sheep()
 
-                globals()[animalName] = eval('Sheep'+'(offspringRate=50)')  
+                globals()[animalName] = eval('Sheep'+'(offspringRate=50, health=100)')  
 
                 row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
