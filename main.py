@@ -539,6 +539,10 @@ def drawWolves(app, canvas):
         elif globals()[currentWolf].getMutationType() == 1:
             canvas.create_image(x0, y0, image=ImageTk.PhotoImage(app.mutatedLargeWolfImage))
 
+        if globals()[currentWolf].getCurrentThirstLevel() > 0:
+            if app.cellColorsList[row][col] == 'blue':
+                globals()[currentWolf].drinkWater()
+
 def drawSheep(app, canvas):
 
     for i in range(len(SheepPosition)):
@@ -690,19 +694,31 @@ def simulateScreen_timerFired(app):
         
         currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
         currentWolfHungerLevel = globals()[WolfNames[wolf]].getCurrentHungerLevel()
-        print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+        #print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
         if currentWolfHungerLevel < 100:
             globals()[WolfNames[wolf]].getHungrier()
         else:
             globals()[WolfNames[wolf]].loseHealth()
             currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-            print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-            print("Current Wolf hunger:", currentWolfHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            #print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            #print("Current Wolf hunger:", currentWolfHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
         
         if currentWolfHealth <= 0:
             WolfNames.pop(wolf)
             WolfPosition.pop(wolf)
             break
+
+
+        currentWolfThirstLevel = globals()[WolfNames[wolf]].getCurrentThirstLevel()
+        print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+
+        if currentWolfThirstLevel < 100:
+            globals()[WolfNames[wolf]].getThirstier()
+        else:
+            globals()[WolfNames[wolf]].loseHealth()
+            currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
+            print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+            print("Current Wolf hunger:", currentWolfHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
         
 

@@ -71,6 +71,17 @@ class Animal(object):
         else:
             self.hungerLevel -= 10
 
+    def getCurrentThirstLevel(self):
+        return self.thirstLevel
+
+    def getThirstier(self):
+        self.thirstLevel += 5  
+
+    def drinkWater(self):
+        if self.thirstLevel - 50 < 0:
+            self.thirstLevel = 0
+        else:
+            self.thirstLevel -= 50
     
 
 
