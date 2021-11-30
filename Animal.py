@@ -64,6 +64,12 @@ class Animal(object):
             self.hungerLevel = 0
         else:
             self.hungerLevel -= 4
+    
+    def eatFlower(self):
+        if self.hungerLevel - 10 < 0:
+            self.hungerLevel = 0
+        else:
+            self.hungerLevel -= 10
 
     
 

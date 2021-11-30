@@ -563,6 +563,9 @@ def drawSheep(app, canvas):
             if app.cellColorsList[row][col] == 'green':
                 app.cellColorsList[row][col] = 'tan'
                 globals()[currentSheep].eatGrass()
+            if app.cellColorsList[row][col] in app.flowerColorOptions:
+                app.cellColorsList[row][col] = 'tan'
+                globals()[currentSheep].eatFlower()
 
 ######################################################################
 #Draws sliders
