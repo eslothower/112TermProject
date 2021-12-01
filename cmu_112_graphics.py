@@ -1,3 +1,4 @@
+#This file is used for all animations and drawings
 #From https://www.cs.cmu.edu/~112/notes/hw6.html
 
 # cmu_112_graphics.py
