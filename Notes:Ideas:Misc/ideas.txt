@@ -1,4 +1,9 @@
-## Basic Ideas
+This file is used for all of the ideas I had for this project before I started coding.
+Not all ideas were implemented for MVP, but I hope to continue working on this 
+project in the future, and these ideas will be some of the first that I implement
+during that time period. 
+
+Basic Ideas
 
 - 2D simulation software that simulates the lifespan of animals and plants
 - 2D terrain generation
@@ -16,7 +21,7 @@
   - Change the speed of the simulation or go through it step-by-step
   - Graph the current population of each animal type, current amount of food present, current terrain type present
   
-## Far-fetched ideas
+Far-fetched ideas
 
   - Have the board animate in, cell by cell
   - Weather can impact the terrain, and therefore impact the animals and food levels
@@ -33,7 +38,7 @@
   - Really far-fetched idea: 3D terrain 
   - Climate Change kills everything
 
-## Animals
+Animals
 
 - Wolves
   -  Offspring rate 
@@ -60,13 +65,13 @@
 - Frogs
 - Birds
 
-## Terrain types
+Terrain types
 
 - Forest
 - Mountains
 - Flat-land
 
-## Mutations
+Mutations
 
 - Double the size (require more food, more water, harder to kill, stronger, slower, etc.)
 - Half the size (require less food, less, water, easier to kill, weaker, faster, etc.)
@@ -85,7 +90,7 @@
 - Doesn't need food and/or water
 - Dies 3 cycles after being born 
  
-## Implementation
+Implementation
 
 - OOP for all animals and plants, possibly even terrain
   - All animals will have:

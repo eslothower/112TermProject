@@ -6,4 +6,5 @@
 # for animalInstance in WolfNames:
 #     print(globals()[animalInstance].getMutationStatus())
 
+#This is how you delete all .DS_Store files 
 #find . -name ".DS_Store" -delete
