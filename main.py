@@ -882,16 +882,29 @@ def drawFlowerGrowthRateSlider(app, canvas):
 ######################################################################
 
 def drawGraph(app, canvas):
+
+    #Draws Graph Title
     canvas.create_text(app.width/1.3, app.height/3.08, text='Species Population ', fill='black', font='Ariel 25')
+
+    #Draws x-axis title
+    canvas.create_text(app.width/1.3, app.height/1.16, text='Time (simulation cycles)', fill='black', font='Ariel20')
+
+    #Draws y-axis title (uses image since I needed rotated text)
+    canvas.create_image(app.width/1.89, app.height/1.6, image=ImageTk.PhotoImage(app.yAxis))  
+
+    #Draws graph box
     canvas.create_rectangle(app.width/1.8, app.height/2.9, app.width - app.margin + 10, app.height/1.18, outline='black')
+
+    #Draws wolf legend
     canvas.create_rectangle(app.width/1.745, app.height/1.16, app.width/1.717, app.height/1.14, fill='red')
     canvas.create_text(app.width/1.67, app.height/1.15, text='Wolf', fill='black', font='Arial 15')
 
+    #Draws sheep legend
     canvas.create_rectangle(app.width/1.58, app.height/1.16, app.width/1.555, app.height/1.139, fill='Green')
     canvas.create_text(app.width/1.5, app.height/1.15, text='Sheep', fill='black', font='Arial 15')
-    canvas.create_image(app.width/1.89, app.height/1.6, image=ImageTk.PhotoImage(app.yAxis))  
-    canvas.create_text(app.width/1.3, app.height/1.16, text='Time (simulation cycles)', fill='black', font='Ariel20')
+    
 
+    #Draws y-axis numbers
     canvas.create_text(app.width/1.83, app.height/1.18, text='0', fill='black')
     canvas.create_text(app.width/1.83, app.height/1.23, text='10', fill='black')
     canvas.create_text(app.width/1.83, app.height/1.28, text='20', fill='black')
@@ -909,6 +922,7 @@ def drawGraph(app, canvas):
     canvas.create_text(app.width/1.83, app.height/2.65, text='140', fill='black')
     canvas.create_text(app.width/1.83, app.height/2.9, text='150', fill='black')
 
+    #Sets line variables
     s = 0
     for population in app.sheepPopulationRecord:
     
@@ -934,6 +948,7 @@ def drawGraph(app, canvas):
             endingWidth = app.width - app.margin + 10
             startingHeight = endingHeight
 
+        #Defines height of line
         if population == 0:
             endingHeight = app.height/1.18
         elif population <= 10:
@@ -969,8 +984,10 @@ def drawGraph(app, canvas):
         elif population == 150:
             endingHeight = app.height/2.895
 
+        #Draws sheep line
         canvas.create_line(startingWidth, startingHeight, endingWidth, endingHeight, fill='green', width=4)
 
+    #Sets line variables
     w = 0
     for population in app.wolfPopulationRecord:
     
@@ -996,6 +1013,7 @@ def drawGraph(app, canvas):
             endingWidth = app.width - app.margin + 10
             startingHeight = endingHeight
 
+        #Defines height of line
         if population == 0:
             endingHeight = app.height/1.185
         elif population <= 10:
@@ -1031,6 +1049,7 @@ def drawGraph(app, canvas):
         elif population == 150:
             endingHeight = app.height/2.895
 
+        #Draws wolf line
         canvas.create_line(startingWidth, startingHeight, endingWidth, endingHeight, fill='red', width=4)
     
 
@@ -1061,6 +1080,8 @@ def titleScreen_mousePressed(app, event):
 def simulateScreen_timerFired(app):
 
     if app.runSim:
+
+        #Keeps track of population levels for graphing purposes
         if len(app.wolfPopulationRecord) == 5:
             app.wolfPopulationRecord.pop(0)
             app.wolfPopulationRecord.append(len(WolfPosition))
