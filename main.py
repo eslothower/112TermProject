@@ -125,6 +125,8 @@ def appStarted(app):
     #used for when the sim is paused
     app.stockSimWithOverlayWithTextImage = app.scaleImage(app.loadImage(
                 'assets/Modified/stockSimWithOverlayWithTextImage.png'), 1/2.04)
+    app.enterSimulationButton = app.scaleImage(app.loadImage(
+                                    'assets/Modified/enter_simulation.png'), 1/5)
     app.yAxis = app.scaleImage(app.loadImage('assets/Modified/y-axis.png'), 1/13)
 
     #Code for grid/terrain generation
@@ -1062,15 +1064,14 @@ def drawGraph(app, canvas):
 
 def titleScreen_redrawAll(app, canvas):
     canvas.create_text(app.width//2, app.height/5, text="EcoSim", fill="black", font="Ariel 100")
-    canvas.create_rectangle(app.width/2.5, app.height/1.9, app.width/1.65, app.height/2.3, fill='black')
-    canvas.create_text(app.width//2, app.height/2.1, text="Enter Simulation", fill='white', font='Ariel 40')
+    canvas.create_image(app.width/2, app.height/2, image=ImageTk.PhotoImage(app.enterSimulationButton))  
     canvas.create_text(app.width//2, app.height/1.025, text="Created by Eli Slothower, Carnegie Mellon University class of 2025", fill='black', font='Ariel 20')
 
 def titleScreen_mousePressed(app, event):
-    topLeftXTitleScreen = app.width/2.5
-    topLeftYTitleScreen = app.height/1.9
+    topLeftXTitleScreen = app.width/2.54
+    topLeftYTitleScreen = app.height/1.78
     bottomRightXTitleScreen = app.width/1.65
-    bottomRightYTitleScreen = app.height/2.3
+    bottomRightYTitleScreen = app.height/2.26
 
     if(topLeftXTitleScreen < event.x < bottomRightXTitleScreen and bottomRightYTitleScreen < event.y < topLeftYTitleScreen):
         app.mode = 'simulateScreen'
