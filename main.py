@@ -442,42 +442,41 @@ def moveSheep(row, col, app, sheepIndex):
                 for dcol in range(-8, 8):
                     if (drow, dcol) != (0, 0):
 
-                        #If a sheep sees a wolf, it will run in the opposite direction,
-                        #but it also won't overlap with another sheep
-                        if [tempRow + drow, tempCol + dcol] in WolfPosition:
+                        #Code that tracks the wolve's positions
+                        if [tempRow + drow, tempCol + dcol] in SheepPosition:
                             foundWolf = True
 
                             if drow > 0 and dcol > 0:
-                                if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow - 1, originalCol - 1] not in WolfPosition and [originalRow - 1, originalCol - 1] not in SheepPosition:
-                                    return [originalRow - 1, originalCol - 1]
-
-                            elif drow == 0 and dcol > 0:
-                                if 0 < originalCol - 1 < app.cols and [originalRow, originalCol - 1] not in WolfPosition and [originalRow, originalCol - 1] not in SheepPosition:
-                                    return [originalRow, originalCol - 1] 
-
-                            elif drow > 0 and dcol == 0:
-                                if 0 < originalRow - 1 < app.rows and [originalRow - 1, originalCol] not in WolfPosition and [originalRow - 1, originalCol] not in SheepPosition:
-                                    return [originalRow - 1, originalCol]
-
-                            elif drow < 0 and dcol < 0:
-                                if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow + 1, originalCol + 1] not in WolfPosition and [originalRow + 1, originalCol + 1] not in SheepPosition:
+                                if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow + 1, originalCol + 1] not in SheepPosition:
                                     return [originalRow + 1, originalCol + 1]
 
-                            elif drow == 0 and dcol < 0:
-                                if 0 < originalCol + 1 < app.cols and [originalRow, originalCol + 1] not in WolfPosition and [originalRow, originalCol + 1] not in SheepPosition:
-                                    return [originalRow, originalCol + 1]
+                            elif drow == 0 and dcol > 0:
+                                if 0 < originalCol + 1 < app.cols and [originalRow, originalCol + 1] not in SheepPosition:
+                                    return [originalRow, originalCol + 1] 
 
-                            elif drow < 0 and dcol == 0:
-                                if 0 < originalRow + 1 < app.rows and [originalRow + 1, originalCol] not in WolfPosition and [originalRow + 1, originalCol] not in SheepPosition:
+                            elif drow > 0 and dcol == 0:
+                                if 0 < originalRow + 1 < app.rows and [originalRow + 1, originalCol] not in SheepPosition:
                                     return [originalRow + 1, originalCol]
 
+                            elif drow < 0 and dcol < 0:
+                                if 0 < originalRow - 1 < app.rows and 0 < originalCol - 1 < app.cols and [originalRow - 1, originalCol - 1] not in SheepPosition:
+                                    return [originalRow - 1, originalCol - 1]
+
+                            elif drow == 0 and dcol < 0 and [originalRow, originalCol - 1] not in SheepPosition:
+                                if 0 < originalCol - 1 < app.cols:
+                                    return [originalRow, originalCol - 1]
+
+                            elif drow < 0 and dcol == 0:
+                                if 0 < originalRow - 1 < app.rows and [originalRow - 1, originalCol] not in SheepPosition:
+                                    return [originalRow - 1, originalCol]
+
                             elif drow > 0 and dcol < 0:
-                                if 0 < originalRow - 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow - 1, originalCol + 1] not in WolfPosition and [originalRow - 1, originalCol + 1] not in SheepPosition:
-                                    return [originalRow - 1, originalCol + 1]
+                                if 0 < originalRow + 1 < app.rows and 0 < originalCol - 1 < app.cols and [originalRow + 1, originalCol - 1] not in SheepPosition:
+                                    return [originalRow + 1, originalCol - 1]
                                     
                             elif drow < 0 and dcol > 0:
-                                if 0 < originalRow + 1 < app.rows and 0 < originalCol - 1 < app.cols and [originalRow + 1, originalCol - 1] not in WolfPosition and [originalRow - 1, originalCol + 1] not in SheepPosition:
-                                    return [originalRow + 1, originalCol - 1]
+                                if 0 < originalRow - 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow - 1, originalCol + 1] not in SheepPosition:
+                                    return [originalRow - 1, originalCol + 1]
 
         #this is for if a wolf was never found, breaking the while loop
         foundWolf = True
