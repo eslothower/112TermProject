@@ -442,7 +442,7 @@ def moveSheep(row, col, app, sheepIndex):
                 for dcol in range(-8, 8):
                     if (drow, dcol) != (0, 0):
 
-                        #Code that tracks the wolve's positions
+
                         if [tempRow + drow, tempCol + dcol] in SheepPosition:
                             foundWolf = True
 
@@ -494,7 +494,7 @@ def moveSheep(row, col, app, sheepIndex):
                     for dcol in range(-app.cols, app.cols):
                         if (drow, dcol) != (0, 0):
 
-                            #Code that tracks the wolve's positions
+                            #Tracks water sources as needed, as long as wolves aren't a threat
                             if 0 < tempRow + drow < app.rows and 0 < tempCol + dcol < app.cols:
                                 if app.cellColorsList[tempRow + drow][tempCol + dcol] == 'blue':
                                     foundWater = True
@@ -538,7 +538,7 @@ def moveSheep(row, col, app, sheepIndex):
                     for dcol in range(-app.cols, app.cols):
                         if (drow, dcol) != (0, 0):
 
-                            #Code that tracks the wolve's positions
+                            #Tracks food sources as needed, as long as wolves aren't a threat
                             if 0 < tempRow + drow < app.rows and 0 < tempCol + dcol < app.cols:
                                 if app.cellColorsList[tempRow + drow][tempCol + dcol] in ['pink', 'red', 'purple', 'yellow', 'orange', 'green']:
                                     foundFood = True
@@ -616,7 +616,7 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
                         for dcol in range(-8, 8):
                             if (drow, dcol) != (0, 0):
 
-                                #Code that tracks the sheep positions
+                                #Tracks nearest food source (sheep)
                                 #We don't necessarily have to check whether or not the 
                                 #new row/col is within the bounds of the grid or not 
                                 #because we do it already with the sheep. However, we do
@@ -668,7 +668,7 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
                     for dcol in range(-app.cols, app.cols):
                         if (drow, dcol) != (0, 0):
 
-                            #Code that tracks the sheep positions
+                            #Tracks nearest water source  
                             #We don't necessarily have to check whether or not the 
                             #new row/col is within the bounds of the grid or not 
                             #because we do it already with the sheep. However, we do
@@ -718,6 +718,8 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
     while ((not(0 <= row + newDrow <= app.rows - 1)) or 
         (not (0 <= col + newDcol <= app.cols - 1)) or 
         ([row + newDrow, col + newDcol] in WolfPosition)): #wolf won't step into a wolf
+
+        #breaks the loop if it can't find a solution within 1000 cycles
         if iterations > 1000: break
         iterations += 1
         newDrow = random.randrange(-1, 2) #-1, 0, or 1
@@ -966,19 +968,8 @@ def drawGraph(app, canvas):
             endingHeight = app.height/2.72
         elif population == 150:
             endingHeight = app.height/2.895
-        
-        # print(endingHeight)
-
-        
-        
-        # canvas.create_line(app.width/1.8, app.height/1.18, app.width/1.6, endingHeight, fill='green', width=4)
-        # canvas.create_line(app.width/1.6, app.height/1.18, app.width/1.4, endingHeight, fill='red', width=4)
-        # canvas.create_line(app.width/1.4, app.height/1.18, app.width/1.25, endingHeight, fill='green', width=4)
-        # canvas.create_line(app.width/1.25, app.height/1.18, app.width/1.1, endingHeight, fill='red', width=4)
-        # canvas.create_line(app.width/1.1, app.height/1.18, app.width - app.margin + 10, endingHeight, fill='green', width=4)
 
         canvas.create_line(startingWidth, startingHeight, endingWidth, endingHeight, fill='green', width=4)
-
 
     w = 0
     for population in app.wolfPopulationRecord:
@@ -1083,8 +1074,6 @@ def simulateScreen_timerFired(app):
             app.sheepPopulationRecord.append(len(SheepPosition))
 
 
-
-
         wolvesToBeBorn = 0
         wolvesThatGaveBirth = 0
 
@@ -1109,36 +1098,32 @@ def simulateScreen_timerFired(app):
                 globals()[WolfNames[wolf]].resetOffspringCounter()
 
             
+            #Increases hunger level if not eating
+            #Decreases health if hunger level is at full (at 100)
             currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
             currentWolfHungerLevel = globals()[WolfNames[wolf]].getCurrentHungerLevel()
-            print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+
             if currentWolfHungerLevel < 100:
                 globals()[WolfNames[wolf]].getHungrier()
             else:
                 globals()[WolfNames[wolf]].loseHealth()
                 currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-                print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-                print("Current Wolf hunger:", currentWolfHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
             
             if currentWolfHealth <= 0:
                 WolfNames.pop(wolf)
                 WolfPosition.pop(wolf)
                 break
 
-
+            #Increases thirst level if not drinking
+            #Decreases health if thirst level is at full (at 100)
             currentWolfThirstLevel = globals()[WolfNames[wolf]].getCurrentThirstLevel()
-            print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
             if currentWolfThirstLevel < 100:
                 globals()[WolfNames[wolf]].getThirstier()
             else:
                 globals()[WolfNames[wolf]].loseHealth()
                 currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-                print("Current Wolf Health:", currentWolfHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-                print("Current Wolf Thirst:", currentWolfThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-
-            
-
+                
 
         #Caps combined animal population at 150 to ensure good performance
         if len(WolfPosition) + len(SheepPosition) < 150:
@@ -1158,7 +1143,6 @@ def simulateScreen_timerFired(app):
 
                     #Actually initializes animal instance
                     #i.e. wolf1 = Wolf()
-
                     globals()[animalName] = eval('Wolf'+'(offspringRate=150, health=250)')  
 
                     row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
@@ -1192,31 +1176,28 @@ def simulateScreen_timerFired(app):
                     sheepToBeBorn += 1
                 globals()[SheepNames[sheep]].resetOffspringCounter()
 
-
+            #Increases hunger level if not eating
+            #Decreases health if hunger level is at full (at 100)
             currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
             currentSheepHungerLevel = globals()[SheepNames[sheep]].getCurrentHungerLevel()
-            print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
+
             if currentSheepHungerLevel < 100:
                 globals()[SheepNames[sheep]].getHungrier()
             else:
                 globals()[SheepNames[sheep]].loseHealth()
                 currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
-                print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-                print("Current Sheep hunger:", currentSheepHungerLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
             
 
 
-
+            #Increases thirst level if not drinking
+            #Decreases health if thirst level is at full (at 100)
             currentSheepThirstLevel = globals()[SheepNames[sheep]].getCurrentThirstLevel()
-            print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
             if currentSheepThirstLevel < 100:
                 globals()[SheepNames[sheep]].getThirstier()
             else:
                 globals()[SheepNames[sheep]].loseHealth()
                 currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
-                print("Current Sheep Health:", currentSheepHealth)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
-                print("Current Sheep Thirst:", currentSheepThirstLevel)##############################################################SAVE FOR MVP VIDEO TO PROVE THAT IT WORKS
 
 
             if currentSheepHealth <= 0:
@@ -1309,12 +1290,6 @@ def simulateScreen_mousePressed(app, event):
         app.cellColorsList = getCellColorsList(app)
         global animalCount
         animalCount = {'Wolf': wolfCount, 'Sheep': sheepCount}
-
-        # for sheep in SheepNames:
-        #     print(globals()[sheep].getOffspringRate())
-        # for wolf in WolfNames:
-        #     print(globals()[wolf].getOffspringRate())
-
         initializeAnimals(app)
 
         app.wolfPopulationRecord = []
@@ -1481,9 +1456,6 @@ def simulateScreen_mouseDragged(app, event):
             sheepCount = 70
         elif app.sspNum == 10:
             sheepCount = 75
-
-
-
 
 #Draws the simulation screen
 def simulateScreen_redrawAll(app, canvas):
