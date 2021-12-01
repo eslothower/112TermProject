@@ -70,7 +70,7 @@ def initializeAnimals(app):
         for _ in range(animalCount[key]):
             
             while True:
-                #print("thing 4")
+
                 #a random number to put at the end of the instance's name
                 #(i.e. 'wolf8349'). This ensures a unique name for each instance
                 number = random.randrange(1000000000000)
@@ -101,7 +101,6 @@ def initializeAnimals(app):
                     while app.cellColorsList[row][col] == 'blue':
                         if iterations > 1000: break
                         iterations += 1
-                        #print("thing 5")
                         row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
                     globals()[key+'Position'].append([row, col])
@@ -369,7 +368,11 @@ def getAddedWaterList(app, currentCellColorsList):
     numberOfBodiesOfWater = app.aawNum
     
     for bodyOfWater in range(numberOfBodiesOfWater):
+
+        #Randomizes how far the body of water spreads 
         layersOfWater = random.randrange(3,7)
+
+        #Randomizes the position of the body of water on the screen
         row = random.randrange(app.rows)
         col = random.randrange(app.cols)
 
@@ -378,34 +381,40 @@ def getAddedWaterList(app, currentCellColorsList):
         
         for drow in [-1, 0, +1]:
             for dcol in [-1, 0, +1]: 
-                if (drow, dcol) != (0, 0):
-                    for layer in range(layersOfWater + 1):
-                        rowBeingChecked = row + layer*drow
-                        colBeingChecked = col + layer*dcol
+                for layer in range(layersOfWater + 1):
 
-                        if ((rowBeingChecked < 0) or (rowBeingChecked >= app.rows) or (colBeingChecked < 0) or (colBeingChecked >= app.cols)):
-                            continue
-                        else:
-                            currentCellColorsList[rowBeingChecked][colBeingChecked] = 'blue'
- 
-                            for drowTwo in [-1, 0, +1]:
-                                for dcolTwo in [-1, 0, +1]: 
-                                    if (drowTwo, dcolTwo) != (0, 0):
-                                        for layerTwo in range(2):
-                                            rowBeingCheckedTwo = rowBeingChecked + layerTwo*drowTwo
-                                            colBeingCheckedTwo = colBeingChecked + layerTwo*dcolTwo
+                    #The next two lines are adapted from https://www.cs.cmu.edu/~112/notes/notes-animations-part3.html#snakeAndMVC
+                    rowBeingChecked = row + layer*drow
+                    colBeingChecked = col + layer*dcol
 
-                                            if ((rowBeingCheckedTwo < 0) or (rowBeingCheckedTwo >= app.rows) or (colBeingCheckedTwo < 0) or (colBeingCheckedTwo >= app.cols)):
-                                                continue
-                                            else:
+                    if ((rowBeingChecked < 0) or (rowBeingChecked >= app.rows) or (colBeingChecked < 0) or (colBeingChecked >= app.cols)):
+                        continue
+                    else:
+                        currentCellColorsList[rowBeingChecked][colBeingChecked] = 'blue'
+
+                        #This is so heavily nested like this because this was the 
+                        #only way I could get it to give me the odd shape of body
+                        #of water I was looking for. This way it gives me weird 
+                        #shapes, sqaures, rectangles, and even 'x' shapes. The variety is good!
+                        for drowTwo in [-1, 0, +1]:
+                            for dcolTwo in [-1, 0, +1]: 
+                                for layerTwo in range(2):
+
+                                    #The next two lines are adapted from https://www.cs.cmu.edu/~112/notes/notes-animations-part3.html#snakeAndMVC
+                                    rowBeingCheckedTwo = rowBeingChecked + layerTwo*drowTwo
+                                    colBeingCheckedTwo = colBeingChecked + layerTwo*dcolTwo
+
+                                    if ((rowBeingCheckedTwo < 0) or (rowBeingCheckedTwo >= app.rows) or (colBeingCheckedTwo < 0) or (colBeingCheckedTwo >= app.cols)):
+                                        continue
+                                    else:
+                                        currentCellColorsList[rowBeingCheckedTwo][colBeingCheckedTwo] = 'blue'
+
+                                        if bodyOfWater == numberOfBodiesOfWater:
+                                            chance = random.randrange(2)
+                                            if chance == 0:
                                                 currentCellColorsList[rowBeingCheckedTwo][colBeingCheckedTwo] = 'blue'
-
-                                                if bodyOfWater == numberOfBodiesOfWater:
-                                                    chance = random.randrange(2)
-                                                    if chance == 0:
-                                                        currentCellColorsList[rowBeingCheckedTwo][colBeingCheckedTwo] = 'blue'
-                                                else:
-                                                    currentCellColorsList[rowBeingChecked][colBeingChecked] = 'blue'
+                                        else:
+                                            currentCellColorsList[rowBeingChecked][colBeingChecked] = 'blue'
 
     return currentCellColorsList
 
@@ -422,8 +431,8 @@ def moveSheep(row, col, app, sheepIndex):
     tempRow = row
     tempCol = col
 
+    #Moves sheep away from wolves
     while foundWolf == False:
-        #print("Wolf")
         if len(WolfPosition) > 0:
 
             #The two following ranges define how large the radius is for the 
@@ -433,41 +442,42 @@ def moveSheep(row, col, app, sheepIndex):
                 for dcol in range(-8, 8):
                     if (drow, dcol) != (0, 0):
 
-                        #Code that tracks the wolve's positions
-                        if [tempRow + drow, tempCol + dcol] in SheepPosition:
-                            foundSheep = True
+                        #If a sheep sees a wolf, it will run in the opposite direction,
+                        #but it also won't overlap with another sheep
+                        if [tempRow + drow, tempCol + dcol] in WolfPosition:
+                            foundWolf = True
 
                             if drow > 0 and dcol > 0:
-                                if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow + 1, originalCol + 1] not in SheepPosition:
-                                    return [originalRow + 1, originalCol + 1]
-
-                            elif drow == 0 and dcol > 0:
-                                if 0 < originalCol + 1 < app.cols and [originalRow, originalCol + 1] not in SheepPosition:
-                                    return [originalRow, originalCol + 1] 
-
-                            elif drow > 0 and dcol == 0:
-                                if 0 < originalRow + 1 < app.rows and [originalRow + 1, originalCol] not in SheepPosition:
-                                    return [originalRow + 1, originalCol]
-
-                            elif drow < 0 and dcol < 0:
-                                if 0 < originalRow - 1 < app.rows and 0 < originalCol - 1 < app.cols and [originalRow - 1, originalCol - 1] not in SheepPosition:
+                                if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow - 1, originalCol - 1] not in WolfPosition and [originalRow - 1, originalCol - 1] not in SheepPosition:
                                     return [originalRow - 1, originalCol - 1]
 
-                            elif drow == 0 and dcol < 0 and [originalRow, originalCol - 1] not in SheepPosition:
-                                if 0 < originalCol - 1 < app.cols:
-                                    return [originalRow, originalCol - 1]
+                            elif drow == 0 and dcol > 0:
+                                if 0 < originalCol - 1 < app.cols and [originalRow, originalCol - 1] not in WolfPosition and [originalRow, originalCol - 1] not in SheepPosition:
+                                    return [originalRow, originalCol - 1] 
 
-                            elif drow < 0 and dcol == 0:
-                                if 0 < originalRow - 1 < app.rows and [originalRow - 1, originalCol] not in SheepPosition:
+                            elif drow > 0 and dcol == 0:
+                                if 0 < originalRow - 1 < app.rows and [originalRow - 1, originalCol] not in WolfPosition and [originalRow - 1, originalCol] not in SheepPosition:
                                     return [originalRow - 1, originalCol]
 
+                            elif drow < 0 and dcol < 0:
+                                if 0 < originalRow + 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow + 1, originalCol + 1] not in WolfPosition and [originalRow + 1, originalCol + 1] not in SheepPosition:
+                                    return [originalRow + 1, originalCol + 1]
+
+                            elif drow == 0 and dcol < 0:
+                                if 0 < originalCol + 1 < app.cols and [originalRow, originalCol + 1] not in WolfPosition and [originalRow, originalCol + 1] not in SheepPosition:
+                                    return [originalRow, originalCol + 1]
+
+                            elif drow < 0 and dcol == 0:
+                                if 0 < originalRow + 1 < app.rows and [originalRow + 1, originalCol] not in WolfPosition and [originalRow + 1, originalCol] not in SheepPosition:
+                                    return [originalRow + 1, originalCol]
+
                             elif drow > 0 and dcol < 0:
-                                if 0 < originalRow + 1 < app.rows and 0 < originalCol - 1 < app.cols and [originalRow + 1, originalCol - 1] not in SheepPosition:
-                                    return [originalRow + 1, originalCol - 1]
+                                if 0 < originalRow - 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow - 1, originalCol + 1] not in WolfPosition and [originalRow - 1, originalCol + 1] not in SheepPosition:
+                                    return [originalRow - 1, originalCol + 1]
                                     
                             elif drow < 0 and dcol > 0:
-                                if 0 < originalRow - 1 < app.rows and 0 < originalCol + 1 < app.cols and [originalRow - 1, originalCol + 1] not in SheepPosition:
-                                    return [originalRow - 1, originalCol + 1]
+                                if 0 < originalRow + 1 < app.rows and 0 < originalCol - 1 < app.cols and [originalRow + 1, originalCol - 1] not in WolfPosition and [originalRow - 1, originalCol + 1] not in SheepPosition:
+                                    return [originalRow + 1, originalCol - 1]
 
         #this is for if a wolf was never found, breaking the while loop
         foundWolf = True
@@ -481,7 +491,6 @@ def moveSheep(row, col, app, sheepIndex):
         if currentSheepThirstLevel <= currentSheepHungerLevel:
 
             while foundWater == False: 
-                #print("Water")
                 for drow in range(-app.rows, app.rows):
                     for dcol in range(-app.cols, app.cols):
                         if (drow, dcol) != (0, 0):
@@ -526,7 +535,6 @@ def moveSheep(row, col, app, sheepIndex):
 
         elif currentSheepHungerLevel < currentSheepThirstLevel:
             while foundFood == False:
-                #print("Food")
                 for drow in range(-app.rows, app.rows):
                     for dcol in range(-app.cols, app.cols):
                         if (drow, dcol) != (0, 0):
@@ -600,7 +608,6 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
         if currentWolfHungerLevel < currentWolfThirstLevel:
             
             while foundSheep == False:
-                #print("Looking for sheep")
                 if len(SheepPosition) > 0:
 
                     #The two following ranges define how large the radius is for the 
@@ -654,7 +661,7 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
 
         elif currentWolfThirstLevel < currentWolfHungerLevel:
             while foundWater == False:
-                #print("Looking for water")
+
                 #The two following ranges define how large the radius is for the 
                 #wolve's sheep-detection. The larger these two ranges are, the 
                 #further the wolves can detect the sheep
@@ -714,7 +721,6 @@ def moveWolvesTowardSheep(row, col, app, wolfIndex):
         ([row + newDrow, col + newDcol] in WolfPosition)): #wolf won't step into a wolf
         if iterations > 1000: break
         iterations += 1
-        #print("thing 1")
         newDrow = random.randrange(-1, 2) #-1, 0, or 1
         newDcol = random.randrange(-1, 2) #-1, 0, or 1
 
@@ -782,7 +788,6 @@ def drawWolves(app, canvas):
 
         if globals()[currentWolf].getCurrentThirstLevel() > 0:
             if app.cellColorsList[row][col] == 'blue':
-                #print("DRIKNING WATER WOLF")
                 globals()[currentWolf].drinkWater()
 
 def drawSheep(app, canvas):
@@ -1163,7 +1168,6 @@ def simulateScreen_timerFired(app):
                     while app.cellColorsList[row][col] == 'blue':
                         if iterations > 1000: break
                         iterations += 1
-                        #print("thing 2")
                         row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
 
@@ -1252,7 +1256,6 @@ def simulateScreen_timerFired(app):
                     while app.cellColorsList[row][col] == 'blue':
                         if iterations > 1000: break
                         iterations += 1
-                        #print("thing 3")
                         row, col = random.randrange(0, app.rows), random.randrange(0, app.cols)
 
 
