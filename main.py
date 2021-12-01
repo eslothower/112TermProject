@@ -832,7 +832,7 @@ def drawSheep(app, canvas):
 ######################################################################
 
 def drawGrassGrowthRateSlider(app, canvas):
-    canvas.create_text(app.ggrTextX, app.ggrTextY, text=f"Grass Growth Rate: {app.ggrNum}", fill='black', font='Ariel 18')
+    canvas.create_text(app.ggrTextX, app.ggrTextY, text=f"Grass Growth Rate: {app.ggrNum}", fill='black', font='Ariel 15')
     canvas.create_line(app.ggrLineTopX, app.ggrLineTopY, app.ggrLineBottomX, app.ggrLineBottomY, fill='grey', width=3)
 
     #Greys out sliders when the sim is running to signify that the slider cannot be used while the sim is running
@@ -842,7 +842,7 @@ def drawGrassGrowthRateSlider(app, canvas):
         canvas.create_rectangle(app.ggrSliderTopX, app.ggrSliderTopY, app.ggrSliderBottomX, app.ggrSliderBottomY, fill='black')
 
 def drawWaterFallRateSlider(app, canvas):
-    canvas.create_text(app.aawTextX, app.aawTextY, text=f"Average Amount of Water: {app.aawNum}", fill='black', font='Ariel 18')
+    canvas.create_text(app.aawTextX, app.aawTextY, text=f"Average Amount of Water: {app.aawNum}", fill='black', font='Ariel 15')
     canvas.create_line(app.aawLineTopX, app.aawLineTopY, app.aawLineBottomX, app.aawLineBottomY, fill='grey', width=3)
 
     #Greys out sliders when the sim is running to signify that the slider cannot be used while the sim is running
@@ -852,7 +852,7 @@ def drawWaterFallRateSlider(app, canvas):
         canvas.create_rectangle(app.aawSliderTopX, app.aawSliderTopY, app.aawSliderBottomX, app.aawSliderBottomY, fill='black')
 
 def drawStartingWolfPopulationSlider(app, canvas):
-    canvas.create_text(app.swpTextX, app.swpTextY, text=f"Starting Wolf Population: {app.swpNum}", fill='black', font='Ariel 18')
+    canvas.create_text(app.swpTextX, app.swpTextY, text=f"Starting Wolf Population Intensity: {app.swpNum}", fill='black', font='Ariel 15')
     canvas.create_line(app.swpLineTopX, app.swpLineTopY, app.swpLineBottomX, app.swpLineBottomY, fill='grey', width=3)
 
     #Greys out sliders when the sim is running to signify that the slider cannot be used while the sim is running
@@ -862,7 +862,7 @@ def drawStartingWolfPopulationSlider(app, canvas):
         canvas.create_rectangle(app.swpSliderTopX, app.swpSliderTopY, app.swpSliderBottomX, app.swpSliderBottomY, fill='black')
 
 def drawStartingSheepPopulationSlider(app, canvas):
-    canvas.create_text(app.sspTextX, app.sspTextY, text=f"Starting Sheep Population: {app.sspNum}", fill='black', font='Ariel 18')
+    canvas.create_text(app.sspTextX, app.sspTextY, text=f"Starting Sheep Population Intensity: {app.sspNum}", fill='black', font='Ariel 15')
     canvas.create_line(app.sspLineTopX, app.sspLineTopY, app.sspLineBottomX, app.sspLineBottomY, fill='grey', width=3)
 
     #Greys out sliders when the sim is running to signify that the slider cannot be used while the sim is running
@@ -872,7 +872,7 @@ def drawStartingSheepPopulationSlider(app, canvas):
         canvas.create_rectangle(app.sspSliderTopX, app.sspSliderTopY, app.sspSliderBottomX, app.sspSliderBottomY, fill='black')
 
 def drawFlowerGrowthRateSlider(app, canvas):
-    canvas.create_text(app.fgrTextX, app.fgrTextY, text=f"Flower Growth Rate: {app.fgrNum}", fill='black', font='Ariel 18')
+    canvas.create_text(app.fgrTextX, app.fgrTextY, text=f"Flower Growth Rate: {app.fgrNum}", fill='black', font='Ariel 15')
     canvas.create_line(app.fgrLineTopX, app.fgrLineTopY, app.fgrLineBottomX, app.fgrLineBottomY, fill='grey', width=3)
 
     #Greys out sliders when the sim is running to signify that the slider cannot be used while the sim is running
@@ -1511,4 +1511,4 @@ def simulateScreen_redrawAll(app, canvas):
         canvas.create_rectangle(app.width/1.885, app.height/1.1, app.width/1.315, app.height - app.margin + 10, fill='grey', outline='grey')
     canvas.create_text(app.width/1.545, app.height/1.06, text='End Current Simulation', font='Ariel 30', fill='white')
 
-runApp(width=1728, height=905)
+runApp(width=1725, height=905)
