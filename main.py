@@ -1126,13 +1126,16 @@ def simulateScreen_timerFired(app):
             #Decreases health if hunger level is at full (at 100)
             currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
             currentWolfHungerLevel = globals()[WolfNames[wolf]].getCurrentHungerLevel()
+            print("Current Wolf Health:", currentWolfHealth)
 
             if currentWolfHungerLevel < 100:
                 globals()[WolfNames[wolf]].getHungrier()
             else:
                 globals()[WolfNames[wolf]].loseHealth()
                 currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-            
+                print("Current Wolf Health:", currentWolfHealth)
+                print("Current Wolf hunger:", currentWolfHungerLevel)
+
             if currentWolfHealth <= 0:
                 WolfNames.pop(wolf)
                 WolfPosition.pop(wolf)
@@ -1141,13 +1144,15 @@ def simulateScreen_timerFired(app):
             #Increases thirst level if not drinking
             #Decreases health if thirst level is at full (at 100)
             currentWolfThirstLevel = globals()[WolfNames[wolf]].getCurrentThirstLevel()
+            print("Current Wolf Thirst:", currentWolfThirstLevel)
 
             if currentWolfThirstLevel < 100:
                 globals()[WolfNames[wolf]].getThirstier()
             else:
                 globals()[WolfNames[wolf]].loseHealth()
                 currentWolfHealth = globals()[WolfNames[wolf]].getCurrentHealth()
-                
+                print("Current Wolf Health:", currentWolfHealth)
+                print("Current Wolf Thirst:", currentWolfThirstLevel)
 
         #Caps combined animal population at 150 to ensure good performance
         if len(WolfPosition) + len(SheepPosition) < 150:
@@ -1204,25 +1209,30 @@ def simulateScreen_timerFired(app):
             #Decreases health if hunger level is at full (at 100)
             currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
             currentSheepHungerLevel = globals()[SheepNames[sheep]].getCurrentHungerLevel()
+            print("Current Sheep Health:", currentSheepHealth)
 
             if currentSheepHungerLevel < 100:
                 globals()[SheepNames[sheep]].getHungrier()
             else:
                 globals()[SheepNames[sheep]].loseHealth()
                 currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
+                print("Current Sheep Health:", currentSheepHealth)
+                print("Current Sheep hunger:", currentSheepHungerLevel)
             
 
 
             #Increases thirst level if not drinking
             #Decreases health if thirst level is at full (at 100)
             currentSheepThirstLevel = globals()[SheepNames[sheep]].getCurrentThirstLevel()
+            print("Current Sheep Thirst:", currentSheepThirstLevel)
 
             if currentSheepThirstLevel < 100:
                 globals()[SheepNames[sheep]].getThirstier()
             else:
                 globals()[SheepNames[sheep]].loseHealth()
                 currentSheepHealth = globals()[SheepNames[sheep]].getCurrentHealth()
-
+                print("Current Sheep Health:", currentSheepHealth)
+                print("Current Sheep Thirst:", currentSheepThirstLevel)
 
             if currentSheepHealth <= 0:
                 SheepNames.pop(sheep)

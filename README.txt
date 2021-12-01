@@ -31,4 +31,4 @@ Libraries needed to run EcoSim:
 
 Shortcut Commands:
 
-None
+None. To prove that my classes (Animal, Wolf, and Sheep) code, inheritence code, and my health/hunger/thirst code does indeed work and does use classes/inheritence, I have put 12 print statements in timerFired() that shows you that each instance's health/hunger/thirst really is working as I say it is.  
