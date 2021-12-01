@@ -11,3 +11,6 @@ Black Wolf Image: https://www.shutterstock.com/image-vector/vector-pixel-art-bla
 roundHalfUp(): from the HW assignments on https://www.cs.cmu.edu/~112/index.html
 
 cmu_112_graphics.py: https://www.cs.cmu.edu/~112/notes/hw6.html 
+
+"rowBeingChecked = row + layer*drow" in main.py: Adapted from https://www.cs.cmu.edu/~112/notes/notes-animations-part3.html#snakeAndMVC 
+"colBeingChecked = col + layer*dcol" in main.py: Adapted from https://www.cs.cmu.edu/~112/notes/notes-animations-part3.html#snakeAndMVC 
