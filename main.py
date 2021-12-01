@@ -116,7 +116,9 @@ def appStarted(app):
     ###############################################
 
     app.mode = "titleScreen"
-    app._root.resizable(False, False) #Contributed by Anita (TA) on Piazza @4354
+
+    #Contributed by Anita (TA) on Piazza @4354, locks window size
+    app._root.resizable(False, False) 
     app.timerDelay = 90
     app.runSim = False #signifies whether the sim is running or not
 

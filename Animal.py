@@ -6,17 +6,14 @@ import random
 class Animal(object):
 
     #default values for each animal type
-    def __init__(self, offspringRate=0, health=0, hungerLevel=0, thirstLevel=0, lifespan=0, age=0, mutation=0, mutationStatus=None, nutritionalValue=0, speed=0, offspringCounter=0):
+    def __init__(self, offspringRate=0, health=0, hungerLevel=0, thirstLevel=0, lifespan=0, mutation=0, mutationStatus=None, offspringCounter=0):
         self.offspringRate = offspringRate
         self.health = health
         self.hungerLevel = hungerLevel
         self.thirstLevel = thirstLevel
         self.lifespan = lifespan
-        self.age = age
         self.mutation = mutation
         self.mutationStatus = mutationStatus 
-        self.nutritionalValue = nutritionalValue
-        self.speed = speed
         self.offspringCounter = offspringCounter
 
         #Random chance for mutation
