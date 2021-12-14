@@ -1,6 +1,6 @@
 Welcome to EcoSim!
 
-
+For a nice visual overview of this project, feel free to watch this video here: https://youtu.be/pNI2ecLDfUU
 
 Project Description:
 
